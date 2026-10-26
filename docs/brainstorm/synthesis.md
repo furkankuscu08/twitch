@@ -251,3 +251,15 @@ Kaynaklar: [L1](wave2/L1-need.md), [L2](wave2/L2-spectacle.md), [L3](wave2/L3-ca
 - **Sınırda elenenler:** K04 One Line ve K22b. İkisi de 2/3 FATAL aldı. Kullanıcı isterse geri alınabilir.
 - **İlk 5 listeleri:** VAR (K24) ve Minefield (K19) üç listede de var.
 - **Taşınan tasarım notu:** mesajı silerek mühürlemek gizli değil. Gizli girdi whisper veya web formu ile alınmalı.
+
+### 5a. Puanlama ile 20 → 10 ([step5/aggregate.md](wave2/step5/aggregate.md), [shortlist-10.md](wave2/shortlist-10.md))
+
+- Üç kör değerlendirici (Opus, Astra, Grok) her adaya dört jüri kriterinde 0–5 puan verdi. Toplam puan 0–60. Kural puanlar gelmeden yazıldı: ilk 10 aday geçer; 11–14. sıradakiler bir modelin ilk 5'indeyse kurtulur.
+- **Kalan 10:** Minefield (54), Prodüksiyon sorunları (49), VAR (49), Raid Torch (46), Previously On (45), Studio Audience (45), Foley Pit (44), Hint Jar (43), Photo Booth (40), Checkpoint (39).
+- Modeller benzer ölçekte puanladı (ortalamalar 12,4–12,6). Hiçbir kriterde 3 puanlık ayrışma yok. İlk üç aday (Minefield, Prodüksiyon sorunları, VAR) üç modelin de ilk 5'inde. Kesim noktası (39 / 39 / 38) gürültü bandında.
+- **Elenenlerden kalan adaylara taşınan özellikler:**
+  - Desk Buddy → Prodüksiyon sorunları
+  - Lore dipnotları ve Yeni gelene karşılama → Previously On
+  - Mühürlü tahminler → Minefield
+  - Lurker → Studio Audience
+- **Yeni risk:** gizli giriş (whisper için telefon doğrulaması ve günlük 40 alıcı sınırı). Bu risk Minefield ve Hint Jar'ı etkiliyor. 1. gün test listesine eklendi.

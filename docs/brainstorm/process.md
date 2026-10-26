@@ -26,7 +26,7 @@ Teslim hedefi: **2 Kasım, İstanbul saatiyle en geç 20:00** (resmi son: 3 Kas�
 
 1. **Dalga 1: araştırma** (4 agent, paralel). Sen aynı anda Twitch kurulumu ve saha gözlemi yaparsın.
 2. **Senin bağımsız girdin:** Agent çıktılarını okumadan önce 5 gözlem ve varsa birkaç ham fikir yazarsın (`human-notes.md`).
-3. **Dalga 2: fikir üretimi** (3 Claude agent + GPT 6 Astra + Grok, farklı mercekler, birbirini görmez). Brief: [wave2/brief.md](wave2/brief.md), mercekler: [wave2/prompts.md](wave2/prompts.md). Ardından Grok, fikir kümeleri için X'te benzer ürün ve talep araması yapar.
+3. **Dalga 2: fikir üretimi** (3 Claude agent + GPT 6 Astra + Grok, farklı mercekler, birbirini görmez). Brief: [wave2/brief.md](wave2/brief.md), mercekler: wave2/prompts.md (silindi, commit b282398). Ardından Grok, fikir kümeleri için X'te benzer ürün ve talep araması yapar.
 4. **Sentez** (ben): Tekrarlar ayıklanır, kümelenir. Yaygın fikirler işaretlenir, ama elenmez.
 5. **Dalga 3: değerlendirme.** Kör iki değerlendirici: ürün/özgünlük ve uygulama/demo. Kaynak ve tercihlerimiz gizli tutulur.
 6. **Kısa liste:** 2–3 aday. Her biri için uygulama taslağı ve en riskli varsayım.

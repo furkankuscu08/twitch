@@ -163,6 +163,8 @@ Step 4 and wave 3 mostly look at cards, so each of the 25 full cards gets its ow
 | 8 | YouTube channel live-enabled plus API | K34 |
 | 9 | Modify Channel Information rate limit for frequent title changes | K10 (optional title sync) |
 | 10 | Hardware on hand: smart bulb, lamp, thermal printer | K03, K06, K11 variants |
+| 11 | Sealed input (added 2026-10-26, step 5): a test account whispers the bot and `user.whisper.message` arrives; check phone-verification and silent drops. Fallback: a web page with Twitch login behind a public tunnel | K19, K17 |
+| 12 | Read Developer Agreement IV.C: may our own state (channel IDs, counts) outlive 24 h? (added 2026-10-26) | K14 (multi-day torch) |
 
 The earlier tests still apply as bonuses only: Create Custom Reward, Create Poll, and Create Prediction.
 

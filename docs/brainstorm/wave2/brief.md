@@ -1,6 +1,6 @@
 # Wave 2 brief: idea generation
 
-This brief is self-contained. Every idea agent receives the same text, followed by one lens block from [prompts.md](prompts.md).
+This brief is self-contained. Every idea agent receives the same text, followed by one lens block from prompts.md (deleted; in commit b282398).
 
 ---
 
