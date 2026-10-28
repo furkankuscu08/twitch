@@ -681,6 +681,8 @@ Bu, "yüksek tavan" ile "sağlam taban" arasındaki seçim.
 
 ## 9. 29 Ekim testleri
 
+> **Güncel test takvimi plan dosyasında:** [docs/plan/minefield.md](../../../plan/minefield.md). T1 ve T4 kod gerektirdiği için 30 ve 31 Ekim'e kaydı; 29 Ekim kurulum ve veri günü.
+
 Minefield seçildiği için T1b (Checkpoint) ve T2 (VAR) kalktı. T1 artık bir geçme şartı değil; harness'in ilk koşusu. **Hiçbir test projeyi değiştirmiyor; sonuçlar kuralları ve ayarları belirliyor.**
 
 | Sıra | Test | Ne ölçer | Hedef | Sonuç kötüyse | Süre |
