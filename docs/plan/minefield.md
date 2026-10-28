@@ -160,7 +160,7 @@ T1 ve T4 kod gerektirdiği için 30 ve 31 Ekim'e kaydı. 29 Ekim'de bunlar yapı
 | Sıra | İş | Süre |
 | --- | --- | --- |
 | 1 | Twitch hesapları ve uygulama kaydı (ayrıntı aşağıda) | 60–75 dk |
-| 2 | Codex kurulumu ve OBS'te "Codex" sahnesi ([bölüm 8](#8-codex-kullanımı)). **Kayıt açık**, ana thread'i aç, ilk mesaj (`/plan`), session ID'yi bölüm 8'e yaz. Sonra WP7 (deste) ve WP8 (auth). | 45 dk (senin zamanın) |
+| 2 | Codex kurulumu ve OBS'te "Codex" sahnesi ([bölüm 8](#8-codex-kullanımı)). Ana thread'i aç; **kayda bas**, ilk mesaj (`/plan`), sonuç gelince kaydı durdur (an 1), session ID'yi bölüm 8'e yaz. Sonra WP7 (deste) ve WP8 (auth). | 45 dk (senin zamanın) |
 | 3 | Deepgram hesabı (200 $ ücretsiz kredi), API anahtarı `.env`'e. Kısa bir WAV'ı `curl` ile AB uç noktasındaki pre-recorded API'ye gönder: anahtar çalışıyor mu, kelimeler doğru mu? | 15 dk |
 | 4 | **T5:** WP8 aracıyla yayıncı token'ı al. Kısa bir test yayını aç, curl ile marker ve klip oluştur; **klibi oynat**, doğru anı içeriyor mu bak. Aynı yayında OBS'te ve Chrome'da `http://localhost:8000` erişimini dene (Windows → WSL). | 45 dk |
 | 5 | Deste v0'ı gözden geçir | 20 dk |
@@ -296,17 +296,16 @@ Kullanılmayacaklar: Codex'i ürünün içinde çalıştırmak (yapay görünür
 **OBS kurulumu (bir kez, ~10 dk):**
 - Ayrı bir **"Codex" sahnesi** oluştur; içinde Codex uygulaması için tek bir **Window Capture** kaynağı olsun.
 - Uygulama: koyu tema, kod fontu 16 pt (şu an 14), pencere büyük. 1080p'de satırlar okunmalı.
-- Kayıt ayarları:
-  - **kayıt formatı:** `mkv` (çökmede dosya bozulmaz; montajdan önce Dosya → Remux ile mp4'e çevrilir);
-  - **çözünürlük:** 1080p;
-  - **kare hızı:** 30 fps;
-  - **kodlayıcı:** NVENC.
-  - Terminal görüntüsü az değiştiği için dosyalar küçük kalır.
+- Kayıt ayarları: mp4, 1080p, 30 fps, NVENC. Kayıtlar kısa olduğu için çökmeye dayanıklı format gerekmiyor.
+- Audio Mixer'da mikrofon ve masaüstü sesi Codex kayıtlarında kapalı. **Yayından önce tekrar aç.**
 - Yayın yaparken Codex kaydı alınmaz. Yayın ve oyun kayıtları ayrı bir iş (bölüm 9).
 
-**Ne zaman:** Codex'le çalışmaya oturduğun an kayda bas, kalktığında durdur. Seçmeye çalışma; hepsini kaydet, montajda kırp. 4 günde ~15 saatlik kayıt birikir. "Codex anları" tablosu sayesinde montajda sadece işaretli dakikalara bakarsın.
+**Ne zaman:** Sadece yukarıdaki 7 an kaydedilir; sürekli kayıt yok.
+- O anın mesajını göndermeden hemen önce kayda bas, sonuç gelince durdur. Her kayıt ~5–20 dk; montajda 3–8 sn'si kullanılır.
+- Kayıt bitince dosya adını ve ne olduğunu aşağıdaki tabloya bir satırla yaz.
+- Beklenmedik iyi bir an olursa (ör. Codex ciddi bir hatayı yakaladı) kaydı yoksa saatini tabloya yaz; yedek yoldan alınır.
 
-**İlginç bir an olduğunda:** Saati ve ne olduğunu aşağıdaki tabloya bir satırla yaz. Bunun için 10 saniye yeter. Yukarıdaki 7 an, hedeflenen anlar.
+**Yedek: thread geçmişi.** Codex uygulaması ana thread'in tüm geçmişini saklıyor. 2 Kasım'da thread'i baştan sona kaydırırken 1–2 dk'lık bir kayıt alınır. Kaçırılan anların görüntüsü buradan çıkar; bu da gerçek oturumun görüntüsü.
 
 **Gizlilik:**
 - `.env` ve `data/tokens.json` ekranda açılmaz; Codex'ten bunları göstermesini isteme.
@@ -373,6 +372,7 @@ Kullanılmayacaklar: Codex'i ürünün içinde çalıştırmak (yapay görünür
   - Bildirimler ve Discord overlay'i kapalı.
 - **WSL:** Uykudan sonra localhost erişimi ya da saat bozulursa `wsl --shutdown` yap ve her şeyi yeniden başlat.
 - **Deepgram:** kayıttan önce status.deepgram.com'a bak. Dock'ta Deepgram ışığı kırmızıysa "konuşmayı yaz" moduna geç, kayda devam etme.
+- **OBS sesi:** Mic/Aux ve Desktop Audio açık (Codex kayıtlarında kapatılmıştı).
 - **Twitch:** Bot mod (link engelinden ve AutoMod'dan muaf); test hesaplarının chat'e yazabildiğini kontrol et.
 - **Başlatma:** WSL'de `scripts/run_all.sh`, Windows Chrome'da `http://localhost:8000/mic` (sekme kayıt boyunca açık kalır; OBS ile aynı mikrofon seçili). Dock'taki ışıklar yeşil olmadan kayda başlama.
 
@@ -411,7 +411,7 @@ Kullanılmayacaklar: Codex'i ürünün içinde çalıştırmak (yapay görünür
 | D10 | "Zaman kalırsa" listesi kaldırıldı; dondurmadan sonraki zaman videoya | Verildi | 28 Ekim |
 | D11 | Sadeleştirmeler ([bölüm 13](#13-sadeleştirmeler-28-ekim)) | Verildi | 28 Ekim |
 | D12 | Eşleştiricide onay sayısı ayarlanabilir (`CONFIRM_N`, varsayılan 2); Deepgram'ın ham mesajları ve tahminler kaydedilir; rapordaki tahmin dosyaları commit'lenir ki `replay` anahtarsız çalışsın | Verildi | 28 Ekim |
-| D13 | Codex: masaüstü uygulamasında (ajan WSL'de) tek ana thread; her WP'de önce testler, `/review`, commit, `/compact`; harness döngüsü ana hikâye; M1 ve M3'te `@codex review`; çalışırken sürekli ekran kaydı | Verildi | 28 Ekim |
+| D13 | Codex: masaüstü uygulamasında (ajan WSL'de) tek ana thread; her WP'de önce testler, `/review`, commit, `/compact`; harness döngüsü ana hikâye; M1 ve M3'te `@codex review`; sadece 7 hedef an kaydedilir, yedek olarak 2 Kasım'da thread geçmişi | Verildi | 28 Ekim |
 
 ---
 
