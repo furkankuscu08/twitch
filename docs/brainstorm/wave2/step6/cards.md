@@ -2,7 +2,7 @@
 
 Every card uses the same template and is written at its best variant. Scores from earlier steps are deliberately left out, because these cards are the input for blind evidence gathering and scoring. Features from eliminated candidates are marked **(absorbed)**.
 
-Revision 2 (2026-10-26) applies the independent review in [cards-review.md](cards-review.md) and a 15-hour build budget. What was accepted or changed is listed in the revision log at the end.
+Revision 2 (2026-10-26) applies the independent review in [cards-review.md](cards-review.md) and a 15-hour build budget. Revision 3 (2026-10-28) applies the evidence step ([evidence/aggregate.md](evidence/aggregate.md)): cards 5, 7 and 9 were eliminated by the user (their sections stay for the record), Checkpoint used its one pivot, and the other cards got fact fixes and named competitors only. What was accepted or changed is listed in the revision log at the end.
 
 ## Template
 
@@ -22,7 +22,7 @@ Revision 2 (2026-10-26) applies the independent review in [cards-review.md](card
 ## Shared constraints
 
 - One streamer plus three test accounts.
-- No commercial games or music in the video.
+- No commercial games or music in the video. Where a card's natural setting is a game, the demo uses a small original game built with Codex (about 1 h, paid from the 2 h buffer) or an MIT-licensed open-source game.
 - No Twitch content kept beyond 24 h.
 - **Budget: 15 build hours.** Recording and editing the video are not included. Every card is planned as shared base (3.5 h) + card MVP (at most 9.5 h), so at least 2 h stay free for debugging or stretch items.
 
@@ -44,6 +44,8 @@ These come from the reviewer's check of the Helix reference on 2026-10-26. The e
 
 - **Create Clip** takes `title` and `duration` (5–60 s, default 30). The title must pass AutoMod. The clip is cut from Twitch's broadcast, not from a local OBS recording.
 - **Create Stream Marker** fails unless the channel stores past broadcasts (VOD storage). Turn this on during setup.
+- **Create Clip** captures the live output from roughly 85 s before to 5 s after the call and is asynchronous (confirm with Get Clips). Which part of that window `duration` keeps is not documented (T5).
+- **`channel.raid`** gives the two channels and a viewer count, not the list of raiders. Individual raiders can only be recognized when they chat.
 - **Pin Chat Message** is a documented endpoint (`moderator:manage:chat_messages`, 30–1800 s).
 - **Whispers:** the phone-verified-sender rule covers whispers *sent through the API*. Whether viewers can whisper our bot from the Twitch client is a separate question that has not been tested.
 
@@ -52,10 +54,11 @@ These come from the reviewer's check of the Helix reference on 2026-10-26. The e
 | Test | What it checks | Cards | Pass condition | filter.md # |
 | --- | --- | --- | --- | --- |
 | **T1** | Real-time local speech-to-text keyword spotting during a live stream | 1 | ≥80% hits, ≤1 false alarm per 10 min, ≤3 s lag, no dropped frames | #2 |
-| **T2** | obs-websocket: replay buffer save + Media Source slow motion, screenshot, mute/silence events | 2, 3, 9, 10 | Replay on screen ≤5 s after the command; screenshot ≤1 s; mute event arrives | #5 |
-| **T3** | Second live channel + a real raid between the two | 4, 5 (real raid) | Both live; `channel.raid` arrives ≤5 s | #4 |
+| **T1b** | Local speech-to-text of spoken answers (run in the same session as T1) | 10 | 10 scripted answers: quote ready ≤2 s after the streamer stops, ≥9 of 10 readable without edits | new (rev. 3) |
+| **T2** | obs-websocket: replay buffer save + Media Source slow motion, screenshot, mute/silence events | 2, 3, 9 | Replay on screen ≤5 s after the command; screenshot ≤1 s; mute event arrives | #5 |
+| **T3** | Second live channel + a real raid between the two | 4 | Both live; `channel.raid` arrives ≤5 s | #4 |
 | **T4** | Sealed input: viewer → bot whisper, and the login page behind a public URL | 1, 8 | One path works end to end; whisper loss measured over 10 messages | #11 |
-| **T5** | API checks in one script: Create Clip with title, Stream Marker, Pin, Get Chatters, Get Stream Markers | 1, 3, 5, 6, 7 | All return success on our new channel | low-risk list, #1 |
+| **T5** | API checks in one script: Create Clip with title, Stream Marker, Pin, Get Chatters, Get Stream Markers | 1, 3, 5, 6, 7, 10 (stretch) | All return success on our new channel | low-risk list, #1 |
 | **T6** | Local audio: onset detection and zero-shot audio-text scoring (CLAP) on desk sounds | 7 | Onset ≤200 ms, speech doesn't trigger; scores separate "right" from "wrong" sounds | new |
 | **T7** | Read Developer Agreement IV.C | 4 (only if multi-day returns) | — | #12 |
 
@@ -112,12 +115,14 @@ These come from the reviewer's check of the Helix reference on 2026-10-26. The e
 
 **Demo setup:** 1 streamer + 3 test accounts. Mic and webcam. To keep the demo from looking staged, one or two friends plant words through the page, so the streamer really doesn't know them.
 
-**Closest existing things and claimed difference:** speech-recognition swear jars; the party game Taboo; a past Twitch hackathon entry that used streamer speech to start a poll; stream-bingo overlays (1up.vision Bingo); the "if I say X…" streamer challenge bit. *Difference:* the audience picks secret targets, so it is a viewer-vs-streamer game hidden inside ordinary talk, and detection is automatic.
+**Closest existing things and claimed difference:** OK Gamers (TwitchCon Hackathon 2019 grand prize: streamer speech starts a chat poll); Streamer.bot Voice Control (phrases the streamer configured trigger actions); speech-recognition swear jars (Blabla Radar Swear Jar, obs-popup-overlay); stream-bingo overlays (1up.vision Bingo); secret-word chat games (AnkhbotSecretWord) and Taboo-style games (Wordeous). *Difference:* every speech trigger found uses words the streamer chose, and every viewer-chosen secret-word game runs in typed chat. Here viewers secretly choose the words and the streamer's own speech sets them off, inside ordinary talk.
 
 **Risks and day-1 tests:**
 - Speech-to-text accuracy and false hits on casual speech (T1).
 - Sealed intake: the plant page needs a public URL and login; whisper intake is unverified (T4).
 - Fun is unvalidated: a 20-minute session with three people.
+- Trolls already try to bait streamers into saying things on air; the blocklist screens planted words before they go live.
+- faster-whisper hotwords can be hallucinated on silence; VAD stays on (known fix).
 
 ---
 
@@ -131,10 +136,10 @@ These come from the reviewer's check of the Helix reference on 2026-10-26. The e
 1. **Inputs:**
    - ≥2 distinct viewers mention mic, audio, "far away", black screen or frozen within 60 s, or anyone types `!mic`;
    - a mod taps a preset on a private phone page ("you sound far away", "game too loud", "mic muted", "answer @x");
-   - obs-websocket reports the mic input muted or silent while live.
+   - obs-websocket reports the mic input muted, or its level below a silence threshold for N s while live (two separate signals).
 2. A phone face on the desk, in the camera shot, turns alarmed and shows the issue in huge letters. A chime plays in the streamer's headphones only. When chat and OBS agree, the face says so ("chat + OBS: mic muted").
 3. The streamer fixes it and taps a "fixed" hotkey.
-4. The bot posts "Fix #2: sound right now? 👍/👎". Replies that arrive earlier than fix time plus the measured stream delay are ignored.
+4. The bot posts "Fix #2: sound right now? 👍/👎". Replies that arrive earlier than fix time plus an estimated stream delay are ignored (latency differs per viewer, so the result reads "chat confirmed", not "everyone heard it").
 5. The issue resolves on the dock, and the overlay credits the first reporter.
 6. When nothing is wrong, the face shows calm chat state (a first-time chatter waves, a question is waiting).
 
@@ -174,14 +179,15 @@ These come from the reviewer's check of the Helix reference on 2026-10-26. The e
 
 **Twitch surfaces, scopes and local parts:** EventSub chat, Get Moderators (`moderation:read`), Send Chat Message; OBS browser source and dock; obs-websocket; a phone web page over a secure WebSocket (public URL or local certificate; Wake Lock needs HTTPS).
 
-**Demo setup:** 1 streamer + 3 test accounts (one as mod). A spare phone in the camera shot, a webcam and a mic.
+**Demo setup:** 1 streamer + 3 test accounts (one as mod). A spare phone in the camera shot, a webcam and a mic. For the fullscreen-game case, a small Codex-built game (about 1 h, from the buffer).
 
-**Closest existing things and claimed difference:** Streamer.bot and WooferBot light lamps on Twitch events; OBS mute indicators and obs-websocket mute alerts; Twitch Guardian (keyword-alert Chrome extension); Elgato's Mochi chat pet and Prompter chat mode; a friend relaying chat. *Difference:* it routes human judgment (viewer reports, mod cues) to a signal in the room that survives a fullscreen game, cross-checks OBS, then closes the loop with the audience's confirmation.
+**Closest existing things and claimed difference:** OBS plugins that warn the streamer privately: Muted Notification (12.4k downloads; talking into a muted mic), Remember to Talk (2.4k downloads; mic silent too long), Audio Source Mute Indicator; Twitch Guardian (keyword-alert Chrome extension); Elgato Prompter chat mode and Mochi chat pet; WooferBot and Streamer.bot lights on Twitch events; a friend relaying chat. The well-known plugins cover only the "your mic is muted or silent" input. *Difference:* it routes human judgment (viewer reports, mod cues) to a signal in the room that survives a fullscreen game, cross-checks OBS, then closes the loop with the audience's confirmation.
 
 **Risks and day-1 tests:**
 - Real problems may be too rare to keep it installed; calm mode answers this.
 - Reports may reflect one viewer's device, so the UI says "2 listeners report…", not "your mic is broken".
 - obs-websocket mute and silence events (T2).
+- Some streamers monitor their own mic, and viewers sometimes do tell them in chat. The hook's second case ("you sound far away") is one no OBS plugin can detect.
 
 ---
 
@@ -233,20 +239,21 @@ These come from the reviewer's check of the Helix reference on 2026-10-26. The e
 
 **Twitch surfaces, scopes and local parts:** EventSub chat; Create Clip (`clips:edit`), Create Stream Marker (`channel:manage:broadcast`, VOD storage on), Send Chat Message; OBS replay buffer and Media Source via obs-websocket; OBS browser source.
 
-**Demo setup:** 1 streamer + 3 test accounts. A webcam on the action, a mic, desk props.
+**Demo setup:** 1 streamer + 3 test accounts. A webcam on the action, a mic, desk props. Optionally a small Codex-built game designed to produce close calls (about 1 h, from the buffer) to show the game-stream setting.
 
-**Closest existing things and claimed difference:** the OBS "Instant Replay" script triggered by a chat command; Streamer.bot instant-replay actions; native polls. *Difference:* a full review ritual (call, replay, jury, verdict, titled clip) instead of a replay or a poll alone.
+**Closest existing things and claimed difference:** chat-called replays: tomaae OBS instant replay (12.6k downloads, last updated 2019), BarRaider OBS Tools `!replay` (can also post a clip), Fyre Instant Replay (StreamElements widget; mentions vote-to-trigger without details); Glitch Studios Instant Replay (mod-triggered branded replay with slow motion); Streamer.bot replay-buffer actions; native polls and Senchabot chat polls; Streamer's Court (a Steam game where chat votes a verdict, no replay). *Difference:* a full review ritual (call, replay, jury, verdict, titled clip) instead of a replay or a poll alone.
 
 **Risks and day-1 tests:**
 - Replay buffer and Media Source playback (T2).
 - Latency means the replay must land on the right moment (offset + nudge-back).
-- The 60 s clip may cut the original moment; the replay inside the review still shows it. Clip title (T5).
+- The 60 s clip may cut the original moment; the replay inside the review still shows it. Clip title and window (T5).
+- An immediate review interrupts play; a streamer asking for replays wanted control over when they run.
 
 ---
 
 ## 4. Raid Torch
 
-**One-liner:** A torch that only travels by raid: every chat that holds it leaves a mark, and the raiders who carried it light up when they arrive.
+**One-liner:** A torch that only travels by raid: every chat that holds it leaves a mark, and the raiders who carried it light up when they chat on arrival.
 
 **Best variant:** A same-day relay with a visible journey and torch-bearers. Dropped: G-7 (an activity carried into the next stream) and the multi-day journey. Fallback: a one-sided send-off.
 
@@ -255,11 +262,11 @@ These come from the reviewer's check of the Helix reference on 2026-10-26. The e
 2. While a channel holds the torch, each chatter adds one mark with `!mark <emote>`, and rings grow on the torch. Twitch-native emotes render as images; third-party emotes show as text.
 3. The streamer raids. EventSub `channel.raid` hands the torch over.
 4. On the target's overlay, the torch flies in with its rings and a journey map ("3 channels, 14 marks tonight").
-5. **Torch-bearers:** a raider who added a mark glows when they first chat in the new channel ("Ana carried a mark from A"). The target streamer sees who the raiders are.
+5. **Torch-bearers:** a raider who added a mark glows when they first chat in the new channel ("Ana carried a mark from A"). The target streamer sees which torch-bearers arrived; Twitch's raid event gives only a count, so raiders without a mark stay anonymous.
 6. A public journey page shows tonight's path. It resets after the evening.
 
 **Strengthening (Impact):**
-- Torch-bearers give the receiving streamer something useful on every raid: who arrived and where they came from.
+- Torch-bearers give the receiving streamer something useful on every raid: which marked raiders arrived and where they came from.
 - The audience is raid trains, Twitch teams and small-streamer circles, which already coordinate raids on the same evening.
 - **One-sided fallback:** if the target doesn't run the tool, the raiding channel still shows a "torch passed to X" send-off and the journey page records the hop.
 
@@ -296,16 +303,20 @@ These come from the reviewer's check of the Helix reference on 2026-10-26. The e
 
 **Demo setup:** 1 streamer + 3 test accounts, and **a second live channel** (a test account streaming from a phone or a second OBS).
 
-**Closest existing things and claimed difference:** raid alerts; raid-train tools (R3dLabs Toolbox raid-train Stream Deck plugin, RaidRunner scheduling). *Difference:* state carried across channels; the raid becomes a visible object, and the raiders are recognized on arrival.
+**Closest existing things and claimed difference:** raid alerts; raid-train tools (R3dLabs Toolbox Stream Deck plugin, RaidRunner scheduling and lineups); RaidPort (beta: streamers raid a hub channel and a wheel picks the next raid); Teams+ (TwitchCon Hackathon 2019: trusted-viewer labels shared across a Team); organised relays and raid-train communities (Twitch Storm 2020, Raid Train Central). *Difference:* state carried across channels; the raid becomes a visible object, and marked raiders are recognized when they chat on arrival.
 
 **Risks and day-1 tests:**
 - Second live channel and a real raid (T3).
 - One person's two channels may not make "community relay" feel real.
 - Value depends on both sides adopting it; the send-off is the one-sided fallback.
+- Hate raids made small streamers wary of raids; only channels that joined the circle with its code take part.
+- Many raiders leave quickly; torch-bearers only light up for those who chat.
 
 ---
 
 ## 5. Previously On
+
+**Eliminated in revision 3** (user decision after the evidence step). Kept for the record.
 
 **One-liner:** When raiders arrive, or a late viewer asks, the stream plays a 10-second TV-style "Previously on…" recap built from beats dropped during the stream.
 
@@ -416,18 +427,21 @@ These come from the reviewer's check of the Helix reference on 2026-10-26. The e
 
 **Twitch surfaces, scopes and local parts:** EventSub chat, `channel.follow` (`moderator:read:followers`), `channel.raid`; Get Chatters (`moderator:read:chatters`, stretch); OBS browser source with audio.
 
-**Demo setup:** 1 streamer + 3 test accounts. Headphones, mic, webcam.
+**Demo setup:** 1 streamer + 3 test accounts. Headphones, mic, webcam. Three accounts make at most three voices; a larger crowd can only be shown with the chat simulator, labeled as a simulation in the video.
 
-**Closest existing things and claimed difference:** Sound Alerts; per-user entrance sounds (Streamer.bot); Meld Emote Storm and StreamElements' KappaGen emote explosion (visual scaling). *Difference:* a scaled, mixed crowd you hear, where each voice belongs to a named viewer.
+**Closest existing things and claimed difference:** Sound Alerts and Blerp (viewer-triggered sounds, one clip per trigger); per-viewer entrance sounds (Streamer.bot Walkon Sounds, Blerp walk-ons); Meld Emote Storm and StreamElements' KappaGen (visual scaling with chat); hand-fired laugh tracks (Elgato sound packs, emote soundboards). Per-viewer sounds already tie a noise to a viewer. *Difference:* one mixed crowd you hear, scaled by the number of distinct reactors, with recurring voices tied to named viewers and chants.
 
 **Risks and day-1 tests:**
 - The delight may fade after 10 minutes.
 - It may read as "canned laughter / fake engagement"; traceability is the answer and leads the pitch.
 - Get Chatters for the stretch (T5).
+- Sound spam is a known complaint about sound alerts; distinct-viewer scaling and the volume cap are the answer.
 
 ---
 
 ## 7. Foley Pit
+
+**Eliminated in revision 3** (user decision after the evidence step). Kept for the record.
 
 **One-liner:** Chat writes the sound-effects score, the streamer performs it with a cup and a spoon, and an audio model judges how much the spoon sounded like footsteps.
 
@@ -489,7 +503,7 @@ These come from the reviewer's check of the Helix reference on 2026-10-26. The e
 
 ## 8. Hint Jar
 
-**One-liner:** On blind playthroughs, viewers who know the answer seal tiered hints into a jar instead of backseating. The streamer opens only the tier they want, when they want it.
+**One-liner:** On first (blind) playthroughs, viewers who know the answer seal tiered hints into a jar instead of backseating. The streamer opens only the tier they want, when they want it.
 
 **Best variant:** Hint Jar (L1-5) with Hint Airlock's mod classification (G-1). Hints go in through a private page, not public chat. The demo runs on a small original puzzle game built with Codex.
 
@@ -537,16 +551,19 @@ These come from the reviewer's check of the Helix reference on 2026-10-26. The e
 
 **Demo setup:** 1 streamer + 3 test accounts (one as mod). Webcam and mic. The Codex-built puzzle game.
 
-**Closest existing things and claimed difference:** no-backseating rules; LeagueBackseat (queues backseat messages); channel-point "backseat allowed for 1 min" rewards. *Difference:* the help is tiered, gated by the streamer and revealed as a show.
+**Closest existing things and claimed difference:** no-backseating rules and help safe words; LeagueBackseat (queues backseat messages); channel-point backseat rewards and paid backseat windows; Backseat Me (Channel Points Hackathon 2021: points buy temporary control); Universal Hint System (offline tiered hints since 1988); Chat Curtain (shows only mod-approved messages). *Difference:* the help is tiered, gated by the streamer and revealed as a show.
 
 **Risks and day-1 tests:**
 - Sealed intake (T4).
-- Demand for graded hints is unvalidated (Reddit check).
+- Backseating complaints are common, but many say rules and bans are enough, and some viewers want no hints at all. The jar is where unwanted hints go; the streamer may never open it.
+- Twitch's tag is "First Playthrough" ("Blind Playthrough" was removed in 2020); use that wording in the video.
 - The demo puzzle must feel like a real playthrough.
 
 ---
 
 ## 9. Photo Booth
+
+**Eliminated in revision 3** (user decision after the evidence step). Kept for the record.
 
 **One-liner:** Meet-and-greet for every viewer: type `!snap`, and you and the streamer pose together in a Polaroid that develops live, and the whole chat ends up on the corkboard.
 
@@ -611,64 +628,66 @@ These come from the reviewer's check of the Helix reference on 2026-10-26. The e
 
 ## 10. Checkpoint
 
-**One-liner:** Go heads-down without ghosting chat: messages become save crystals, and at the checkpoint each one gets a call-in card, an on-stream answer and a reply ping.
+**One-liner:** Go heads-down without ghosting chat: messages become save crystals, and at the checkpoint the streamer answers out loud, the words type onto the card, and each viewer gets a threaded reply quoting what the streamer said.
 
-**Best variant:** Checkpoint (L1-1) with context thumbnails and reply pings. The mod-collected variant (G-18) is dropped.
+**Best variant:** Checkpoint with spoken answers and answer receipts (revision 3 pivot, see [pivots/checkpoint-draft.md](pivots/checkpoint-draft.md), candidate C). Fallback if day-1 test T1b fails: the pause trigger (candidate B).
 
 **Core loop:**
-1. The streamer hits a hotkey, a mod types `!focus`, or OBS switches to a "focus" scene. A corner badge: "Focus: messages saved 0".
-2. Each normal viewer message drops a save crystal in the viewer's color. Commands and bot lines are filtered out. obs-websocket stores a screenshot of that moment, locally, deleted at the end of the stream.
-3. The streamer hits "checkpoint". A lower-third call-in card shows the first saved message with its thumbnail: "you asked this while I was inking the eyes". Questions and first-time chatters come first. A mod's urgent lane breaks through at any time.
-4. The streamer answers aloud and hits "next". The card stamps ✓, and the bot replies in thread to the viewer: "✓ answered on stream at 12:04".
-5. At the end: "Checkpoint cleared: 4 answered".
-6. A reminder fires if focus has run for N minutes without a checkpoint.
+1. The streamer hits a hotkey or a mod types `!focus`. A corner badge: "Focus: messages saved 0".
+2. Each normal viewer message drops a save crystal in the viewer's color. Commands and bot lines are filtered out. The app keeps the message id, author, text and first-time flag.
+3. The streamer hits "checkpoint". A lower-third call-in card shows the first saved message. Questions and first-time chatters come first.
+4. The streamer answers aloud without stopping work. Local speech-to-text (faster-whisper) types the words onto the card as they are spoken.
+5. About 2 s of silence, or "next", closes the card: it stamps ✓ and flies off. After 3 s the bot replies in the viewer's thread: "✓ answered on stream: 'It's a Micron 05, it doesn't bleed' (12:04)". If the transcript is empty or low-confidence, the reply drops the quote: "✓ answered on stream (12:04)". "Skip" closes the card with no reply.
+6. At the end: "Checkpoint cleared: 4 answered, 4 receipts sent".
+7. *(Stretch)* When a clip of the answer is confirmed, a second threaded reply adds "▶ watch it: <clip link>".
 
-**Strengthening (Innovation and Design):**
-- Context thumbnails show what was on screen when the viewer wrote, so the answer makes sense to everyone watching.
-- The reply ping closes the loop for the viewer, who may have stopped watching chat.
-- No command needed and no AI summary: every message keeps its author and gets a real answer.
+**Strengthening (Innovation, Impact and Design):**
+- *Innovation:* question queues end when the question is on screen. Here the stream hears the answer and sends it back in writing. None of Meld, StreamerQnA, Social Stream Ninja or Senchabot listens to the streamer or replies after an answer.
+- *Impact:* the streamer never lifts a hand from the work, and every viewer gets a written answer in their own thread, even if they scrolled away, left, or watch the VOD with chat replay.
+- *Design:* the words typing onto the card and the ✓ fly-off are the moment to watch.
+- No command needed and no AI summary: every message keeps its author and gets the streamer's own words.
 
 **3-minute video:**
-- 0:00 Hook: the streamer is inking, 6 crystals stack, "CHECKPOINT", the card reads "@ana (first time!): what pen is that?" with its thumbnail, the streamer answers, and Ana's chat shows "✓ answered".
-- 0:30 Two more cards; thumbnails show what was on screen.
-- 1:05 The urgent lane: a mod breaks through.
-- 1:35 Auto-start from a focus scene, and the reminder.
-- 2:05 Under the hood: message capture, screenshot pairing, reply threading.
-- 2:30 Codex artifact, close.
+- 0:00 Hook: inking time-lapse, 6 crystals stack. The streamer taps checkpoint; the card reads "@ana (first time!): what pen is that?". Still inking, the streamer says "Ana, it's a Micron 05, it doesn't bleed"; the words type onto the card; silence, ✓, fly-off; split screen of Ana's chat with the threaded quote. The next card is up at 0:19.
+- 0:20 Two more cards: one closed with "skip", one with a low-confidence transcript that sends the plain receipt.
+- 1:00 A viewer who "left" opens chat later and finds the answer.
+- 1:30 Under the hood: voice segmenting, the silence rule, reply threading.
+- 2:05 Codex artifact.
+- 2:30 Close. If the clip stretch is done, it gets 10 s around 1:00.
 
-**Codex artifact:** the call-in card system with screenshot pairing, tested with simulated chat during focus.
+**Codex artifact:** the voice-to-receipt pipeline, tested with recorded answer audio and simulated chat during focus.
 
 **MVP:**
-- **In:** focus toggle (hotkey, mod, focus scene), filter, crystal badge, context thumbnails, call-in card, dock with next/skip, ordering, reply ping, urgent lane, reminder.
-- **Stretch:** grouping several messages from one viewer on one card.
-- **Out:** LLM summaries, history beyond the stream.
+- **In:** focus toggle (hotkey, mod), filter, crystal badge, call-in card with live transcript line, dock with next/skip, ordering, local speech-to-text, silence close with hold key, answer receipt with confidence gate.
+- **Stretch:** clip link reply; closing on the next viewer's name; reminder; scene auto-start.
+- **Out:** context thumbnails (cut in revision 3; also removes the stream-delay mismatch), urgent lane, LLM summaries, history beyond the stream.
 
 **Build parts:**
 
 | Part | Hours |
 | --- | --- |
-| Focus toggle + filter + scene auto-start | 1.5 |
+| Focus toggle (hotkey, mod `!focus`) + filter | 1 |
 | Crystal badge overlay | 1.5 |
-| Context thumbnails | 1 |
-| Call-in card overlay | 1.5 |
-| Dock + ordering | 1 |
-| Reply ping | 0.5 |
-| Urgent lane | 0.5 |
-| Reminder | 0.5 |
+| Call-in card overlay with live transcript line and ✓ stamp | 1.5 |
+| Dock + ordering + next/skip | 1 |
+| Local speech-to-text: mic capture, voice-activity segmenting, faster-whisper, partial updates | 2 |
+| Voice close: silence rule, hold key, tuned on recorded clips | 0.5 |
+| Answer receipt: confidence gate, trim to 500 chars, threaded reply, `drop_reason` handling | 0.5 |
 | Polish | 1 |
 | **MVP subtotal** | **9** |
-| Stretch: grouping 0.5 | 0.5 |
+| Stretch: clip link reply (Create Clip From VOD, fallback Create Clip; poll Get Clips) 1, name-based close 0.5, reminder 0.5 | 2 |
 
-**Twitch surfaces, scopes and local parts:** EventSub chat, Send Chat Message (with `reply_parent_message_id`); OBS browser source and dock; obs-websocket (scene events, screenshots).
+**Twitch surfaces, scopes and local parts:** EventSub chat (`message_id`), Send Chat Message with `reply_parent_message_id` (500-char limit, read `is_sent` / `drop_reason`); the bot is a moderator (100 messages per 30 s instead of 20). Stretch: `clips:edit` or `channel:manage:clips`, Get Clips. OBS browser source and dock; local mic + faster-whisper (shared with Minefield).
 
-**Demo setup:** 1 streamer + 3 test accounts. Webcam and mic. A focus task on our own content (drawing or building).
+**Demo setup:** 1 streamer + 3 test accounts. Webcam and mic. A focus task on our own content (drawing, building, or a small Codex-built game).
 
-**Closest existing things and claimed difference:** StreamerQnA and Meld question queues; Chatterino highlights; AI "what did I miss" summaries; featured-message overlays (Social Stream Ninja, StreamElements). *Difference:* time-boxed to the busy stretch, captures normal messages without a command, shows the context of each message and pings the viewer when answered.
+**Closest existing things and claimed difference:** Meld X AMA Question Queue (same core loop up to the featured question; well-known, so this card used its one pivot), StreamerQnA, Social Stream Ninja featured message, Senchabot featured message, Chatterino highlights. *Difference:* the streamer answers by voice without lifting a hand, and each viewer receives the streamer's actual words as a threaded reply.
 
 **Risks and day-1 tests:**
-- Streamers may forget to toggle focus; the scene auto-start and the reminder reduce this.
-- It may read as a question queue; thumbnails and reply pings are the answer.
-- obs-websocket screenshots (T2).
+- Speech-to-text speed and accuracy on the user's machine (T1b). If it fails, switch to the pause-trigger fallback.
+- A thinking pause closes the card early: 2 s threshold plus a hold key.
+- A misheard word in a viewer's quote: the confidence gate sends the plain receipt instead.
+- AutoMod or blocked terms drop the reply: read `drop_reason`.
 
 ---
 
@@ -698,3 +717,17 @@ Per-card changes:
 - **Checkpoint:** new one-liner; context thumbnails; threaded reply ping; urgent lane in the MVP; the "why it isn't a question queue" beat removed.
 
 Not taken from the review: none dropped outright. The VAR history strip and the Hint Jar chat vote were kept only as stretch items.
+
+**Revision 3, 2026-10-28.** Source: the evidence step ([evidence/](evidence/)) and the pre-registered pivot rule in [evidence/README.md](evidence/README.md).
+
+- **Eliminated by the user after the evidence step:** Previously On (Twitch shipped mid-stream AI summaries and Recaps in 2026), Photo Booth (StreamUP Polaroid Picture), Foley Pit (no demand found; CLAP scores correlate poorly with human judgment). Their sections stay above for the record.
+- **Decision:** a commercial game is not needed in the video; the on-screen activity can be a small Codex-built original game or an MIT-licensed open-source game.
+- **Shared:** demo games allowed (Codex-built or MIT-licensed, paid from the buffer); Twitch facts added for the Create Clip window and the `channel.raid` payload; T3 now lists only Raid Torch.
+- **Minefield:** competitors named (OK Gamers, Streamer.bot Voice Control, swear-jar tools, Wordeous, AnkhbotSecretWord) with the difference sentence; risks: baiting trolls (blocklist), hotword hallucination on silence (VAD).
+- **Tap:** "muted" and "silent" are separate OBS signals; the confirmation says "chat confirmed" because latency differs per viewer; well-known OBS plugins named (Muted Notification, Remember to Talk); demo game for the fullscreen case; counter-signal noted.
+- **VAR:** competitors named (tomaae replay, BarRaider, Fyre, Glitch Studios, Senchabot, Streamer's Court); optional demo game with close calls; interruption risk noted.
+- **Raid Torch:** the raid event has no raider list, so only marked raiders who chat are recognized (one-liner and step 5 corrected); RaidPort, Teams+ and relays named; hate-raid and early-leave risks noted.
+- **Studio Audience:** per-viewer sound tools named (Streamer.bot walk-ons, Blerp); three accounts make three voices, so a larger crowd is shown only as a labeled simulation; sound-spam risk noted.
+- **Hint Jar:** competitors named (Backseat Me, Universal Hint System, Chat Curtain, paid backseat windows); counter-signals and "First Playthrough" wording noted.
+- No new features were added to the cards above; the only design change in revision 3 is the Checkpoint pivot.
+- **Checkpoint pivot (its one pivot under the rule):** the user ruled its loop the same core loop as the well-known Meld X AMA Question Queue. Candidates were drafted by an Opus subagent in [pivots/checkpoint-draft.md](pivots/checkpoint-draft.md); the user approved candidate C, spoken answers with answer receipts. Added on review: a confidence gate that sends the plain receipt when the transcript is weak, and the bot as moderator for chat limits. Cut: context thumbnails, urgent lane, reminder, scene auto-start. New day-1 test T1b. MVP stays at 9 h.

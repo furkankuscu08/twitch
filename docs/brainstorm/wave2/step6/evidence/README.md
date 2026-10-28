@@ -51,3 +51,10 @@ A similar product that people use is also recorded as a **demand signal** for Im
 ## Order
 
 Evidence → merge (`aggregate.md`) → pivots, if any (logged in cards.md revision log) → scoring with evidence. A pivoted card enters scoring in its new form. Each card gets at most one pivot.
+
+## Exceptions logged after the results (2026-10-28)
+
+- **Eliminations:** the user eliminated Previously On, Photo Booth and Foley Pit after reading the three reports, although this README says evidence alone does not eliminate a card. Reasons are in [aggregate.md](aggregate.md).
+- **Targeted link check:** single-source competitors were checked only for the 6 cards still in play ([linkcheck.md](linkcheck.md)), by a Sonnet subagent. Checkpoint's competitors were rechecked by the pivot draft instead.
+- **Unverifiable is not dead:** Reddit, X, Devpost and some news sites refused automated fetches. Competitors behind such links were not counted as confirmed (PROVE IT, Raid Train and Twitch Sense were dropped). Demand links behind them are listed as "unverified", not removed.
+- **Checkpoint pivot:** the user ruled Checkpoint the same core loop as Meld X AMA Question Queue (only Astra had said so) and approved pivot C from [../pivots/checkpoint-draft.md](../pivots/checkpoint-draft.md). Its post-pivot difference rests on one source.
