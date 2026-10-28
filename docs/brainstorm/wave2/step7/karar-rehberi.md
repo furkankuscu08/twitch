@@ -1,10 +1,12 @@
-# Karar rehberi: 3 finalist, final seçimi için
+# Karar rehberi: 3 finalist ve final seçim
 
-Hazırlanma tarihi 28 Ekim 2026; aynı gün iki kez güncellendi: önce 4 finaliste, sonra final analize göre 3 finaliste. Bu doküman, 3 finalist arasından final projeyi seçmen için gereken her şeyi tek yerde topluyor.
+Hazırlanma tarihi 28 Ekim 2026. Aynı gün üç kez güncellendi: önce 4 finaliste, sonra final analize göre 3 finaliste, en son da final karara göre.
+
+> **Final karar (28 Ekim): Minefield.** STT modeli `deepdml/faster-whisper-large-v3-turbo-ct2`. Bu modeli daha önce test ettin, Türkçe ve İngilizcede iyi çalıştı; bu yüzden STT doğruluğu çözülmüş kabul edildi. Bu karara göre yapılan değişiklikler: [6.1, "Karardan sonra değişenler"](#karardan-sonra-değişenler-28-ekim-stt-modeli). VAR ve Checkpoint bölümleri kayıt için duruyor. Yapım ayrıntıları ayrı bir plan dosyasında olacak (`docs/plan/minefield.md`).
 
 **Senin 28 Ekim kararların:**
 - **Finalistler:** Minefield, VAR, Checkpoint. Tap on the Shoulder final analizden sonra çıkarıldı; Hint Jar, Studio Audience ve Raid Torch finale alınmamıştı (bkz. [bölüm 12](#12-finale-alınmayan-ve-elenen-projeler)).
-- **Kart MVP bütçesi en fazla 12 saat.** Final analizden sonra her projenin MVP'si yaklaşık 11 saate indi; artan süre tampona kaldı. Toplam yapım süresi yaklaşık **17,5 saat**; video bu sürenin dışında.
+- **Kart MVP bütçesi en fazla 12 saat.** Final analizden sonra her projenin MVP'si yaklaşık 11 saate indi. Minefield'ın MVP'si karardan sonra yaklaşık 10,5 saate indi; artan süre tampona ve videoya kaldı. Toplam yapım süresi yaklaşık **17,5 saat**; video bu sürenin dışında.
 - **Checkpoint'te SSS** senin kararın; final analizde katmanlı (iki eşikli) hâline getirildi.
 
 **Bu sürümde ne var:** Projeler, step 7 puanlarına ek olarak step 8'deki üç serbest incelemenin (Opus, Grok, Astra) [sentezine](../step8/final-analiz.md) göre son hâllerine getirildi. Her projede **"Önceki plandan ne değişti"** tablosu ve **"Step 8: serbest incelemeler"** bölümü var. Son hâller yeniden puanlanmadı.
@@ -29,17 +31,17 @@ Puanlayıcıların söyledikleri ile benim görüşümü ayrı tuttum. Benim gö
 3. [Twitch sözlüğü: terimler ne demek](#3-twitch-sözlüğü-terimler-ne-demek)
 4. [Senin makinen ve telefon/hesap ihtiyacı](#4-senin-makinen-ve-telefonhesap-ihtiyacı)
 5. [Ortak altyapı: her projede aynı olan 3,5 saat](#5-ortak-altyapı-her-projede-aynı-olan-35-saat)
-6. Finalistler, önerilen sırayla:
-   1. [Minefield: önerilen seçim](#61-minefield-önerilen-seçim)
-   2. [VAR: yedek](#62-var-yedek)
-   3. [Checkpoint: ikinci yedek](#63-checkpoint-ikinci-yedek)
+6. Finalistler:
+   1. [Minefield: seçilen proje](#61-minefield-seçilen-proje)
+   2. [VAR: seçilmedi](#62-var-seçilmedi)
+   3. [Checkpoint: seçilmedi](#63-checkpoint-seçilmedi)
 7. [Karşılaştırma matrisi](#7-karşılaştırma-matrisi)
 8. [Kararsız kalırsan: ikili karşılaştırmalar](#8-kararsız-kalırsan-ikili-karşılaştırmalar)
-9. [1. gün testleri ve karar ağacı](#9-1-gün-testleri-ve-karar-ağacı)
+9. [29 Ekim testleri](#9-29-ekim-testleri)
 10. [Zaman çizelgesi](#10-zaman-çizelgesi)
 11. [Önceki araştırmalardan önemli bulgular](#11-önceki-araştırmalardan-önemli-bulgular)
 12. [Finale alınmayan ve elenen projeler](#12-finale-alınmayan-ve-elenen-projeler)
-13. [Benim önerim](#13-benim-önerim)
+13. [Karar ve sonraki adımlar](#13-karar-ve-sonraki-adımlar)
 
 ---
 
@@ -47,14 +49,14 @@ Puanlayıcıların söyledikleri ile benim görüşümü ayrı tuttum. Benim gö
 
 | Rol | Proje | Bir cümlede | Step 7 puanı | Step 8 tercihi (Opus / Grok / Astra) | Risk | Ana test | MVP |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| **Önerilen** | **Minefield** | İzleyiciler gizlice bir desteden "kelime mayını" seçer. Yayıncı o kelimeyi söyleyince ekranda patlar ve ekleyenin adı çıkar. | **16,3** | **1 / 1 / 1** | Yüksek | T0 (eğlence) + T1 (konuşmada kelime yakalama) | ~11,25 sa |
-| Yedek | **VAR** | Chat bir an'a itiraz edince (`!var`) futboldaki VAR gibi ağır çekim tekrar, 15 saniyelik chat jürisi, karar damgası ve klip gelir. | **15,0** | 3 / 2 / 2 | Orta | T2 (OBS tekrar) | ~11 sa |
-| İkinci yedek | **Checkpoint** | Yayıncı işe gömülüyken mesajlar biriktirilir. Molada yayıncı sesli cevap verir, cevap izleyiciye alıntı olarak gider; tekrar eden sorulara bot eski cevabı verir. | **15,0** | 2 / 3 / 3 | Orta | T1b (cevabı yazıya dökme) | ~11 sa |
+| **Seçildi** | **Minefield** | İzleyiciler gizlice bir desteden "kelime mayını" seçer. Yayıncı o kelimeyi söyleyince ekranda patlar ve ekleyenin adı çıkar. | **16,3** | **1 / 1 / 1** | Orta (karardan sonra) | T0 (eğlence ayarı) + harness ilk koşusu | ~10,5 sa |
+| Seçilmedi | **VAR** | Chat bir an'a itiraz edince (`!var`) futboldaki VAR gibi ağır çekim tekrar, 15 saniyelik chat jürisi, karar damgası ve klip gelir. | **15,0** | 3 / 2 / 2 | Orta | T2 (OBS tekrar) | ~11 sa |
+| Seçilmedi | **Checkpoint** | Yayıncı işe gömülüyken mesajlar biriktirilir. Molada yayıncı sesli cevap verir, cevap izleyiciye alıntı olarak gider; tekrar eden sorulara bot eski cevabı verir. | **15,0** | 2 / 3 / 3 | Orta | T1b (cevabı yazıya dökme) | ~11 sa |
 
 Step 7 puanı, 4 kriterin (her biri 1–5) üç puanlayıcıya göre ortalamasının toplamıdır; en fazla 20 olabilir. Puanlar eski kartlara göre verildi; son hâller yeniden puanlanmadı.
 
 **Kısaca durum:**
-- **Minefield en yenilikçi ve en izlenesi proje.** Step 7'de üç model Innovation ve Design'a 5 verdi; step 8'de üçü de "bunu yapardım" dedi. Şartları: T1 senin sesinle geçmeli ve T0'da arkadaşlarla oyun eğlenceli çıkmalı. "Birine kelime söyletme" türü parti oyunlarından biliniyor, bu yüzden gerçekçi Innovation beklentisi 4.
+- **Minefield seçildi: en yenilikçi ve en izlenesi proje.** Step 7'de üç model Innovation ve Design'a 5 verdi; step 8'de üçü de "bunu yapardım" dedi. STT modeli senin testinden geçtiği için risk yüksekten ortaya indi. Kalan açık soru eğlence (T0). "Birine kelime söyletme" türü parti oyunlarından biliniyor, bu yüzden gerçekçi Innovation beklentisi 4.
 - **VAR en güvenli "izlemesi eğlenceli" seçenek** ve Minefield'la aynı riski (STT) taşımayan tek yedek. Zayıf yanı yenilik: parçaları zaten var.
 - **Checkpoint en faydalı proje** (Impact 4/4/4), ama videosu sakin ve farkı ince. Üç model de onu Minefield'ın arkasına koydu.
 
@@ -72,7 +74,7 @@ Step 7 puanı, 4 kriterin (her biri 1–5) üç puanlayıcıya göre ortalaması
 | Finalistler | Toplam puanı en yüksek 5 proje finalist olur. |
 | **Resmi eşitlik bozma** | Eşitlikte önce **Innovation** puanına bakılır, sonra sıradaki kriterlere. |
 | Birden fazla başvuru | Serbest, ama her başvuru "unique and substantially different" olmalı; ayrı video, repo ve Codex session ID gerekir. 17,5 saatlik yapım süresiyle ikinci bir proje gerçekçi değil. |
-| Bizim kısıtlarımız | Yaklaşık 17,5 saat geliştirme (3,5 ortak + ~11 MVP + kalan tampon); 1 yayıncı + 3 test hesabı; videoda ticari oyun ya da müzik yok; Twitch içeriği en fazla 24 saat tutuluyor. |
+| Bizim kısıtlarımız | Yaklaşık 17,5 saat geliştirme (3,5 ortak + ~10,5 Minefield MVP'si + ~3,5 tampon); 1 yayıncı + 3 test hesabı; videoda ticari oyun ya da müzik yok; Twitch içeriği en fazla 24 saat tutuluyor. |
 
 **Bu kurallardan çıkan iki pratik sonuç:**
 1. **İlk 20 saniye kritik.** Jüri videoya bakıp puanlıyor ve fikri ilk saniyelerde kavramalı. Bu yüzden "Design" kriterinde ilk 20 saniyede anlaşılırlığa baktık.
@@ -140,10 +142,11 @@ Finalistlerin hiçbiri raid kullanmıyor, ama bunlar Twitch'in temel kavramları
 | Terim | Ne demek |
 | --- | --- |
 | **STT (speech-to-text)** | Konuşmayı yazıya çevirme. |
-| **faster-whisper** | OpenAI Whisper'ın hızlı (CTranslate2) sürümü. GPU'da float16 ile çok hızlı çalışır. Modeller: `base.en`, `small.en`, `medium.en`, `large-v3-turbo`. |
+| **faster-whisper** | OpenAI Whisper'ın hızlı (CTranslate2) sürümü. GPU'da float16 ile çok hızlı çalışır. Modeller: `base.en`, `small.en`, `medium.en`, `large-v3-turbo`. **Minefield `large-v3-turbo` kullanıyor** (`deepdml/faster-whisper-large-v3-turbo-ct2`, çok dilli). |
 | **VAD** | Voice Activity Detection: sesin konuşma mı sessizlik mi olduğunu bulur (ör. Silero VAD). Whisper'ın sessizlikte uydurma yapmasını (hallucination) önler. |
-| **Hotwords** | faster-whisper'a "bu kelimeler geçebilir" diye verilen ipucu listesi. Doğru tanımayı artırır, ama sessizlikte uydurma riskini de artırır; bu yüzden VAD şart. |
+| **Hotwords** | faster-whisper'a "bu kelimeler geçebilir" diye verilen ipucu listesi. Doğru tanımayı artırır, ama sessizlikte uydurma riskini de artırır; bu yüzden VAD şart. Minefield'da kullanılmıyor. |
 | **Keyword spotting** | Sürekli konuşmada belirli kelimeleri yakalama. |
+| **Akan tanıma + LocalAgreement** | Konuşma sürerken biriken ses kısa aralıklarla (ör. 0,5 sn) yeniden yazıya dökülür. Bir kelime iki ardışık tahminde de görünürse kesinleşmiş sayılır (whisper_streaming'deki yöntem). Minefield'da patlama bu onayla gelir. |
 | **Hit / false alarm / lag** | Doğru yakalama / söylenmemiş kelimeyi yakalamak / söyleyişten tepkiye kadar geçen süre. |
 
 ---
@@ -154,12 +157,12 @@ Finalistlerin hiçbiri raid kullanmıyor, ama bunlar Twitch'in temel kavramları
 
 | Parça | Değer | Etkisi |
 | --- | --- | --- |
-| GPU | **RTX 4070 Laptop, 8 GB VRAM** | faster-whisper `small.en` ve `medium.en` float16 ile rahat sığar. `large-v3-turbo` de büyük ihtimalle sığar. 2 saniyelik bir pencere GPU'da 1 saniyeden çok daha kısa sürede işlenir. **Hız riski büyük ölçüde ortadan kalkıyor; kalan risk doğruluk ve yanlış alarm.** |
+| GPU | **RTX 4070 Laptop, 8 GB VRAM** | faster-whisper `large-v3-turbo` float16 ile rahat sığar. Minefield'da konuşma sürerken yaklaşık 0,5 saniyede bir çalışacak. OBS açıkken GPU yükü, VRAM ve gecikme harness'in ilk koşusunda ölçülecek. |
 | GPU + yayın | OBS videoyu NVENC ile kodlar; NVENC GPU'da ayrı bir donanım birimi. | Whisper ile yayın kodlama birbirini pek etkilemez. T1 yine de "kare düşmesi yok" şartını ölçecek. |
 | CPU / RAM | Ryzen 7 8845HS, 32 GB | Fazlasıyla yeterli. |
 | İşletim sistemi | Windows 11 + WSL2 (repo WSL içinde) | **Dikkat:** WSL2 içinden mikrofona erişmek güvenilmez. OBS de Windows'ta çalışacak. **Öneri:** ses yakalama ve STT'yi Windows'ta yerel Python süreci olarak çalıştırmak (CUDA Windows'ta sorunsuz). Diğer kısımlar WSL'de kalabilir. obs-websocket'e WSL'den bağlanmak için Windows host IP'si ya da WSL "mirrored networking" gerekir. Bunlar T1 sırasında doğrulanacak. |
 
-**Bir de dil riski var:** Video ve jüri İngilizce, yani Minefield ve Checkpoint'te **senin aksanlı İngilizcen** tanınacak. Whisper aksanlarda genelde iyidir. T1 ve T1b testlerini mutlaka **kendi sesinle, doğal konuşarak** yapmalıyız; hazır kayıtlarla değil.
+**Dil:** Video ve jüri İngilizce, yani **senin aksanlı İngilizcen** tanınacak. `large-v3-turbo`'yu kendi sesinle denedin ve iyi buldun; bu riski büyük ölçüde kapatıyor. Model çok dilli olduğu için `language="en"` sabitlenmeli. Aksi hâlde kısa ve aksanlı cümlelerde dili yanlış tespit edebilir.
 
 ### Telefon ve hesaplar: hangi proje ne istiyor?
 
@@ -172,7 +175,7 @@ Finalistlerin hiçbiri raid kullanmıyor, ama bunlar Twitch'in temel kavramları
 **Test hesapları için telefon numarası:**
 - Twitch hesabı genelde e-postayla açılabiliyor; Twitch ek olarak telefon doğrulaması isteyebilir. Kaç hesabın aynı numaraya bağlanabileceği **doğrulanmadı**. Hesapları açarken göreceğiz; senin numaran ve 1–2 arkadaşın numarası büyük ihtimalle yeter.
 - Kanal sahibi sensin; "chat için telefon doğrulaması iste" ayarını kapalı tutabilirsin.
-- Whisper (DM) ile mesaj göndermek telefon doğrulaması istiyor ama bu hiçbir projenin MVP'sinde yok, sadece stretch hedeflerde.
+- Whisper (DM) ile mesaj göndermek telefon doğrulaması istiyor, ama Minefield bunu kullanmıyor.
 
 **Kısa cevap:** Üç finalistin hiçbiri için ekstra telefon gerekmiyor. Ama Minefield için **1–2 arkadaşın gerçekten katılması** neredeyse şart: T0'da (29 Ekim) ve kayıtta (1 Kasım akşamı). Arkadaşlar ekme sayfasını kendi telefonlarından açar.
 
@@ -192,15 +195,15 @@ Hangi projeyi seçersen seç önce bu kurulur:
 
 **Codex hikâyesi:** Videoda "Codex'i nasıl kullandık" kısmı zorunlu. Chat simülatörü her projede Codex'in ortak payı; ayrıca her projenin kendine özgü bir "Codex artifact"ı var. Bunlar aşağıda her projede ayrıca yazılı.
 
-**Bütçe hesabı (final analizden sonra):** 3,5 saat ortak altyapı + ~11 saat proje MVP'si + kalan tampon (~3 saat) = **yaklaşık 17,5 saat**. Astra'nın uyarısı: 3,5 saatlik ortak altyapı Twitch'e yeni biri için iyimser. Seçilen projenin ihtiyacı olmayan parçaları baştan kurma; örneğin Minefield'ın ilk patlaması için obs-websocket gerekmiyor.
+**Bütçe hesabı (karardan sonra):** 3,5 saat ortak altyapı + ~10,5 saat Minefield MVP'si + ~3,5 saat tampon = **yaklaşık 17,5 saat**. Astra'nın uyarısı: 3,5 saatlik ortak altyapı Twitch'e yeni biri için iyimser. Seçilen projenin ihtiyacı olmayan parçaları baştan kurma; örneğin Minefield'ın ilk patlaması için obs-websocket gerekmiyor.
 
 **MVP'ler nasıl son hâline geldi:** Önce her projeye 12 saate kadar eklemeler önerdim. Sonra üç model bu eklemeleri serbestçe inceledi. Astra'nın genel uyarısı belirleyici oldu: *"12 saatlik MVP alanını doldurma hedefi... son eklenen özellikler tamamlanmış ürün hissinden çok yeni hata yüzeyleri getiriyor."* Bu yüzden eklemelerin bir kısmı kesildi, MVP'ler ~11 saate indi ve artan süre tampona kaldı. Ayrıntılar her projenin "Önceki plandan ne değişti" tablosunda.
 
 ---
 
-## 6.1 Minefield: önerilen seçim
+## 6.1 Minefield: seçilen proje
 
-Puan (step 7): **16,3**, risk Yüksek. Step 8'de üç modelin de birinci tercihi.
+Puan (step 7): **16,3**, risk Yüksek (karardan sonra Orta). Step 8'de üç modelin de birinci tercihi. **28 Ekim'de seçildi.**
 
 ### Ne?
 İzleyiciler gizlice "kelime mayınları" eker. Yayıncı sıradan konuşurken o kelimeyi söylerse ekranda patlama olur ve mayını ekleyenin adı çıkar.
@@ -210,19 +213,20 @@ Puan (step 7): **16,3**, risk Yüksek. Step 8'de üç modelin de birinci tercihi
 
 ### Nasıl çalışır (son hâli)
 1. İzleyici `!mine` yazar. Bot ona ekme sayfasının linkini verir. Sayfa Twitch girişi ister (hiçbir izin istemeyen, sadece kimlik doğrulayan bir giriş; sayfada "We only see your Twitch name" yazar).
-2. İzleyici kelimesini **yaklaşık 150 kelimelik bir desteden** seçer: pineapple, giraffe, spaghetti, keyboard gibi somut, komik isimler. Kimse seçimi görmez. Kurallar:
-   - izleyici başına aynı anda 1 mayın, toplamda en fazla **4 canlı mayın**;
-   - aynı kelime iki kişiye verilmez;
+2. İzleyiciye **yaklaşık 300 kelimelik bir desteden rastgele 6 kart** gösterilir; kelimesini bunlardan seçer: pineapple, giraffe, spaghetti, keyboard gibi somut, komik isimler. Kimse seçimi görmez. Kurallar:
+   - izleyici başına aynı anda 1 mayın, toplamda en fazla **4 canlı mayın** (ekran okunabilsin diye; T0'da 5–6 denenir);
+   - aynı kelime iki kişiye verilmez (seçilen kelime destede kalan kartlardan çıkar);
    - mayın eklendikten **30 saniye sonra** aktif olur ("kurulma" süresi).
 3. Overlay'de mayın çipleri görünür: sadece sahiplerin adları, kelimeler yok.
 4. İzleyiciler sohbeti kendi kelimelerine doğru çekmeye çalışır. Asıl oyun bu "tuzak kurma" kısmı.
-5. Yerel STT yayıncının mikrofonunu dinler:
-   - VAD bir konuşma parçası (sözce) bitince onu keser, faster-whisper `small.en` o parçayı **bir kez** yazıya döker.
-   - Metinde canlı bir mayın kelimesi varsa, aynı ses parçası **hotword'süz ikinci bir geçişle** doğrulanır.
-   - Transkript sadece mayın kelimelerinden ibaretse ya da sesin enerjisi düşükse patlama olmaz (hayalet kelime koruması).
-6. **Güvene göre iki aşama:**
-   - **Yüksek güven** (iki geçiş de kelimeyi buldu): anında patlama, afiş, stream marker.
-   - **Orta güven** (sadece hotword'lü geçiş buldu): ekranda en fazla 2 saniyelik bir **fitil** yanar, sonra patlar. Mod ya da yayıncı bu sırada fitili kesebilir.
+5. Yerel STT yayıncının mikrofonunu dinler: `large-v3-turbo`, dil `en` olarak sabit, hotword yok.
+   - VAD konuşma başlayınca bir ses tamponu açar. Konuşma sürerken tampon yaklaşık **0,5 saniyede bir** yeniden yazıya dökülür (akan tanıma).
+   - Bir mayın kelimesi **iki ardışık tahminde** de görünürse onaylanır (LocalAgreement). Böylece patlama cümlenin bitmesini beklemez, kelimeden yaklaşık 1 saniye sonra gelir.
+   - VAD konuşma görmediğinde model çalışmaz; Whisper'ın bilinen uydurma kalıpları ("thank you for watching" gibi) filtrelenir.
+6. **Fitil = onay penceresi:**
+   - Kelime ilk tahminde görününce sahibinin çipinde bir **kıvılcım** çakar (~0,5 sn).
+   - İkinci tahminde de varsa **BOOM**: patlama, afiş, stream marker.
+   - Kaybolursa fitil **"fıss"** diye söner. Ayrı bir güven eşiği yok.
 7. Patlamadan sonra mod 10 saniye içinde **DEFUSE** edebilir: geri sarma animasyonu ve "false alarm" damgası çıkar. DEFUSE edilmezse 30 saniyelik başlıklı klip açılır.
 8. Yayın sonunda patlamayan mayınlar "dud" olarak açılır: *"Cy's mine 'GIRAFFE' never went off"*. Altında sadece **o yayına ait** birkaç sayaç görünür (kaç patlama, en hızlı patlayan mayın). Yayınlar arası hiçbir şey saklanmaz.
 9. **"Konuşmayı yaz" modu:** Dock'ta bir metin kutusu; yazılan cümle STT'den geliyormuş gibi işlenir. STT'siz test için ve kayıt sırasında STT tökezlerse sigorta olarak.
@@ -234,7 +238,7 @@ Puan (step 7): **16,3**, risk Yüksek. Step 8'de üç modelin de birinci tercihi
 | 0:08 | Başlık kartı: "Chat plants secret words. Say one on stream, it explodes." |
 | 0:12 | Arkadaşın telefonundan ekme sayfası: desteden kelime seçimi; kelimenin gizli kaldığı görünüyor. |
 | 0:35 | İkinci tur: iki arkadaş tuzak kurar; biri tutar (BOOM), biri tutmaz. |
-| 1:00 | Belirsiz bir tanıma: fitil yanar, mod keser, "false alarm". Aksilik gag'e döner. |
+| 1:00 | Bir kelime ilk tahminde görünür, kıvılcım çakar, ikinci tahminde kaybolur: fitil "fıss" diye söner. Ya da yanlış bir patlamayı mod DEFUSE eder. Aksilik gag'e döner. |
 | 1:25 | Yayın sonu: dud'lar açılır ("Cy'ın 'giraffe'ı hiç patlamadı"). |
 | 1:45 | Kaputun altı: yerel STT, ses kaydedilmiyor; harness tablosu ~10 sn ekranda (isabet, yanlış alarm, gecikme). |
 | 2:10 | Codex bölümü (20–30 sn): harness'in yakaladığı somut bir hata ve düzeltmesi. |
@@ -244,34 +248,36 @@ Puan (step 7): **16,3**, risk Yüksek. Step 8'de üç modelin de birinci tercihi
 
 ### Teknik detay
 - **Mimari:**
-  - **STT süreci (Windows'ta yerel Python):** mikrofon → VAD (sözce sınırı) → faster-whisper `small.en` (GPU) → aday eşleşmede ikinci geçiş → eşleşme olayı.
+  - **STT süreci (Windows'ta yerel Python):** mikrofon → Silero VAD → büyüyen ses tamponu → her ~0,5 sn'de `large-v3-turbo` → iki ardışık tahminin ortak kelimeleri → eşleşme olayı.
+    - Tampon konuşma boyunca büyür; sözce bitince ya da ~15 saniyede sıfırlanır.
+    - Başlangıç ayarları: float16, `language="en"`, `beam_size=1`, `condition_on_previous_text=False`, hotword yok. Harness'te ayarlanacak.
   - **Köprü:** Windows süreci eşleşmeyi WSL'deki FastAPI'ye HTTP POST ile gönderir.
-  - **Eşleşme:** metin normalize edilir (küçük harf, noktalama silinir, çoğul eki atılır) ve canlı mayınlarla tam kelime olarak karşılaştırılır. Aynı sözce iki kez patlamaz.
+  - **Eşleşme:** metin normalize edilir (küçük harf, noktalama silinir, çoğul eki atılır) ve canlı mayınlarla tam kelime olarak karşılaştırılır. Birleşik yazımlar için destede kelimenin birkaç biçimi tutulur (pineapple, pine apple). Aynı konuşmada bir mayın bir kez patlar.
   - **Patlama:** FastAPI → WebSocket → OBS overlay. Minefield'ın ilk patlaması için obs-websocket gerekmez.
 - **Twitch:**
   - EventSub `channel.chat.message`, Send Chat Message;
   - Create Stream Marker (`channel:manage:broadcast`, VOD açık olmalı);
   - Create Clip (`clips:edit`, `title`, `duration=30`). Klip asenkron ve hazır olması bir dakikayı bulabilir; T5'te klibi oynatıp patlamanın içinde olduğunu doğrula.
   - Ekme sayfası için Twitch girişi ve herkese açık URL (`cloudflared` quick tunnel; bilgisayar uykuya geçerse tünel kapanır).
-- **Gecikme hedefi:** medyan ≤1,5 sn, en kötü durumda ≤3 sn. Overlay yayına yerelde eklendiği için yayın gecikmesi kelimeyi ve patlamayı aynı miktarda kaydırır; yalnızca STT gecikmesi önemli.
+- **Gecikme hedefi:** kelimenin bitişinden patlamaya medyan ≤1,5 sn, en kötü durumda ≤3 sn. Overlay yayına yerelde eklendiği için yayın gecikmesi kelimeyi ve patlamayı aynı miktarda kaydırır; yalnızca STT gecikmesi önemli.
 - **Saatler:**
 
 | Parça | Saat |
 | --- | --- |
-| Ekme sayfası: scope'suz Twitch girişi + cloudflared + desteden seçim | 1,5 |
-| STT: sözce bazlı VAD + `small.en` + ikinci geçiş + Windows → WSL köprüsü | 2,5 |
-| Kelime destesi (~150 isim, harness'te test edilmiş) + kurallar | 0,5 |
+| Ekme sayfası: scope'suz Twitch girişi + cloudflared + rastgele 6 karttan seçim | 1,5 |
+| STT: VAD + akan tanıma (`large-v3-turbo`) + iki ardışık tahmin onayı + Windows → WSL köprüsü | 2 |
+| Kelime destesi (~300 isim; sesteşler harness'le elenmiş) + kurallar | 0,75 |
 | "Konuşmayı yaz" dock modu | 0,25 |
 | Doğruluk harness'i (Codex artifact) | 1 |
 | Overlay: çipler, patlama, afiş | 2 |
 | Marker, klip, DEFUSE, dud'lar + yayın içi sayaçlar | 1,5 |
-| Fitil (sadece orta güven, ≤2 sn) | 1 |
+| Fitil: kıvılcım ve "fıss" (onay penceresine bağlı) | 0,5 |
 | Cila | 1 |
-| **MVP toplamı** | **~11,25** |
-| Zaman kalırsa sırayla: `!dud` chat jürisi (fitil yanarken chat 10 sn oy verir) 0,5; mayın tarama 1 | — |
+| **MVP toplamı** | **~10,5** |
+| Zaman kalırsa sırayla: `!dud` chat itirazı (patlamadan sonra 10 sn içinde chat çoğunluğu `!dud` derse DEFUSE) 0,5; Türkçe deste + ekleri tanıyan eşleşme ~1 (videoda 5 sn "also works in Turkish"); mayın tarama 1 | — |
 | **Çıkarıldı:** serbest kelime girişi, yayınlar arası Bomb Squad tablosu, whisper ile ekme, "Call it" modu | — |
 
-- **Codex artifact:** Doğruluk harness'i. Senin sesinle kaydedilmiş konuşmaları (deste kelimeleri cümle içinde, benzer sesli kelimeler, sessizlik, doğal duraksamalar, OBS açıkken normal konuşma) yakalayıcıdan geçirir; isabet, yanlış alarm ve gecikmeyi raporlar. Fitil eşiği de bu verilerle ayarlanır.
+- **Codex artifact:** Doğruluk harness'i. Senin sesinle kaydedilmiş konuşmaları (deste kelimeleri cümle içinde, benzer sesli kelimeler, sessizlik, doğal duraksamalar, OBS açıkken normal konuşma) yakalayıcıdan geçirir; isabet, yanlış alarm ve gecikmeyi (kelimenin bitişinden) raporlar. Tahmin aralığı, tampon sınırı ve deste bu verilerle ayarlanır.
 
 ### Önceki plandan ne değişti (ve neden)
 | Önceki | Son hâli | Kim önerdi |
@@ -284,6 +290,21 @@ Puan (step 7): **16,3**, risk Yüksek. Step 8'de üç modelin de birinci tercihi
 | Gecikme ≤3 sn | Medyan ≤1,5 sn | Opus, Astra: "Espri, kelimeden hemen sonra gelen patlamada." |
 | — | "Konuşmayı yaz" modu | Opus. STT'siz test ve kayıt sigortası. |
 | — | Kurulma süresi, aynı kelime iki kişiye verilmez | Opus, Astra. |
+
+### Karardan sonra değişenler (28 Ekim: STT modeli)
+`deepdml/faster-whisper-large-v3-turbo-ct2` senin testinden geçtiği için, zayıf bir model için koyduğumuz önlemlerin bir kısmı gereksiz kaldı:
+
+| Önceki | Şimdi | Neden |
+| --- | --- | --- |
+| `small.en` + hotwords | `large-v3-turbo`, hotword yok, `language="en"` sabit | Turbo hotword olmadan da yeterince doğru; hotword ise uydurma riski getiriyordu. Dil sabit, çünkü çok dilli model kısa ve aksanlı cümlelerde dili yanlış tespit edebilir. |
+| Sözce bazlı tek yazım + ikinci geçiş | Akan tanıma + iki ardışık tahmin onayı | Patlama cümle sonunu beklemiyor. "Pineapple on pizza is honestly the worst thing ever" cümlesinde sözce bazlı tanımada BOOM kelimeden ~3 sn sonra, akan tanımada ~1 sn sonra gelir. Espri bu zamanlamada. |
+| Fitil: sadece orta güvende, ≤2 sn | Fitil = onay penceresi: kıvılcım → BOOM ya da "fıss" | Ayrı eşik yok. ~0,5 sn zaten var olan bekleme, yani Astra'nın "fitil gecikme ekliyor" itirazı da karşılanıyor. |
+| ~150 kelimelik deste (STT için) | ~300 kelime, izleyiciye rastgele 6 kart | Desteyi artık STT için değil, trol kelimeleri engellemek ve oyun dengesi için tutuyoruz. Rastgele kart, herkesin aynı kolay kelimeyi seçmesini önlüyor ve kart çekme hissi veriyor. |
+| ≤4 mayın (STT yükü) | ≤4 mayın (ekran okunabilirliği) | T0'da 5–6 denenebilir. |
+| T1: geçme şartı | T1: harness'in ilk koşusu | Doğruluk çözüldü; gecikme ve yanlış alarm yine ölçülüyor, çünkü videoda rakamlar gerekiyor. |
+| Yedek proje: VAR | Proje içi sigortalar | "Konuşmayı yaz" modu ve Discord + mod yolu. |
+| MVP ~11,25 sa | ~10,5 sa | Artan süre video ve tampona. |
+| Türkçe yok | Zaman kalırsa | Model çok dilli, Impact için koz. Ama Türkçe ekler ("ananası", "ananasa") eşleşmeyi zorlaştırıyor; test etmeden iddia edilmeyecek. |
 
 ### Rakipler ve fark
 | Rakip | Ne yapıyor | Fark |
@@ -305,7 +326,7 @@ OK Gamers'ın 2019'da aynı yarışmanın büyük ödülünü kazanması, jürin
 - **Doğrudan talep yok.** Üç araştırmacı da bu oyunu isteyen birini bulamadı. Astra: "Eğlence ürünlerinde doğrudan talep bulunamaması tek başına olumsuz değil; birkaç kişinin gerçekten oynamak istemesi bir forum talebinden daha iyi gösterir."
 - **Dolaylı talep:** yayıncılar elle küfür kavanozu ve bingo kartı yürütüyor; iki Reddit başlığında "mikrofonda kelime algılayıp efekt tetikleme" isteniyor (doğrulanmadı).
 - **Karşı sinyal:** troller yayıncılara zaten bir şeyler söyletmeye çalışıyor (Dexerto 2019, doğrulandı). Deste bunu büyük ölçüde kapatıyor.
-- **Teknik karşı sinyal:** faster-whisper `hotwords` sessizlikte kelime uydurabiliyor (issue 1356, PR 731). Sözce bazlı tanıma, ikinci geçiş ve ≤4 mayın bunun için.
+- **Teknik karşı sinyal:** faster-whisper `hotwords` sessizlikte kelime uydurabiliyor (issue 1356, PR 731). Bu yüzden hotword kullanılmıyor; VAD ve iki ardışık tahmin onayı uydurmalara karşı koruyor.
 
 ### Kitle
 Yayıncının konuştuğu her yayın: Just Chatting (%14,2), IRL (%1,8) ve konuşkan oyun yayınları. Oyun gerekmediği için demo oyunu da gerekmiyor.
@@ -313,13 +334,14 @@ Yayıncının konuştuğu her yayın: Just Chatting (%14,2), IRL (%1,8) ve konu�
 ### Riskler, test ve yedek plan
 | Risk | Ne kadar ciddi | Önlem |
 | --- | --- | --- |
-| **STT kelimeyi kaçırır ya da olmayan kelimeyi yakalar** | **Proje bunun üzerine kurulu.** | T1 (yenilenmiş): senin sesin, deste kelimeleri cümle içinde; ≥%80 isabet, 10 dakikada ≤1 yanlış alarm, medyan gecikme ≤1,5 sn. Sözce bazlı tanıma + ikinci geçiş + fitil + DEFUSE. |
-| **Oyun eğlenceli değil** | Yüksek, henüz ölçülmedi | **T0:** Discord'da kodsuz 20 dakika. Ölçüt: arkadaşlar ikinci tur istiyor mu? |
-| Aksanlı İngilizce | Orta | T1'i kendi sesinle yap; deste kelimeleri harness'te senin sesinle test edilir. Gerekirse `medium.en`. |
+| STT kelimeyi kaçırır ya da olmayan kelimeyi yakalar | Düşük–orta (turbo senin sesinle test edildi) | Harness'in ilk koşusu: OBS açık ve yayın sürerken gecikme ve VRAM, 10 dk sessizlik ve arka plan sesi, deste kelimeleri. Hedefler: ≥%80 isabet, 10 dakikada ≤1 yanlış alarm, medyan gecikme ≤1,5 sn. Onay kuralı + "fıss" + DEFUSE. |
+| **Oyun eğlenceli değil** | **Orta–yüksek, henüz ölçülmedi** | **T0:** Discord'da kodsuz 20 dakika. Ölçüt: arkadaşlar ikinci tur istiyor mu? Sonuç kötüyse proje değil kurallar değişir: mayın sayısı, kurulma süresi, deste zorluğu. |
+| Aksanlı İngilizce | Düşük | Turbo kendi sesinle denendi; `language="en"`. |
+| GPU paylaşımı (OBS + 0,5 sn'de bir turbo) | Düşük | NVENC ayrı bir birim. Harness ilk koşusunda kare düşmesi ölçülür; gerekirse tahmin aralığı 0,75–1 sn'ye çıkar. |
 | Ekme sayfası | Düşük–orta | T4. Kalırsa: arkadaşlar kelimelerini Discord'dan mod rolündeki üçüncü kişiye iletir, o da dock'a girer. Sen yine bilmezsin. |
 | "Don't Get Got'un Twitch hâli" algısı | Orta | Benzerliği sahiplen; ilk 20 saniyede "izleyici gizlice seçti + sohbetle tuzak + kuranın adı" görünsün. |
 | Arkadaşların zamanı | Orta | Darboğaz koddan çok insanlar. Arkadaşları şimdiden bağla: 29 Ekim T0, 1 Kasım akşamı kayıt. |
-| **Yedek plan** | — | Proje içinde yedek yok. Testler kötü çıkarsa **VAR**'a geç (bkz. karar ağacı). |
+| **Sigortalar** | — | Proje değişmiyor. STT tökezlerse "konuşmayı yaz" modu; ekme sayfası tökezlerse Discord + mod yolu. |
 
 ### Step 7: puanlar ve modellerin söyledikleri
 | | Innovation | Impact | Tech | Design | Toplam | Risk | Sıra |
@@ -339,14 +361,15 @@ Yayıncının konuştuğu her yayın: Just Chatting (%14,2), IRL (%1,8) ve konu�
 - **Astra: "Minefield'i seçerdim."** "İzleyici yayındaki olayın gerçek sebebi oluyor... İki arkadaşla bile çekişme, sürpriz ve sahiplenme oluşabilir." Ama: "On dakikada bir yanlış patlama bile saatte altı tartışmalı sonuç demek."
 
 ### Benim görüşüm
-- **Yarışmayı kazanabilecek tek proje bu.** Altı değerlendirmenin altısında da birinci ya da ikinci; step 8'de üç model de "bunu yapardım" dedi.
-- **Sentezle risk azaldı ama gitmedi.** Deste ve sözce bazlı tanıma, tanıma işini çok kolaylaştırıyor: rastgele bir kelimeyi değil, önceden test edilmiş 150 kelimeden birini arıyoruz. Yine de T1 senin sesinle geçmeli.
-- **En büyük açık soru artık eğlence.** T0 bunu 20 dakikada, kod yazmadan ölçüyor. Arkadaşlar ikinci tur istemiyorsa Minefield'ı zorlama.
+- **Doğru seçim.** Altı değerlendirmenin altısında da birinci ya da ikinci; step 8'de üç model de "bunu yapardım" dedi.
+- **STT artık ana risk değil.** Turbo'yu kendi sesinle denemiş olman en büyük belirsizliği kapattı. Kalan iş mühendislik: akan tanımada gecikmeyi ve yanlış alarmı ölçüp ayarlamak.
+- **En büyük açık soru eğlence.** T0 artık "yapalım mı?" testi değil, "nasıl ayarlayalım?" testi.
+- **Artan süreyi özellik eklemeye harcama.** Minefield'da video işin yarısı; zaman kalırsa listesi sıralı ve kısa.
 - **Destenin bedeli:** "İzleyici her şeyi seçebilir" hissi biraz azalıyor. Ama gizlilik ve tuzak kurma, yani oyunun özü aynı kalıyor.
 
 ---
 
-## 6.2 VAR: yedek
+## 6.2 VAR: seçilmedi
 
 Puan (step 7): **15,0**, risk Orta. Step 8'de Grok ve Astra'nın ikinci tercihi; Opus'un üçüncüsü.
 
@@ -470,7 +493,7 @@ Futboldaki VAR'ın Twitch versiyonu. Chat yayıncının bir iddiasına itiraz ed
 
 ---
 
-## 6.3 Checkpoint: ikinci yedek
+## 6.3 Checkpoint: seçilmedi
 
 Puan (step 7): **15,0**, risk Orta. Step 8'de Opus'un ikinci, Grok ve Astra'nın üçüncü tercihi.
 
@@ -605,6 +628,8 @@ Notlar: Opus, kodlama yayınının senin için en doğal demo ortamı olduğunu 
 
 ## 7. Karşılaştırma matrisi
 
+Karar verildi; bu tablo kayıt için. Minefield sütunu karardan sonraki hâli gösteriyor.
+
 | | Minefield | VAR | Checkpoint |
 | --- | --- | --- | --- |
 | **Step 7 toplam (ort.)** | **16,3** | 15,0 | 15,0 |
@@ -612,24 +637,26 @@ Notlar: Opus, kodlama yayınının senin için en doğal demo ortamı olduğunu 
 | Impact | 3,0 | 3,0 | **4,0** |
 | Tech | 3,3 | **4,0** | 3,3 |
 | Design | **5,0** | **5,0** | 4,0 |
-| Risk (medyan) | Yüksek | Orta | Orta |
+| Risk (step 7 medyanı) | Yüksek (karardan sonra Orta) | Orta | Orta |
 | **Step 8 tercihi (Opus / Grok / Astra)** | **1 / 1 / 1** | 3 / 2 / 2 | 2 / 3 / 3 |
-| Konuşma tanıma gerekli mi | Evet (kelime) | Hayır | Evet (cümle) |
-| Aksan riski | Var (deste ile azaldı) | Yok | Var (daha az) |
-| Ana açık soru | T1 ve T0 (eğlence) | T2 (OBS tesisatı) | Farkın ince olması |
+| Konuşma tanıma gerekli mi | Evet (kelime, akan tanıma) | Hayır | Evet (cümle) |
+| Aksan riski | Düşük (turbo test edildi) | Yok | Var (daha az) |
+| Ana açık soru | T0 (eğlence) | T2 (OBS tesisatı) | Farkın ince olması |
 | İlk 20 saniyedeki "vay" etkisi | **Patlama + kuranın adı** | **Siren + ağır çekim + halka + damga** | Kelimeler karta yazılıyor + alıntı |
 | 3 hesapla gerçekçi demo | Evet (arkadaşla daha iyi) | Evet | Evet |
-| MVP saati (son hâli) | ~11,25 | ~11 | ~11 |
+| MVP saati (son hâli) | ~10,5 | ~11 | ~11 |
 | Senin ML uzmanlığına uyum | **Yüksek** | Düşük | **Yüksek** |
 | "With AI" çerçevesine uyum (Opus) | Var (yerel Whisper) | Yok | Var |
 | Ekstra kişi | 1–2 arkadaş (şart gibi) | — | — |
 | Kitle | Konuşan her yayın (Just Chatting %14,2) | Rekabetçi oyun, meydan okuma | Odak yayınları (kod, çizim, maker) |
 | Kullanım sıklığı | Her yayın (arka planda) | Tartışmalı anlarda, self-VAR | Her yayın |
-| 1. gün testleri | T0, T1, T4, T5 | T2, T5 | T1b, T5 |
+| 1. gün testleri | T0, T1 (harness ilk koşusu), T4, T5 | T2, T5 | T1b, T5 |
 
 ---
 
 ## 8. Kararsız kalırsan: ikili karşılaştırmalar
+
+Karar verildi (Minefield); bu bölüm kayıt için.
 
 ### Minefield mi VAR mı?
 Bu, "yüksek tavan" ile "sağlam taban" arasındaki seçim.
@@ -652,48 +679,33 @@ Bu, "yüksek tavan" ile "sağlam taban" arasındaki seçim.
 
 ---
 
-## 9. 1. gün testleri ve karar ağacı
+## 9. 29 Ekim testleri
 
-### Hangi test, ne kadar sürer, neyi ölçer
-| Sıra | Test | Proje | Ne ölçer | Geçme şartı | Süre |
+Minefield seçildiği için T1b (Checkpoint) ve T2 (VAR) kalktı. T1 artık bir geçme şartı değil; harness'in ilk koşusu. **Hiçbir test projeyi değiştirmiyor; sonuçlar kuralları ve ayarları belirliyor.**
+
+| Sıra | Test | Ne ölçer | Hedef | Sonuç kötüyse | Süre |
 | --- | --- | --- | --- | --- | --- |
-| 1 | **T0 (yeni)** | Minefield | Kodsuz oyun: Discord'da 2 arkadaş kelimelerini üçüncü arkadaşa DM'ler; o, kelimeyi duyunca "BOOM" der. Sen kelimeleri bilmezsin. | Gülüş var, ilk patlama makul sürede geliyor, **arkadaşlar ikinci tur istiyor**. | 20–30 dk |
-| 2 | **T1 (yenilenmiş)** | Minefield | Senin sesin, deste kelimeleri cümle içinde, OBS açık; sözce bazlı tanıma + ikinci geçiş; negatif örnekler (benzer sesli kelimeler, sessizlik, doğal konuşma) | ≥%80 isabet; 10 dakikada ≤1 yanlış alarm; **medyan gecikme ≤1,5 sn**, en kötü ≤3 sn; kare düşmesi yok. Güven skorları kaydedilir. | 1–1,5 sa |
-| 3 | T1b | Checkpoint | Aynı oturumda 10 senaryolu cevap | 10 cevabın en az 9'unda **anlam ve kritik kelimeler doğru**; alıntı ≤2 sn'de hazır | 30 dk |
-| 4 | T4 | Minefield | Ekme sayfası: arkadaşın telefonundan cloudflared + Twitch girişi | Uçtan uca bir mayın ekleniyor | ~1 sa |
-| 5 | T5 | Hepsi | Create Clip (`title`, `duration`) ve marker; **klibi oynatıp** doğru anı içerdiğini görmek; threaded reply | Klip doğru anı içeriyor | ~30 dk |
-| 6 | T2 | VAR | Replay buffer kaydı → ffmpeg → Media Source | Komuttan sonra ≤5 sn'de tekrar ekranda | ~1 sa |
+| 1 | **T0: kodsuz oyun** | Discord'da 2 arkadaş kelimelerini (desteden rastgele 6 karttan) üçüncü arkadaşa DM'ler; o, kelimeyi duyunca "BOOM" der. Sen kelimeleri bilmezsin. | Gülüş var; ilk patlama makul sürede geliyor (kaç dakika, not al); **arkadaşlar ikinci tur istiyor**. | Kuralları değiştir: mayın sayısı, kurulma süresi, deste zorluğu. | 20–30 dk |
+| 2 | **T1: harness ilk koşusu** | Akan tanıma (turbo, 0,5 sn aralık, iki tahmin onayı); OBS açık ve test yayını sürerken | ≥%80 isabet; 10 dk'da ≤1 yanlış alarm; kelimenin bitişinden medyan ≤1,5 sn, en kötü ≤3 sn; kare düşmesi yok; VRAM kaydı | Tahmin aralığını büyüt (0,75–1 sn), tampon sınırını küçült, sorunlu kelimeleri desteden çıkar. | ~1 sa |
+| 3 | T4 | Ekme sayfası: arkadaşın telefonundan cloudflared + Twitch girişi | Uçtan uca bir mayın ekleniyor | Discord + mod yolu | ~1 sa |
+| 4 | T5 | Create Clip (`duration=30`) ve marker; **klibi oynatıp** patlamanın içinde olduğunu görmek | Klip doğru anı içeriyor | `duration`'ı ve çağrı zamanını ayarla | ~30 dk |
 
-Toplam yaklaşık 4,5–5 saat. T0 için arkadaşlarla saati şimdiden ayarla.
+Toplam yaklaşık 3 saat (önceki planda 4,5–5 saatti). T0 için arkadaşlarla saati şimdiden ayarla.
 
 ### T1 nasıl yapılmalı (somut)
-1. Windows'ta Python + CUDA ile faster-whisper kur; `small.en` ile başla, gerekirse `medium.en` dene.
-2. İlk ~150 kelimelik desteyi hazırla (somut, komik isimler). Arkadaşın içinden 10 kelime seçsin; sen bilme.
-3. **10 dakika doğal İngilizce konuş:** OBS açık, yayın test modunda. Arkadaş kelimeleri sohbete sokmaya çalışsın.
+1. Windows'ta Python + CUDA ile faster-whisper; model `deepdml/faster-whisper-large-v3-turbo-ct2`. Ayarlar: `language="en"`, hotword yok, `condition_on_previous_text=False`.
+2. İlk ~300 kelimelik desteyi hazırla. Arkadaşın içinden 10 kelime seçsin; sen bilme.
+3. Üç kayıt al. Bunlar harness'in ilk veri seti olacak:
+   - **a.** 10 dk doğal İngilizce; OBS açık ve test yayını sürerken. Arkadaş kelimeleri sohbete sokmaya çalışsın.
+   - **b.** 10 dk sessizlik ve arka plan sesi (klavye, nefes, sandalye).
+   - **c.** Deste kelimeleri kısa cümleler içinde (300 kelime ~15 dk; zaman yoksa ilk 100).
 4. Ölç:
    - Kaç kelime yakalandı (isabet)?
-   - Kaç tanesi söylenmediği halde yakalandı (yanlış alarm)? İkinci geçiş bunları eledi mi?
-   - Söyleyişten tetiklenmeye kaç saniye geçti? Medyan ve en kötü değer.
-   - OBS kare düşürdü mü?
-   - Her yakalamanın güven skoru: yanlış alarmların skorları doğru yakalamalarınkinden ayrışıyor mu? (Fitil eşiği bununla ayarlanır.)
-5. Aynı oturumda T1b: 10 senaryolu cevabı oku; her birinde anlam ve kritik kelimeler doğru mu, alıntı kaç saniyede hazır?
-6. Kayıtları sakla: harness'in ilk veri seti bunlar olacak.
-
-### Karar ağacı
-```
-T0 eğlenceli VE T1 geçti ─────────────────► MINEFIELD
-        │
-  T1 sınırda (isabet iyi, yanlış alarmların güveni düşük)
-        │  → fitil bunu gerilime çevirebilir; birlikte bakalım
-        │
-  T0 eğlenceli değil YA DA T1 kaldı
-        │
-  T2 geçti ────────────────────────────────► VAR
-        │
-  T2 kaldı, T1b geçti ─────────────────────► CHECKPOINT
-        │
-  Hepsi kaldı ─────────────────────────────► VAR (replay'siz: çağrı, jüri, damga, klip)
-```
+   - Kaç tanesi söylenmediği hâlde yakalandı (yanlış alarm)? Kayıt b'de sıfır olmalı.
+   - Kelimenin bitişinden patlamaya kaç saniye geçti (`word_timestamps` ile)? Medyan ve en kötü değer.
+   - OBS kare düşürdü mü? VRAM ne kadar?
+   - Kayıt c'de kaçırılan ve birbirine karışan kelimeleri desteden çıkar.
+5. Kayıtları sakla.
 
 ---
 
@@ -701,15 +713,15 @@ T0 eğlenceli VE T1 geçti ─────────────────�
 
 | Tarih | Ne |
 | --- | --- |
-| **28 Ekim (bugün)** | Finalistler 3 projeye indi; final analiz yapıldı. Arkadaşlarla T0 ve kayıt saatlerini ayarla. |
-| **29 Ekim** | 1. gün testleri: T0, T1 + T1b, T4, T5, T2 (~4,5–5 saat). Akşam final seçimi. Twitch hesapları ve ayarları (VOD açık, bot mod). |
-| **30 Ekim – 1 Kasım** | Yaklaşık 17,5 saat geliştirme: ortak altyapı (seçilen projenin ihtiyacı kadar) 3,5 saat, MVP ~11 saat, kalan tampon. Günde yaklaşık 6 saat. |
-| **1 Kasım akşamı** | Arkadaşlarla kayıt (Minefield seçilirse). |
+| **28 Ekim (bugün)** | Minefield seçildi, STT modeli belirlendi. Arkadaşlarla T0 ve kayıt saatlerini ayarla. Yapım planı: `docs/plan/minefield.md`. |
+| **29 Ekim** | Testler: T0, T1 (harness ilk koşusu), T4, T5 (~3 saat). Twitch hesapları ve ayarları (VOD açık, bot mod). Akşam sonuçlara göre kurallar ve ayarlar. |
+| **30 Ekim – 1 Kasım** | Yaklaşık 17,5 saat geliştirme: ortak altyapı (Minefield'ın ihtiyacı kadar) 3,5 saat, MVP ~10,5 saat, ~3,5 saat tampon. Günde yaklaşık 6 saat. |
+| **1 Kasım akşamı** | Arkadaşlarla kayıt. |
 | **1–2 Kasım** | Video montajı (<3 dk), YouTube'a yükleme, repo README, Devpost açıklaması (dört kriterle eşleşen başlıklar: Innovation / Potential Impact / Technological implementation + Codex / Design). |
 | **2 Kasım 23:00 TSİ** | **Hedef: Submit'e bas.** Taslak olarak kaydetmek teslim sayılmıyor. |
 | **2 Kasım 14:00 PT** | Resmi son teslim. Kuralların çoğuna göre Türkiye saatiyle **3 Kasım 01:00**; ama `resources.md` kendi içinde çelişiyor ("10 PM London" ve "9 PM UTC" kasımda aynı an değil). Bu yüzden 23:00 hedefi. |
 
-**Dikkat:** Video çekimi ve montaj 17,5 saatin içinde değil. Toplam bütçen 20–25 saatse video için 2,5–7,5 saat kalıyor. MVP'ler 12 yerine ~11 saat olduğu için tampon biraz büyüdü; bu süre video için de kullanılabilir. Astra'nın uyarısı: 3,5 saatlik ortak altyapı Twitch'e yeni biri için iyimser.
+**Dikkat:** Video çekimi ve montaj 17,5 saatin içinde değil. Toplam bütçen 20–25 saatse video için 2,5–7,5 saat kalıyor. MVP ~10,5 saate indiği ve 29 Ekim testleri yaklaşık 2 saat kısaldığı için video için daha çok zaman var. Astra'nın uyarısı: 3,5 saatlik ortak altyapı Twitch'e yeni biri için iyimser.
 
 ---
 
@@ -781,27 +793,26 @@ Ayrıntıları için: [ranking.md](ranking.md) ve bu dokümanın git geçmişind
 
 ---
 
-## 13. Benim önerim
+## 13. Karar ve sonraki adımlar
 
-**Seçim: Minefield. Yedek: VAR. İkinci yedek: Checkpoint.** Karar şekli: sezgiyle değil, 29 Ekim testleriyle ([karar ağacı](#karar-ağacı)).
+**Karar (28 Ekim): Minefield.** VAR ve Checkpoint seçilmedi; bölümleri kayıt için duruyor.
 
 **Neden Minefield:**
 1. Step 7'de en yüksek toplam (16,3); step 8'de üç modelin de birinci tercihi. Altı değerlendirmenin altısında birinci ya da ikinci.
 2. Innovation hem bir kriter hem de eşitlik bozucu; üç finalist içinde en yüksek Innovation onda.
 3. ML becerin projenin merkezinde; accuracy harness Tech kriterine sayılarla cevap veriyor.
-4. Riski pahalı değil: T0 ve T1, 29 Ekim'de birkaç saatte ölçülüyor.
-5. Sentezle risk azaldı: deste ve sözce bazlı tanıma, tanıma işini rastgele kelimeden test edilmiş 150 kelimeye indiriyor.
+4. STT riski senin testinle büyük ölçüde kapandı (`large-v3-turbo`, Türkçe ve İngilizce).
 
-**Neden yedek VAR:** Minefield'la aynı riski (STT) taşımayan tek seçenek; videosu en kolay anlaşılanı; Grok ve Astra'nın ikinci tercihi.
-
-**Final seçilince yapılacaklar:**
-- **Minefield:** ~150 kelimelik desteyi hazırlamak ve harness'te senin sesinle test etmek; T1 verisiyle fitil eşiğini ayarlamak; arkadaşlarla 1 Kasım kaydını kesinleştirmek; açıklamaya Don't Get Got benzerliğini sahiplenen bir cümle yazmak.
-- **VAR:** ffmpeg ön-render hattını T2'de doğrulamak; stinger, siren ve damga animasyonuna özen göstermek; PROVE IT Devpost linkini elle kontrol etmek.
-- **Checkpoint:** Pause trigger yedeğini karta yazmak; SSS eşiklerini 20–30 soru çiftiyle ayarlamak; kodlama yayınıyla çekmek.
+**Sonraki adımlar:**
+- Yapım planı: `docs/plan/minefield.md`. Sıradaki iş bu.
+- ~300 kelimelik desteyi hazırlamak; sesteşleri harness'le elemek.
+- 29 Ekim testleri ([bölüm 9](#9-29-ekim-testleri)).
+- Arkadaşlarla 29 Ekim T0 ve 1 Kasım kayıt saatlerini kesinleştirmek.
+- Açıklamaya Don't Get Got benzerliğini sahiplenen bir cümle yazmak.
 
 **Her durumda:**
 - Devpost açıklamasını dört kriterle birebir eşleşen başlıklarla yaz (Opus: değerlendirmede otomatik AI analizi de kullanılabiliyor).
 - Videoda Codex'e 20–30 saniye ayır; kod ekranını gezmek yerine harness'in ya da testlerin yakaladığı somut bir hatayı ve düzeltmesini göster.
 - 2 Kasım 23:00 TSİ'den önce Submit.
 
-**Son not:** Bu dokümanda puanlar ve modellerin söyledikleri ölçülmüş bilgiler. "Benim görüşüm" bölümleri ve son hâllerin etkisi ise yorum. Final analizin tamamı: [../step8/final-analiz.md](../step8/final-analiz.md). Karar senin.
+**Son not:** Bu dokümanda puanlar ve modellerin söyledikleri ölçülmüş bilgiler. "Benim görüşüm" bölümleri ve son hâllerin etkisi ise yorum. Final analizin tamamı: [../step8/final-analiz.md](../step8/final-analiz.md). Karar verildi; bu doküman artık kayıt. Yapım ayrıntıları plan dosyasında olacak.
