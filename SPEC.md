@@ -233,7 +233,7 @@ Verify every endpoint, scope and payload against https://dev.twitch.tv/docs befo
   - Scopes:
     - Bot (a mod in the channel): `user:read:chat`, `user:write:chat`.
     - One test account (optional, for testing commands alone): `user:write:chat`.
-    - The broadcaster needs no token: there are no markers or clips (decision D15), and the bot reads and sends chat as a moderator. Verify this against the EventSub and Send Chat Message authorization notes; if the broadcaster must authorize after all, say so and propose a spec change.
+    - The broadcaster needs no token: there are no markers or clips (decision D15), and the bot reads and sends chat with its own user access token. Checked on 29 Oct: `channel.chat.message` with a user access token "requires `user:read:chat` scope from the chatting user"; Send Chat Message requires "a user access token that includes the `user:write:chat` scope"; `channel:bot` from the broadcaster is needed only with an app access token. Messages are limited to 500 characters.
 - **EventSub WebSocket:** `channel.chat.message` v1, condition `{broadcaster_user_id, user_id: bot}`.
   - Subscribe within 10 s of `session_welcome`.
   - On `session_reconnect`: connect to the given `reconnect_url` and close the old socket only after the new welcome. Subscriptions carry over, so do **not** resubscribe.
