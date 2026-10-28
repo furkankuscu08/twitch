@@ -81,7 +81,7 @@ Ayrıntılar `SPEC.md`'de. Kısaca:
    - Ayrı karşılaştırma testi yapılmaz. Ses beğenilmezse aynı anahtarla Nova-3'e (`--backend nova3`) ya da başka bir Deepgram modeline geçilir. Yerel motor yazılmaz.
    - Gecikme tek bir saatle ölçülür: motorun kendi saati, çünkü Windows ve WSL saatleri uykudan sonra kayabiliyor.
    - Ayrıntılar ve kaynaklar: [stt-cloud-options.md](stt-cloud-options.md).
-2. **D4: Ekme sayfasında Twitch girişi yerine chat kodu.**
+2. **D4: Ekme sayfasında Twitch girişi yerine chat kodu** (onaylandı, 28 Ekim).
    - İzleyici kartını seçer, sayfa `!mine K7QF` komutunu kopyala düğmesiyle gösterir; izleyici bunu chat'e yapıştırır.
    - Kazanç:
      - OAuth yönlendirme adresi gerekmez (quick tunnel adresi her açılışta değişiyor).
@@ -161,7 +161,7 @@ T1 ve T4 kod gerektirdiği için 30 ve 31 Ekim'e kaydı. 29 Ekim'de bunlar yapı
 | Sıra | İş | Süre |
 | --- | --- | --- |
 | 1 | ✅ Twitch hesapları ve uygulama kaydı (28 Ekim'de yapıldı; ayrıntı aşağıda) | — |
-| 2 | Codex ana thread'i ([bölüm 8](#8-codex-kullanımı); OBS "Codex" sahnesi 28 Ekim'de hazırlandı). Thread'i aç; **kayda bas**, ilk mesaj (`/plan`), sonuç gelince kaydı durdur (an 1), session ID'yi bölüm 8'e yaz. Sonra WP7 (deste) ve WP8 (auth). | 45 dk (senin zamanın) |
+| 2 | Codex ana thread'i ([bölüm 8](#8-codex-kullanımı); OBS "Codex" sahnesi 28 Ekim'de hazırlandı). Thread'i aç; **kayda bas**, ilk mesaj (`/plan`), sonuç gelince kaydı durdur (an 1), session ID'yi bölüm 8'e yaz. Sonra WP7 (deste) ve WP8 (auth). WP8 bitince **bot ve test hesabı** için device code girişini yap: bundan sonra Twitch testlerini Codex kendisi koşar. | 45 dk (senin zamanın) |
 | 3 | ✅ Deepgram hesabı, API anahtarı `.env`'de, AB uç noktasında Flux denendi (28 Ekim'de yapıldı) | — |
 | 4 | **T5:** WP8 aracıyla bot token'ını al, curl ile kanala bir chat mesajı gönder (canlı yayın gerekmez). WSL'de `python -m http.server 8000` çalıştır; OBS browser source'ta ve Windows Chrome'da `http://localhost:8000` açılıyor mu bak (Windows → WSL). | 20 dk |
 | 5 | Deste v0'ı gözden geçir | 20 dk |
@@ -179,6 +179,18 @@ T1 ve T4 kod gerektirdiği için 30 ve 31 Ekim'e kaydı. 29 Ekim'de bunlar yapı
 
 ### İnsan saati
 28 Ekim'de yapılan hazırlık ~1,5 + 29 Ekim 2,25 + 30 Ekim–1 Kasım 14,5 (6 + 4,5 + 4) + kayıt 2 + montaj ve teslim 4 ≈ **24,25 saat**. 29 Ekim sabahından itibaren kalan ≈ **22,75 saat**; tampon (2,5) kullanılmazsa ~20,25. T0 çıkınca 15 dk (kayıt (a) tek başına 15 dk), marker ve klip çıkınca ~1 saat kazanıldı (T5 45 → 20 dk, 31 Ekim'de canlı yayın denemesi yok).
+
+**Aktif emek ve bekleme (D16).** Codex'in kendi doğrulayabildiği işler ona bırakılır; sende sadece onun yapamadıkları kalır. Bu açıdan kalan ~22,75 saatin ~15,5'i aktif emek, ~7'si Codex çalışırken bekleme. Bekleme, Codex'in hatalarının düzeltildiği yer (fiilî tampon); iş yolunda giderse kayıtlara, OBS'e ve montaj hazırlığına kayar.
+
+| Gün | Plandaki | Aktif | Bekleme | Senin işin |
+| --- | --- | --- | --- | --- |
+| 29 Ekim | 2,25 | ~2,25 | — | `/plan`, device code girişleri, T5, deste, kayıtlar |
+| 30 Ekim | 6 | ~3 | ~3 | Mic sayfasında konuşmak, etiket düzeltme, overlay'e ilk bakış, T1 kararları |
+| 31 Ekim | 4,5 | ~1,75 | ~2,75 | OBS kaynakları ve dock, telefonla T4 |
+| 1 Kasım | 6 | ~4,75 | ~1,25 | Overlay cilası (zevk), prova, kayıt gecesi |
+| 2 Kasım | 4 | ~3,75 | — | Montajda zaman damgalarını seçmek, Devpost'u düzeltmek, Submit |
+
+**Codex'e tamamen bırakılanlar:** WP1, WP2, WP6 ve T1 ayar döngüsü (`run` ve `replay`'i kendisi koşar), WP7, WP9 ve WP10'un canlı testleri (test hesabıyla komut gönderir), WP14; overlay, dock ve ekme sayfasının ekran görüntülerini Playwright ile kendisi alıp kontrol eder; sesleri WebAudio ile sentezler (ses dosyası ve lisans işi yok); montajın mekanik kısmı (`ffmpeg` betiği) ve Devpost taslağı.
 
 Sıkışırsan kesilecekler, sırasıyla:
 1. dud gösteriminin animasyonu (düz liste);
@@ -249,6 +261,13 @@ Do not write code yet.
 Codex'in spec'i eleştirmesi gerçek bir katkı ve videonun ilk Codex sahnesi. Haklı bulduğun düzeltmeleri SPEC'e işlet.
 
 ### Her WP için aynı döngü
+Kilometre taşı içindeki WP'ler **zincirlenir** (D16); Codex her birini bitirip commit'ler, düzeltemediği ilk hatada durur. Senin başında beklemen gerekmez.
+```
+Do M1: WP1, WP2, WP4, then WP3 (basic), per SPEC.md §8, following the Workflow in AGENTS.md
+(tests first, verify it yourself, commit each WP, stop at the first failure you cannot fix).
+End with one report and a short checklist of anything only I can do.
+```
+Zincir bitince her WP için `/review` (2–3 dk) ve sonda bir `/compact`. Tek WP isteniyorsa:
 1. `Do WP<n> per SPEC.md §8. Write failing tests from the acceptance list first, run them, then implement.`
 2. Testler kırmızı → kod → `uv run pytest` + `uv run ruff check` → yeşil.
 3. `/review`. Önemli bulgu varsa düzelttir.
@@ -262,7 +281,7 @@ Codex'in spec'i eleştirmesi gerçek bir katkı ve videonun ilk Codex sahnesi. H
 | 2 | Testler kırmızı → yeşil | 30 Ekim (WP1) | Döngünün 2. adımı |
 | 3 | **Harness döngüsü (asıl hikâye)** | 30 Ekim akşam, T1 | Aşağıdaki istem; önce/sonra raporları `reports/` altında |
 | 4 | Codex'in dev.twitch.tv'yi kontrol etmesi | 31 Ekim (WP9/WP10) | Web araması açık; AGENTS.md zaten istiyor |
-| 5 | Overlay ekran görüntüsüyle düzeltme | 1 Kasım (WP3 tam / WP13) | OBS'teki overlay'in ekran görüntüsü Codex'e verilir |
+| 5 | Codex'in overlay'i kendi ekran görüntüsüyle düzeltmesi | 30 Ekim–1 Kasım (WP3) | `scripts/shoot.py overlay` → Codex PNG'ye bakar → düzeltir; gerekirse OBS'teki görüntü de verilir |
 | 6 | PR'da `@codex review` | M1 ve M3 sonunda (2 PR) | Kilometre taşı dalı → PR → yorum |
 | 7 | Session ID | 2 Kasım | `/status` ya da status line |
 
@@ -273,6 +292,8 @@ Read the report. Propose at most 3 changes to minefield/core/config.py or deck v
 verify each with `harness replay`, keep only changes that improve hits without raising
 normalized false alarms, and commit the new report under reports/.
 ```
+
+Canlı testler (`pytest -m live`) ve harness koşuları Codex'in kendi işi; sana sadece cihaz ve zevk gerektirenler kalır (AGENTS.md, Workflow).
 
 Kullanılmayacaklar: Codex'i ürünün içinde çalıştırmak (yapay görünür), Codex cloud görevleri (kayıtlar ve token'lar yerelde), skills, hooks, MCP.
 
@@ -371,6 +392,11 @@ Arkadaşlar sadece 1 Kasım 20:00 kaydında var (D14); T0 yapılmaz, T4 tek baş
 - **Twitch:** Bot mod (link engelinden ve AutoMod'dan muaf); test hesaplarının chat'e yazabildiğini kontrol et.
 - **Başlatma:** WSL'de `scripts/run_all.sh`, Windows Chrome'da `http://localhost:8000/mic` (sekme kayıt boyunca açık kalır; OBS ile aynı mikrofon seçili). Dock'taki ışıklar yeşil olmadan kayda başlama.
 
+### Montaj (2 Kasım, yarı otomatik)
+- Sen ham kayıtları izleyip her sahne için başlangıç–bitiş zamanını ve altyazıyı bir listeye yazarsın (`video/cuts.json`, git'e girmez; ham görüntüler `C:\Users\furkan\Videos\minefield`'da kalır).
+- Codex bu listeden `ffmpeg` ile kesen, hızlandıran, birleştiren ve altyazıyı yakan bir betik yazar ve çalıştırır.
+- Son kontrol ve zevk kararı sende. Devpost metninin taslağını da Codex repo'dan çıkarır; sen düzeltirsin.
+
 ### Teslim listesi
 - [ ] YouTube'a **public** video: 2:50'nin altında, altyazılı; telifli müzik ya da marka yok. Ses efektleri CC0 ya da kendi üretimin.
 - [ ] Repo private kalabilir, GitHub'da **testing@devpost.com** ile paylaşılır. Ya da public yapılır.
@@ -398,7 +424,7 @@ Arkadaşlar sadece 1 Kasım 20:00 kaydında var (D14); T0 yapılmaz, T4 tek baş
 | D1 | Kod bu repoda; repo şimdilik private | Verildi | 28 Ekim |
 | D2 | Plan Türkçe; `AGENTS.md`, `SPEC.md`, kod, README İngilizce | Verildi | 28 Ekim |
 | D3 | STT: Deepgram Flux (AB uç noktası, `mip_opt_out`, keyterm yok), yedek Nova-3 aynı anahtarla; mikrofon Chrome'daki `/mic` sayfasından; yerel motor ve ayrı karşılaştırma testi yok; tek saat | Verildi | 28 Ekim |
-| D4 | Ekme sayfasında Twitch girişi yerine chat kodu (`!mine KOD`), kopyala düğmesi, QR, 5 dk geçerlilik | **Öneri.** İnceleme kabul etti; senin onayını bekliyor. | — |
+| D4 | Ekme sayfasında Twitch girişi yerine chat kodu (`!mine KOD`), kopyala düğmesi, QR, 5 dk geçerlilik | Verildi | 28 Ekim |
 | D5 | Teknoloji: Python 3.12 + uv + FastAPI; overlay, dock ve sayfa framework'süz HTML/JS | Verildi | 28 Ekim |
 | D6 | Herkese açık adres: cloudflared quick tunnel (WSL'de), sadece ekme sayfası portu | Verildi | 28 Ekim |
 | D7 | Ana yapım tek Codex thread'inde; yan thread sadece ana thread beklerken | Güncellendi (sadeleştirme) | 28 Ekim |
@@ -410,6 +436,7 @@ Arkadaşlar sadece 1 Kasım 20:00 kaydında var (D14); T0 yapılmaz, T4 tek baş
 | D13 | Codex: masaüstü uygulamasında (ajan WSL'de) tek ana thread; her WP'de önce testler, `/review`, commit, `/compact`; harness döngüsü ana hikâye; M1 ve M3'te `@codex review`; sadece 7 hedef an kaydedilir, yedek olarak 2 Kasım'da thread geçmişi | Verildi | 28 Ekim |
 | D14 | Arkadaşlar sadece 1 Kasım kayıt gecesinde; T0 yok, T4 tek başına (kendi telefonun, mobil veri); arkadaş yoksa kör ekleme betiği (~0,5 sa), karar 1 Kasım öğlen | Verildi | 28 Ekim |
 | D15 | Marker, otomatik klip ve klip linki çıktı (sadece canlı yayında test edilebiliyor, videoda ~10 sn). Yerine patlama makbuzu (afişte yayıncının son ~8 kelimesi, diğer deste kelimeleri maskeli) ve tur sonu chat özeti. Yayıncı token'ı gerekmiyor. | Verildi | 28 Ekim |
+| D16 | Otomasyon: Codex kendi işini doğrular (Playwright ekran görüntüleri, `pytest -m live` ile test hesabından Twitch testleri, harness'i kendisi koşar); sesler WebAudio ile sentezlenir; kilometre taşı içinde WP'ler zincirlenir; montajın mekanik kısmı `ffmpeg` betiğiyle. Sen sadece cihaz, giriş ve zevk işlerini yaparsın. | Verildi | 28 Ekim |
 
 ---
 
@@ -435,6 +462,7 @@ Arkadaşlar sadece 1 Kasım 20:00 kaydında var (D14); T0 yapılmaz, T4 tek baş
   - Eşleştirici: `CONFIRM_N`, `MIN_WORD_PROB`; `AGREE_TOL_S` 0,5.
 - **28 Ekim, arkadaşlar (D14):** T0 çıktı; arkadaşlar sadece 1 Kasım kayıt gecesinde. T4 tek başına (kendi telefonun, mobil veri). Kayıt (a) tek başına 15 dk. Kurallar (D8) provada kesinleşir. Arkadaş yoksa kör ekleme betiği yedek. 28 Ekim'de yapılan hazırlıklar 29 Ekim tablosunda işaretlendi; 29 Ekim ~2,5 saat.
 - **28 Ekim, marker ve klip (D15):** marker, otomatik klip ve klip linki çıktı; yerine patlama makbuzu ve tur sonu chat özeti. Yayıncı token'ı ve `channel:manage:broadcast` / `clips:edit` scope'ları gitti. T5 bot token'ı ve erişim kontrolüne indi (20 dk). Video çekim listesinde klip sahnesi yerine tur özeti.
+- **28 Ekim, otomasyon (D16) ve D4 onayı:** AGENTS.md'ye "önce kendin doğrula", zincirleme ve Playwright kuralları; SPEC'te `scripts/shoot.py`, `?step=N`, WebAudio sesleri, WP9/WP10/WP11 canlı testleri; plana aktif emek/bekleme tablosu, zincir istemi, yarı otomatik montaj. D4 (chat kodu) onaylandı.
 - **28 Ekim, Codex kullanımı:** bölüm 8, [codex-usage.md](codex-usage.md) araştırmasına göre yeniden yazıldı: kurulum, ilk mesaj, WP döngüsü (önce testler, `/review`, `/compact`), 7 görünür an, ekran kaydı, dürüstlük cümlesi. Alt ajanlar varsayılan değil; PR incelemesi sadece M1 ve M3'te.
 
 ---

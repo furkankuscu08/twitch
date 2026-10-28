@@ -9,6 +9,8 @@ Minefield: a Twitch game for the Codex x TwitchCon Hackathon. Viewers plant secr
 - FastAPI + uvicorn for the server; `httpx` for Helix and Deepgram's REST API; `websockets` for EventSub, Deepgram streaming and the mic page.
 - STT: Deepgram streaming over plain `websockets` (no Deepgram SDK). Default model Flux (`flux-general-en`), backup Nova-3; EU endpoint. No local model, no GPU.
 - Web: plain HTML/CSS/JS in `web/`. No framework, no bundler, no build step; these pages run as OBS browser sources.
+- Sound effects are synthesized at runtime with the WebAudio API; there are no audio files.
+- Dev only: Playwright (Chromium) for headless screenshots of the web pages (`scripts/shoot.py`).
 
 ## Commands
 ```
@@ -19,6 +21,8 @@ uv run python -m minefield.server         # game server (127.0.0.1:8000, mic pag
 uv run python -m minefield.stt --mic      # STT engine, live (open http://localhost:8000/mic in Chrome on Windows)
 uv run python -m minefield.stt --wav FILE # STT engine on a recording
 uv run python -m minefield.harness ...    # accuracy report (see SPEC §7)
+uv run python scripts/shoot.py PAGE       # screenshots of overlay/dock/plant/mic into data/shots/
+uv run pytest -m live                     # live checks against Twitch and Deepgram (needs .env and data/tokens.json)
 ```
 
 ## Rules
@@ -28,7 +32,7 @@ uv run python -m minefield.harness ...    # accuracy report (see SPEC §7)
 - `minefield/core` stays pure (no I/O, no network, no GPU) and fully unit-tested. Put all tunable numbers in `minefield/core/config.py`.
 - Twitch and Deepgram: verify endpoints, scopes, parameters and payloads against https://dev.twitch.tv/docs and https://developers.deepgram.com before coding them. Twitch failures (chat send, EventSub) are logged and must never crash or block the game.
 - All code, comments, UI text, commit messages and docs you write are in English.
-- Assets (sounds, images, fonts) must be your own or CC0; record the source in `web/assets/CREDITS.md`. No third-party trademarks.
+- Assets (images, fonts) must be your own or CC0; record the source in `web/assets/CREDITS.md`. No third-party trademarks. Sounds are synthesized (see Stack), so they need no credits.
 - Don't modify `docs/brainstorm/`, `docs/competition/`, or the local `twitch/` folder.
 
 ## Twitch accounts
@@ -46,9 +50,16 @@ The logins and the app's Client ID are configured in `.env` (`TWITCH_CLIENT_ID`,
 - Tests that need a microphone, the network or an API key are marked `@pytest.mark.live` and are skipped by default.
 - Fake Twitch in unit tests (`respx` or a fake client). Test the Deepgram mapping with recorded messages from `tests/fixtures/deepgram/`. Never call the real APIs from the default test run.
 - If you cannot reach dev.twitch.tv, developers.deepgram.com or a package index, say so instead of guessing an API shape.
+- Playwright is a dev dependency only. Install the browser with `uv run playwright install chromium`, without `--with-deps`: there is no sudo, and the system libraries Chromium needs are already present (checked on 28 Oct). If Chromium still fails to start, fall back to the Windows Chrome at `/mnt/c/Program Files/Google/Chrome/Application/chrome.exe --headless --screenshot`.
 
 ## Workflow
 - Tests first: for each WP, write failing tests from its acceptance criteria in SPEC §8, run them, then implement.
+- **Verify it yourself before asking the human.** The human's time is the bottleneck; only ask for what you cannot do.
+  - Web pages: after a change, run `scripts/shoot.py`, look at the screenshots, and fix what is off before reporting.
+  - Twitch and Deepgram: once `data/tokens.json` and `.env` exist, run `uv run pytest -m live` yourself. Live Twitch tests send commands as the test account and check the bot's replies. No live stream is needed.
+  - Harness: run `harness run` and `harness replay` yourself on the recordings in `data/recordings/`.
+  - Only the human can: complete device-code logins, speak into the mic, use the phone, configure OBS, and judge how it feels. Ask for those explicitly, as a short checklist.
+- **Chains:** when asked for several WPs (e.g. "do M1: WP1, WP2, WP4"), do them in order, run tests and lint and commit after each, and stop at the first failure you cannot fix. End with one report covering all of them.
 - Small commits, prefixed with the WP id (e.g. `WP5: streaming hypotheses`).
 - Before finishing a WP, run tests and lint, and report: what changed, how it was verified, and anything left open.
 
