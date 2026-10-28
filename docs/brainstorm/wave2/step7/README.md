@@ -67,4 +67,5 @@ After the user's pick: day-1 tests for the finalists that depend on one (T1/T1b,
 
 ## Exceptions
 
-None yet.
+- **2026-10-28, unresolved tie.** Checkpoint and VAR both total 15, with median risk M and median rank 3, so the registered tie-breakers do not separate them. No third tie-breaker is added after seeing the scores; they are shown as tied for second (2=) in `ranking.md`.
+- **2026-10-28, mean instead of median for the total (user's decision, made after seeing the scores).** The criterion scores and the total use the mean of the three raters, not the median. Effect: Hint Jar (14.7) moves above Tap on the Shoulder (14.3); every other position is unchanged. Risk and rank tie-breakers still use the median. `ranking.md` also lists the median totals for comparison.
