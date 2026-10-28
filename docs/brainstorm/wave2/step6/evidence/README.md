@@ -14,9 +14,9 @@ Nobody scores in this step. Researchers only gather evidence.
 
 | Researcher | File given | Source priority | Result file |
 | --- | --- | --- | --- |
-| Grok | [paste-grok.md](paste-grok.md) | X first, then web | evidence-grok.md |
-| GPT 6 Astra | [paste-astra.md](paste-astra.md) | Its own web search | evidence-astra.md |
-| Claude agent | [paste-claude.md](paste-claude.md) | GitHub, Devpost, Reddit, Twitch Extensions | evidence-claude.md |
+| Grok | `paste-grok.md` (removed after use; see git history) | X first, then web | evidence-grok.md |
+| GPT 6 Astra | `paste-astra.md` (removed after use; see git history) | Its own web search | evidence-astra.md |
+| Claude agent | `paste-claude.md` (removed after use; see git history) | GitHub, Devpost, Reddit, Twitch Extensions | evidence-claude.md |
 
 The three prompts are identical except for the last paragraph. Grok and Astra run in new chats with no file access. The Claude agent reads only its paste file. The card text in the prompts was extracted from cards.md by script (one-liner, best variant, core loop, named competitors), so no card is described differently from another.
 

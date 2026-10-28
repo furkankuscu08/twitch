@@ -12,9 +12,9 @@ Cards: Minefield, Tap on the Shoulder, VAR, Raid Torch, Studio Audience, Hint Ja
 
 | Rater | File given | How it runs | Result file |
 | --- | --- | --- | --- |
-| Grok | [paste-grok.md](paste-grok.md) | New chat, no file access, no search | results-grok.md |
-| GPT 6 Astra | [paste-astra.md](paste-astra.md) | New chat, no file access, no search | results-astra.md |
-| Claude agent (Opus, high effort) | [paste-claude.md](paste-claude.md) | Reads only its paste file; no search, no subagents | results-claude.md |
+| Grok | `paste-grok.md` (removed after use; see git history) | New chat, no file access, no search | results-grok.md |
+| GPT 6 Astra | `paste-astra.md` (removed after use; see git history) | New chat, no file access, no search | results-astra.md |
+| Claude agent (Opus, high effort) | `paste-claude.md` (removed after use; see git history) | Reads only its paste file; no search, no subagents | results-claude.md |
 
 The three files are identical except for one sentence about search tools and the **card order**, which is shuffled per rater (fixed seeds 11, 22, 33) so no card always comes first:
 
