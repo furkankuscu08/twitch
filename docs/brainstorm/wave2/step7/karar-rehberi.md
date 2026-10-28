@@ -1,13 +1,13 @@
-# Karar rehberi: 4 finalist, final seçimi için
+# Karar rehberi: 3 finalist, final seçimi için
 
-Hazırlanma tarihi 28 Ekim 2026; aynı gün finalistlere göre güncellendi. Bu doküman, 4 finalist arasından final projeyi seçmen için gereken her şeyi tek yerde topluyor.
+Hazırlanma tarihi 28 Ekim 2026; aynı gün iki kez güncellendi: önce 4 finaliste, sonra final analize göre 3 finaliste. Bu doküman, 3 finalist arasından final projeyi seçmen için gereken her şeyi tek yerde topluyor.
 
 **Senin 28 Ekim kararların:**
-- **Finalistler:** Minefield, Checkpoint, VAR, Tap on the Shoulder. Hint Jar, Studio Audience ve Raid Torch finale alınmadı (bkz. [bölüm 12](#12-finale-alınmayan-ve-elenen-projeler)).
-- **Kart MVP bütçesi 9,5 saatten 12 saate çıktı.** Toplam yapım süresi: ortak altyapı 3,5 + MVP 12 + tampon ≥2 = **yaklaşık 17,5 saat**. Video bu sürenin dışında.
-- **Checkpoint'e SSS özelliği eklendi.** Diğer üç projeye de benim önerdiğim eklemeler kondu; her projede **"12 saatlik eklemeler"** başlığı altında.
+- **Finalistler:** Minefield, VAR, Checkpoint. Tap on the Shoulder final analizden sonra çıkarıldı; Hint Jar, Studio Audience ve Raid Torch finale alınmamıştı (bkz. [bölüm 12](#12-finale-alınmayan-ve-elenen-projeler)).
+- **Kart MVP bütçesi en fazla 12 saat.** Final analizden sonra her projenin MVP'si yaklaşık 11 saate indi; artan süre tampona kaldı. Toplam yapım süresi yaklaşık **17,5 saat**; video bu sürenin dışında.
+- **Checkpoint'te SSS** senin kararın; final analizde katmanlı (iki eşikli) hâline getirildi.
 
-**Önemli:** Puanlar eski kartlara göre verildi. 12 saatlik eklemeler yeniden puanlanmadı. Eklemelerin hangi kritere yarayacağı benim tahminim. Kısa kayıt: [finalistler.md](finalistler.md).
+**Bu sürümde ne var:** Projeler, step 7 puanlarına ek olarak step 8'deki üç serbest incelemenin (Opus, Grok, Astra) [sentezine](../step8/final-analiz.md) göre son hâllerine getirildi. Her projede **"Önceki plandan ne değişti"** tablosu ve **"Step 8: serbest incelemeler"** bölümü var. Son hâller yeniden puanlanmadı.
 
 Kaynaklar:
 - Kartlar: [../step6/cards.md](../step6/cards.md), revizyon 3
@@ -15,6 +15,8 @@ Kaynaklar:
 - Puanlama sonuçları: [ranking.md](ranking.md)
 - Üç puanlayıcının ham cevapları: [results-grok.md](results-grok.md), [results-astra.md](results-astra.md), [results-claude.md](results-claude.md)
 - Pazar araştırması: [../research/stream-types.md](../research/stream-types.md)
+- Serbest incelemeler (step 8): [../step8/review-opus.md](../step8/review-opus.md), [../step8/review-grok.md](../step8/review-grok.md), [../step8/review-astra.md](../step8/review-astra.md)
+- Final analiz (sentez): [../step8/final-analiz.md](../step8/final-analiz.md)
 
 Puanlayıcıların söyledikleri ile benim görüşümü ayrı tuttum. Benim görüşüm her bölümde **"Benim görüşüm"** başlığı altında.
 
@@ -27,11 +29,10 @@ Puanlayıcıların söyledikleri ile benim görüşümü ayrı tuttum. Benim gö
 3. [Twitch sözlüğü: terimler ne demek](#3-twitch-sözlüğü-terimler-ne-demek)
 4. [Senin makinen ve telefon/hesap ihtiyacı](#4-senin-makinen-ve-telefonhesap-ihtiyacı)
 5. [Ortak altyapı: her projede aynı olan 3,5 saat](#5-ortak-altyapı-her-projede-aynı-olan-35-saat)
-6. Finalistler, puan sırasına göre:
-   1. [Minefield](#61-minefield--163-puan-risk-yüksek)
-   2. [Checkpoint](#62-checkpoint--150-puan-risk-orta)
-   3. [VAR](#63-var--150-puan-risk-orta)
-   4. [Tap on the Shoulder](#64-tap-on-the-shoulder--143-puan-risk-orta)
+6. Finalistler, önerilen sırayla:
+   1. [Minefield: önerilen seçim](#61-minefield-önerilen-seçim)
+   2. [VAR: yedek](#62-var-yedek)
+   3. [Checkpoint: ikinci yedek](#63-checkpoint-ikinci-yedek)
 7. [Karşılaştırma matrisi](#7-karşılaştırma-matrisi)
 8. [Kararsız kalırsan: ikili karşılaştırmalar](#8-kararsız-kalırsan-ikili-karşılaştırmalar)
 9. [1. gün testleri ve karar ağacı](#9-1-gün-testleri-ve-karar-ağacı)
@@ -44,20 +45,18 @@ Puanlayıcıların söyledikleri ile benim görüşümü ayrı tuttum. Benim gö
 
 ## 1. Tek bakışta özet
 
-| # | Proje | Bir cümlede | Puan (ort.) | Risk | Ana test | 12 saatlik eklemeler |
-| --- | --- | --- | --- | --- | --- | --- |
-| 1 | **Minefield** | İzleyiciler gizlice "kelime mayını" eker. Yayıncı o kelimeyi söyleyince ekranda patlar ve ekleyenin adı çıkar. | **16,3** | Yüksek | T1 (konuşmada kelime yakalama) | Fitil, mayın tarama, Bomb Squad tablosu |
-| 2= | **Checkpoint** | Yayıncı işe gömülüyken mesajlar biriktirilir. Molada yayıncı sesli cevap verir, cevap yazıya dökülür ve izleyiciye alıntı olarak gönderilir. | **15,0** | Orta | T1b (cevabı yazıya dökme) | **SSS**, cevabın klip linki, geri alma penceresi |
-| 2= | **VAR** | Chat bir an'a itiraz edince (`!var`) futboldaki VAR gibi ağır çekim tekrar, 15 saniyelik chat jürisi, karar damgası ve klip gelir. | **15,0** | Orta | T2 (OBS tekrar) | VAR beklemede, telestrator, hakem itibarı |
-| 4 | **Tap on the Shoulder** | Mikrofon kapalı ya da ses uzak gelince chat'in uyarısı masadaki telefon yüzüne yansır, chat de düzeltmeyi onaylar. | **14,3** | Orta | T2 (OBS mute/sessizlik), T4 (telefonda HTTPS) | Sakin mod, soundcheck, siyah/donmuş ekran, sorun raporu |
+| Rol | Proje | Bir cümlede | Step 7 puanı | Step 8 tercihi (Opus / Grok / Astra) | Risk | Ana test | MVP |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| **Önerilen** | **Minefield** | İzleyiciler gizlice bir desteden "kelime mayını" seçer. Yayıncı o kelimeyi söyleyince ekranda patlar ve ekleyenin adı çıkar. | **16,3** | **1 / 1 / 1** | Yüksek | T0 (eğlence) + T1 (konuşmada kelime yakalama) | ~11,25 sa |
+| Yedek | **VAR** | Chat bir an'a itiraz edince (`!var`) futboldaki VAR gibi ağır çekim tekrar, 15 saniyelik chat jürisi, karar damgası ve klip gelir. | **15,0** | 3 / 2 / 2 | Orta | T2 (OBS tekrar) | ~11 sa |
+| İkinci yedek | **Checkpoint** | Yayıncı işe gömülüyken mesajlar biriktirilir. Molada yayıncı sesli cevap verir, cevap izleyiciye alıntı olarak gider; tekrar eden sorulara bot eski cevabı verir. | **15,0** | 2 / 3 / 3 | Orta | T1b (cevabı yazıya dökme) | ~11 sa |
 
-Puan, 4 kriterin (her biri 1–5) üç puanlayıcıya göre ortalamasının toplamıdır; en fazla 20 olabilir. Puanlar eski (8,5–9,5 saatlik) kartlara göre verildi. Her projenin MVP'si artık 12 saat.
+Step 7 puanı, 4 kriterin (her biri 1–5) üç puanlayıcıya göre ortalamasının toplamıdır; en fazla 20 olabilir. Puanlar eski kartlara göre verildi; son hâller yeniden puanlanmadı.
 
 **Kısaca durum:**
-- **En yenilikçi ve en izlenesi proje Minefield.** Üç model de Innovation ve Design'a 5 verdi. Ama her şey konuşmadan kelime yakalama testine (T1) bağlı. Ayrıca "birine kelime söyletme" türü parti oyunlarından biliniyor (bkz. 6.1), bu yüzden gerçekçi Innovation beklentisi 4.
-- **Checkpoint en faydalı proje** (Impact 4/4/4). SSS ile "her yayın açık kalan araç" profili güçlendi. Puanı kısmen Claude puanlayıcısına dayanıyor.
-- **VAR en güvenli "izlemesi eğlenceli" seçenek.** Konuşma tanımaya ihtiyacı yok ve üç model ona birebir aynı puanları verdi. Zayıf yanı yenilik: parçaları zaten var.
-- **Tap faydalı ama akılda kalıcılığı zayıf.** Eklemeler kullanım sıklığını artırıyor ama Innovation'ı (3,0) değiştirmiyor.
+- **Minefield en yenilikçi ve en izlenesi proje.** Step 7'de üç model Innovation ve Design'a 5 verdi; step 8'de üçü de "bunu yapardım" dedi. Şartları: T1 senin sesinle geçmeli ve T0'da arkadaşlarla oyun eğlenceli çıkmalı. "Birine kelime söyletme" türü parti oyunlarından biliniyor, bu yüzden gerçekçi Innovation beklentisi 4.
+- **VAR en güvenli "izlemesi eğlenceli" seçenek** ve Minefield'la aynı riski (STT) taşımayan tek yedek. Zayıf yanı yenilik: parçaları zaten var.
+- **Checkpoint en faydalı proje** (Impact 4/4/4), ama videosu sakin ve farkı ince. Üç model de onu Minefield'ın arkasına koydu.
 
 ---
 
@@ -65,15 +64,15 @@ Puan, 4 kriterin (her biri 1–5) üç puanlayıcıya göre ortalamasının topl
 
 | Konu | Detay |
 | --- | --- |
-| Son teslim | **2 Kasım 2026, 14:00 PT** (Türkiye saatiyle 3 Kasım 01:00; ABD 1 Kasım’da kış saatine geçiyor, yani PST = UTC−8) |
+| Son teslim | **2 Kasım 2026, 14:00 PT** (Türkiye saatiyle 3 Kasım 01:00; ABD 1 Kasım’da kış saatine geçiyor, yani PST = UTC−8). `resources.md` kendi içinde çelişiyor, bu yüzden **hedef 2 Kasım 23:00 TSİ**. |
 | Jüri dönemi | 5–15 Kasım 2026 |
 | Ne teslim ediliyor | Kod reposu ve **3 dakikadan kısa** bir YouTube videosu. Video projenin Twitch'te çalıştığını **ve Codex'i nasıl kullandığını** göstermeli. |
-| Jüri ne yapıyor | Kurallara göre jüri projeyi denemek zorunda değil. **Sadece açıklama, görseller ve videoya bakarak puan verebilir.** Yani pratikte video her şey. |
+| Jüri ne yapıyor | Kurallara göre jüri projeyi denemek zorunda değil. **Sadece açıklama, görseller ve videoya bakarak puan verebilir.** Yani pratikte video her şey. Değerlendirmede otomatik AI analizi de kullanılabilir (rules §6). |
 | Kriterler (eşit ağırlık) | **Innovation/Idea:** ne kadar yaratıcı ve yeni, mevcut şeylerden farkı ne?<br>**Potential Impact:** yayıncılar ve toplulukları için ne kadar faydalı ya da eğlenceli?<br>**Technological Implementation:** teknik uygulama, Codex kullanımı dahil.<br>**Design:** kullanımı kolay mı, izlemesi eğlenceli mi? |
 | Finalistler | Toplam puanı en yüksek 5 proje finalist olur. |
 | **Resmi eşitlik bozma** | Eşitlikte önce **Innovation** puanına bakılır, sonra sıradaki kriterlere. |
 | Birden fazla başvuru | Serbest, ama her başvuru "unique and substantially different" olmalı; ayrı video, repo ve Codex session ID gerekir. 17,5 saatlik yapım süresiyle ikinci bir proje gerçekçi değil. |
-| Bizim kısıtlarımız | Yaklaşık 17,5 saat geliştirme (3,5 ortak + 12 MVP + 2 tampon); 1 yayıncı + 3 test hesabı; videoda ticari oyun ya da müzik yok; Twitch içeriği en fazla 24 saat tutuluyor. |
+| Bizim kısıtlarımız | Yaklaşık 17,5 saat geliştirme (3,5 ortak + ~11 MVP + kalan tampon); 1 yayıncı + 3 test hesabı; videoda ticari oyun ya da müzik yok; Twitch içeriği en fazla 24 saat tutuluyor. |
 
 **Bu kurallardan çıkan iki pratik sonuç:**
 1. **İlk 20 saniye kritik.** Jüri videoya bakıp puanlıyor ve fikri ilk saniyelerde kavramalı. Bu yüzden "Design" kriterinde ilk 20 saniyede anlaşılırlığa baktık.
@@ -120,9 +119,9 @@ Finalistlerin hiçbiri raid kullanmıyor, ama bunlar Twitch'in temel kavramları
 | **Stream marker** | Yayının zaman çizelgesine konan işaret. Sadece kanalda geçmiş yayınları saklama (VOD) açıksa çalışır. | "Mayın patladı" işareti. |
 | **VOD** | Yayının sonradan izlenebilen kaydı. | Kurulumda açılacak. |
 | **Threaded reply** | Chat'te belirli bir mesaja "yanıt" olarak gönderilen mesaj. İzleyici, kendi mesajının altında görür. Teknik olarak `reply_parent_message_id` ile yapılır; sınır 500 karakter. Mesaj AutoMod'a takılırsa `drop_reason` döner. | Checkpoint'in özü. |
-| **Whisper** | Twitch'in özel mesajı (DM). API ile göndermek için gönderenin telefon doğrulaması gerekir. | Sadece stretch hedeflerde. |
+| **Whisper** | Twitch'in özel mesajı (DM). API ile göndermek için gönderenin telefon doğrulaması gerekir. | Hiçbir finalistte kullanılmıyor (Minefield'da whisper ile ekme çıkarıldı). |
 | **AutoMod** | Twitch'in otomatik mesaj filtresi. | Klip başlıkları ve cevaplar buna takılabilir. |
-| **Stream delay (gecikme)** | İzleyicinin gördüğü görüntü gerçek zamanın 2–5+ saniye gerisinden gelir ve gecikme her izleyicide farklıdır. | VAR'ın tekrarı ve Tap'in onay döngüsü buna göre ayarlanır. |
+| **Stream delay (gecikme)** | İzleyicinin gördüğü görüntü gerçek zamanın 2–5+ saniye gerisinden gelir ve gecikme her izleyicide farklıdır. | VAR'ın tekrarı buna göre ayarlanır. Minefield'da önemsiz: overlay yerelde eklendiği için kelime ve patlama aynı miktarda gecikir. |
 | **Channel points / Bits** | İzleyicinin kazandığı puanlar / parayla alınan Twitch kredisi. | Rakip ürünler kullanıyor, biz değil. |
 
 ### OBS tarafı
@@ -130,7 +129,7 @@ Finalistlerin hiçbiri raid kullanmıyor, ama bunlar Twitch'in temel kavramları
 | Terim | Ne demek | Bizim kullanım |
 | --- | --- | --- |
 | **OBS** | Yayını hazırlayıp Twitch'e gönderen ücretsiz yayın programı. | Bütün projeler. |
-| **Browser source** | OBS'te yayının üstüne bir web sayfası koymak. "Overlay" denen grafik katmanı genelde budur. | Patlama, jüri sırası, kavanoz... |
+| **Browser source** | OBS'te yayının üstüne bir web sayfası koymak. "Overlay" denen grafik katmanı genelde budur. | Patlama, jüri sırası, çağrı kartı... |
 | **Dock** | OBS içinde yayıncının gördüğü ama yayına çıkmayan panel; bir web sayfasıdır. | Mod paneli, Checkpoint kontrolü. |
 | **obs-websocket** | OBS'i dışarıdan kod ile kontrol etme protokolü (OBS 28+ ile birlikte gelir). | Tekrar oynatma, mikrofon durumu. |
 | **Replay buffer** | OBS'in son N saniyeyi hafızada tutması; komutla dosyaya kaydedilir. | VAR'ın tekrarı. |
@@ -167,7 +166,6 @@ Finalistlerin hiçbiri raid kullanmıyor, ama bunlar Twitch'in temel kavramları
 | Proje | Telefon gerekli mi? | Kaç tane? | Neden |
 | --- | --- | --- | --- |
 | **Minefield** | Şart değil ama **arkadaş şart gibi** | Senin telefonun + **1–2 arkadaş** (kendi telefonlarından) | Kart özellikle şunu istiyor: mayın kelimelerini sen değil arkadaşların eksin. Böylece kelimeyi gerçekten bilmezsin ve demo sahnelenmiş görünmez. Arkadaşlar test hesabına telefondan giriş yapıp ekme sayfasını açar. |
-| **Tap on the Shoulder** | **Evet** | **1 yedek telefon** kamera kadrajında, masada ("telefon yüzü"). Mod butonları için ikinci bir cihaz (2. telefon ya da laptop tarayıcısı) iyi olur. | Ürünün kendisi masadaki telefon yüzü. |
 | **Checkpoint** | Hayır | — | 3 test hesabı chat simülatörüyle mesaj atar. Arkadaş gerçek soru sorarsa daha doğal görünür; SSS sahnesi için ikinci bir kişinin aynı soruyu sorması gerekir. |
 | **VAR** | Hayır | — | `!var` ve oyları simülatör ya da arkadaşlar yazar. Telestrator çizimini sen ya da mod hesabı dock'tan yaparsın. |
 
@@ -176,7 +174,7 @@ Finalistlerin hiçbiri raid kullanmıyor, ama bunlar Twitch'in temel kavramları
 - Kanal sahibi sensin; "chat için telefon doğrulaması iste" ayarını kapalı tutabilirsin.
 - Whisper (DM) ile mesaj göndermek telefon doğrulaması istiyor ama bu hiçbir projenin MVP'sinde yok, sadece stretch hedeflerde.
 
-**Kısa cevap:** Minefield, Checkpoint ve VAR için ekstra telefon gerekmiyor. Ama Minefield için **1–2 arkadaşın gerçekten katılması** demoyu çok güçlendirir. Tap seçilirse 1 yedek telefon gerekir; sende 1 telefon var, arkadaşlardan 2–3'e çıkabiliyorsun, yani yetiyor.
+**Kısa cevap:** Üç finalistin hiçbiri için ekstra telefon gerekmiyor. Ama Minefield için **1–2 arkadaşın gerçekten katılması** neredeyse şart: T0'da (29 Ekim) ve kayıtta (1 Kasım akşamı). Arkadaşlar ekme sayfasını kendi telefonlarından açar.
 
 ---
 
@@ -194,18 +192,15 @@ Hangi projeyi seçersen seç önce bu kurulur:
 
 **Codex hikâyesi:** Videoda "Codex'i nasıl kullandık" kısmı zorunlu. Chat simülatörü her projede Codex'in ortak payı; ayrıca her projenin kendine özgü bir "Codex artifact"ı var. Bunlar aşağıda her projede ayrıca yazılı.
 
-**Bütçe hesabı (28 Ekim'de güncellendi):** 3,5 saat ortak altyapı + 12 saat proje MVP'si + en az 2 saat tampon = **yaklaşık 17,5 saat**. Demo oyunu gerekirse yaklaşık 1 saati tampondan gider.
+**Bütçe hesabı (final analizden sonra):** 3,5 saat ortak altyapı + ~11 saat proje MVP'si + kalan tampon (~3 saat) = **yaklaşık 17,5 saat**. Astra'nın uyarısı: 3,5 saatlik ortak altyapı Twitch'e yeni biri için iyimser. Seçilen projenin ihtiyacı olmayan parçaları baştan kurma; örneğin Minefield'ın ilk patlaması için obs-websocket gerekmiyor.
 
-**12 saatlik eklemeler nasıl seçildi:** Her ekleme şu üç şarttan en az birini karşılamalı:
-1. O projenin puanlayıcıların söylediği zayıflığını kapatmalı.
-2. 3 dakikalık videoya yeni ve anlaşılır bir sahne eklemeli.
-3. Aracı "bir kez denenen oyuncak" olmaktan çıkarıp "her yayında açık kalan araç" yapmalı (Impact).
-
-Sadece cila olan, videoda görünmeyen ya da yeni bir dış bağımlılık getiren eklemeler alınmadı.
+**MVP'ler nasıl son hâline geldi:** Önce her projeye 12 saate kadar eklemeler önerdim. Sonra üç model bu eklemeleri serbestçe inceledi. Astra'nın genel uyarısı belirleyici oldu: *"12 saatlik MVP alanını doldurma hedefi... son eklenen özellikler tamamlanmış ürün hissinden çok yeni hata yüzeyleri getiriyor."* Bu yüzden eklemelerin bir kısmı kesildi, MVP'ler ~11 saate indi ve artan süre tampona kaldı. Ayrıntılar her projenin "Önceki plandan ne değişti" tablosunda.
 
 ---
 
-## 6.1 Minefield — 16,3 puan, risk Yüksek
+## 6.1 Minefield: önerilen seçim
+
+Puan (step 7): **16,3**, risk Yüksek. Step 8'de üç modelin de birinci tercihi.
 
 ### Ne?
 İzleyiciler gizlice "kelime mayınları" eker. Yayıncı sıradan konuşurken o kelimeyi söylerse ekranda patlama olur ve mayını ekleyenin adı çıkar.
@@ -213,96 +208,120 @@ Sadece cila olan, videoda görünmeyen ya da yeni bir dış bağımlılık getir
 ### Somut örnek
 > Sen yayında öğle yemeğinden bahsediyorsun. Bo 6 dakika önce gizlice "PINEAPPLE" kelimesini ekmiş. Chat'te Bo soruyor: "worst pizza topping?" Sen "pineapple on pizza is—" derken **BOOM**: ekran sallanır, afiş çıkar: *"Bo's mine: PINEAPPLE (planted 6 min ago)"*. Bo chat'e "GOT HIM 😈" yazar.
 
-### Nasıl çalışır (adım adım)
-1. İzleyici `!mine` yazar. Bot ona ekme sayfasının linkini verir; sayfa Twitch girişi istiyor. İzleyici kelimeyi orada yazar ve kimse görmez.
-2. Overlay'de mayın çipleri görünür: sadece sahiplerin adları var, kelimeler yok. Kurallar:
-   - izleyici başına aynı anda 1 mayın;
-   - en az 4 harf;
-   - en yaygın 1000 kelimeden biri olamaz;
-   - yasaklı kelime listesi var.
-3. İzleyiciler sohbeti kendi kelimelerine doğru çekmeye çalışır; asıl oyun bu "tuzak kurma" kısmı.
-4. Yerel STT yayıncının mikrofonunu dinler. faster-whisper kayan yaklaşık 2 saniyelik pencerelerle çalışır; VAD açıktır, aktif mayınlar `hotwords` olarak verilir ve normalize edilmiş metinde tam kelime eşleşmesi aranır (çoğullar da sayılır).
-5. **Fitil (12 saatlik ekleme):** Eşleşmenin güveni yüksekse anında patlama, afiş ve stream marker gelir. Güven orta seviyedeyse ekranda yanan bir fitil ve 3 saniyelik tık-tık sesi çıkar, sonra patlar; mod ya da yayıncı bu sırada fitili kesebilir.
-6. Patlamadan sonra mod 10 saniye içinde **DEFUSE** edebilir: geri sarma animasyonu ve "false alarm" damgası çıkar, yanlış tanıma bir şakaya dönüşür. DEFUSE edilmezse 30 saniyelik başlıklı klip açılır.
-7. **Mayın tarama (12 saatlik ekleme):** Yayıncının yayın başına 3 tarama hakkı var. Bir tuzaktan şüphelenince kelimeyi **söylemeden** dock'a yazar (söylerse patlar). Kelime canlı bir mayınla eşleşirse mayın "SWEPT" olur ve ekleyenin çipi söner. Yanlışsa tarama hakkı gider.
-8. Yayın sonunda patlamayan mayınlar "dud" olarak açılır: *"Cy's mine 'GIRAFFE' never went off"*. Altında **Bomb Squad tablosu (12 saatlik ekleme)** görünür: en çok patlatan izleyici, en uzun yaşayan mayın, yayıncının tarama isabeti. Tablo yayınlar arasında saklanır.
+### Nasıl çalışır (son hâli)
+1. İzleyici `!mine` yazar. Bot ona ekme sayfasının linkini verir. Sayfa Twitch girişi ister (hiçbir izin istemeyen, sadece kimlik doğrulayan bir giriş; sayfada "We only see your Twitch name" yazar).
+2. İzleyici kelimesini **yaklaşık 150 kelimelik bir desteden** seçer: pineapple, giraffe, spaghetti, keyboard gibi somut, komik isimler. Kimse seçimi görmez. Kurallar:
+   - izleyici başına aynı anda 1 mayın, toplamda en fazla **4 canlı mayın**;
+   - aynı kelime iki kişiye verilmez;
+   - mayın eklendikten **30 saniye sonra** aktif olur ("kurulma" süresi).
+3. Overlay'de mayın çipleri görünür: sadece sahiplerin adları, kelimeler yok.
+4. İzleyiciler sohbeti kendi kelimelerine doğru çekmeye çalışır. Asıl oyun bu "tuzak kurma" kısmı.
+5. Yerel STT yayıncının mikrofonunu dinler:
+   - VAD bir konuşma parçası (sözce) bitince onu keser, faster-whisper `small.en` o parçayı **bir kez** yazıya döker.
+   - Metinde canlı bir mayın kelimesi varsa, aynı ses parçası **hotword'süz ikinci bir geçişle** doğrulanır.
+   - Transkript sadece mayın kelimelerinden ibaretse ya da sesin enerjisi düşükse patlama olmaz (hayalet kelime koruması).
+6. **Güvene göre iki aşama:**
+   - **Yüksek güven** (iki geçiş de kelimeyi buldu): anında patlama, afiş, stream marker.
+   - **Orta güven** (sadece hotword'lü geçiş buldu): ekranda en fazla 2 saniyelik bir **fitil** yanar, sonra patlar. Mod ya da yayıncı bu sırada fitili kesebilir.
+7. Patlamadan sonra mod 10 saniye içinde **DEFUSE** edebilir: geri sarma animasyonu ve "false alarm" damgası çıkar. DEFUSE edilmezse 30 saniyelik başlıklı klip açılır.
+8. Yayın sonunda patlamayan mayınlar "dud" olarak açılır: *"Cy's mine 'GIRAFFE' never went off"*. Altında sadece **o yayına ait** birkaç sayaç görünür (kaç patlama, en hızlı patlayan mayın). Yayınlar arası hiçbir şey saklanmaz.
+9. **"Konuşmayı yaz" modu:** Dock'ta bir metin kutusu; yazılan cümle STT'den geliyormuş gibi işlenir. STT'siz test için ve kayıt sırasında STT tökezlerse sigorta olarak.
 
 ### 3 dakikalık video akışı
 | Zaman | Ne oluyor |
 | --- | --- |
-| 0:00 | Hook: öğle yemeği sohbeti, "pineapple" BOOM, afiş, Bo'nun tuzak sorusuna geri dönüş. |
-| 0:20 | Nasıl çalışır: `!mine`, ekme sayfası, çipler, kurallar. |
-| 0:50 | İkinci tur: iki izleyici tuzak kurar. Yayıncı birinden şüphelenir, kelimeyi söylememek için dock'a yazar: "SWEPT". Diğeri tutar: BOOM. |
-| 1:25 | Belirsiz bir tanıma: fitil yanar, tık-tık, mod keser, "false alarm". |
-| 1:45 | Yayın sonunda dud'ların açılması ve Bomb Squad tablosu. |
-| 2:00 | Kaputun altı: yerel STT, hiçbir şey kaydedilmiyor; doğruluk harness'inden sayılar. |
-| 2:30 | Codex artifact, kapanış. |
+| 0:00 | Soğuk açılış: öğle yemeği sohbeti, "pineapple" BOOM, afiş, chip'te Bo'nun adı. |
+| 0:08 | Başlık kartı: "Chat plants secret words. Say one on stream, it explodes." |
+| 0:12 | Arkadaşın telefonundan ekme sayfası: desteden kelime seçimi; kelimenin gizli kaldığı görünüyor. |
+| 0:35 | İkinci tur: iki arkadaş tuzak kurar; biri tutar (BOOM), biri tutmaz. |
+| 1:00 | Belirsiz bir tanıma: fitil yanar, mod keser, "false alarm". Aksilik gag'e döner. |
+| 1:25 | Yayın sonu: dud'lar açılır ("Cy'ın 'giraffe'ı hiç patlamadı"). |
+| 1:45 | Kaputun altı: yerel STT, ses kaydedilmiyor; harness tablosu ~10 sn ekranda (isabet, yanlış alarm, gecikme). |
+| 2:10 | Codex bölümü (20–30 sn): harness'in yakaladığı somut bir hata ve düzeltmesi. |
+| 2:40 | Kapanış. |
+
+**Not:** Birkaç tur kaydet, en temiz patlamayı başa koy. Kelimeleri gerçekten arkadaşların seçsin; sen bilme.
 
 ### Teknik detay
 - **Mimari:**
-  - **STT süreci (Windows'ta Python):** mikrofon → VAD → faster-whisper (GPU) → metin.
-  - **Eşleşme:** metin normalize edilir (küçük harf, noktalama silinir, çoğul eki atılır) ve aktif mayınlarla tam kelime olarak karşılaştırılır.
-  - **Tekrar önleme:** pencereler örtüştüğü için aynı söyleyiş iki kez patlamamalı.
-  - **Patlama:** FastAPI → WebSocket → OBS overlay.
+  - **STT süreci (Windows'ta yerel Python):** mikrofon → VAD (sözce sınırı) → faster-whisper `small.en` (GPU) → aday eşleşmede ikinci geçiş → eşleşme olayı.
+  - **Köprü:** Windows süreci eşleşmeyi WSL'deki FastAPI'ye HTTP POST ile gönderir.
+  - **Eşleşme:** metin normalize edilir (küçük harf, noktalama silinir, çoğul eki atılır) ve canlı mayınlarla tam kelime olarak karşılaştırılır. Aynı sözce iki kez patlamaz.
+  - **Patlama:** FastAPI → WebSocket → OBS overlay. Minefield'ın ilk patlaması için obs-websocket gerekmez.
 - **Twitch:**
   - EventSub `channel.chat.message`, Send Chat Message;
   - Create Stream Marker (`channel:manage:broadcast`, VOD açık olmalı);
-  - Create Clip (`clips:edit`);
-  - ekme sayfası için Twitch girişi ve herkese açık URL (cloudflared ya da ngrok tüneli; bilgisayar uykuya geçerse tünel kapanır).
+  - Create Clip (`clips:edit`, `title`, `duration=30`). Klip asenkron ve hazır olması bir dakikayı bulabilir; T5'te klibi oynatıp patlamanın içinde olduğunu doğrula.
+  - Ekme sayfası için Twitch girişi ve herkese açık URL (`cloudflared` quick tunnel; bilgisayar uykuya geçerse tünel kapanır).
+- **Gecikme hedefi:** medyan ≤1,5 sn, en kötü durumda ≤3 sn. Overlay yayına yerelde eklendiği için yayın gecikmesi kelimeyi ve patlamayı aynı miktarda kaydırır; yalnızca STT gecikmesi önemli.
 - **Saatler:**
 
 | Parça | Saat |
 | --- | --- |
-| Ekme sayfası + Twitch girişi + herkese açık URL | 1,5 |
-| STT kelime yakalayıcı + eşleşme kuralları | 2,5 |
-| Doğruluk harness'i | 1 |
+| Ekme sayfası: scope'suz Twitch girişi + cloudflared + desteden seçim | 1,5 |
+| STT: sözce bazlı VAD + `small.en` + ikinci geçiş + Windows → WSL köprüsü | 2,5 |
+| Kelime destesi (~150 isim, harness'te test edilmiş) + kurallar | 0,5 |
+| "Konuşmayı yaz" dock modu | 0,25 |
+| Doğruluk harness'i (Codex artifact) | 1 |
 | Overlay: çipler, patlama, afiş | 2 |
-| Marker, klip, DEFUSE, dud'lar | 1,5 |
+| Marker, klip, DEFUSE, dud'lar + yayın içi sayaçlar | 1,5 |
+| Fitil (sadece orta güven, ≤2 sn) | 1 |
 | Cila | 1 |
-| *Eski MVP toplamı* | *9,5* |
-| **+ Fitil:** güven skoruna göre iki aşamalı patlama, eşiği harness'le ayarlama | 1 |
-| **+ Mayın tarama:** dock'ta yazma alanı, 3 hak, SWEPT animasyonu | 1 |
-| **+ Bomb Squad tablosu:** SQLite, yayın sonu ekranı | 0,5 |
-| **Yeni MVP toplamı** | **12** |
-| Bilerek alınmayanlar: whisper ile ekme 0,5 (sadece T4 başarısız olursa yedek; fısıltı için telefon doğrulaması gerekebilir, doğrulanmadı); "Call it" modu 1,5 | — |
+| **MVP toplamı** | **~11,25** |
+| Zaman kalırsa sırayla: `!dud` chat jürisi (fitil yanarken chat 10 sn oy verir) 0,5; mayın tarama 1 | — |
+| **Çıkarıldı:** serbest kelime girişi, yayınlar arası Bomb Squad tablosu, whisper ile ekme, "Call it" modu | — |
 
-- **Codex artifact:** Doğruluk harness'i. Kaydedilmiş konuşmaları yakalayıcıdan geçirir; hit, yanlış alarm ve gecikmeyi raporlar. Videoda bu sayıları göstermek teknik güven verir.
+- **Codex artifact:** Doğruluk harness'i. Senin sesinle kaydedilmiş konuşmaları (deste kelimeleri cümle içinde, benzer sesli kelimeler, sessizlik, doğal duraksamalar, OBS açıkken normal konuşma) yakalayıcıdan geçirir; isabet, yanlış alarm ve gecikmeyi raporlar. Fitil eşiği de bu verilerle ayarlanır.
+
+### Önceki plandan ne değişti (ve neden)
+| Önceki | Son hâli | Kim önerdi |
+| --- | --- | --- |
+| Serbest kelime + "ilk 1000 kelime yasak" + blocklist | ~150 isimlik deste | Grok, Astra. Grok: "İlk 1000 kelime yasak, tam da Whisper'ın kaçırdığı kelimeleri seçtiriyor." Deste trol kelime sorununu da kapatıyor. |
+| ~2 sn'lik kayan pencere + hotwords | Sözce bazlı tek yazım + hotword'süz ikinci geçiş + ≤4 canlı mayın | Grok (sözce, ≤4 mayın), Opus (ikinci geçiş). Üçü de `hotwords`'ün hayalet kelime riskini vurguladı. |
+| Fitil 3 sn | Sadece orta güvende, ≤2 sn | Opus ve Grok fitili istedi; Astra gecikme eklediği için karşıydı. Kısa ve sadece belirsiz durumlarda olunca ikisi de karşılanıyor. |
+| Mayın tarama MVP'de | Zaman kalırsa | Grok: koyma. Astra: ikinci sürüm. Opus: zaman kalırsa. |
+| Bomb Squad (yayınlar arası) | Sadece yayın içi sayaçlar | Üçü de. Yayınlar arası kayıt "24 saatten uzun veri tutma" kuralımıza aykırı ve 3 dakikalık videoda görünmüyor. |
+| Gecikme ≤3 sn | Medyan ≤1,5 sn | Opus, Astra: "Espri, kelimeden hemen sonra gelen patlamada." |
+| — | "Konuşmayı yaz" modu | Opus. STT'siz test ve kayıt sigortası. |
+| — | Kurulma süresi, aynı kelime iki kişiye verilmez | Opus, Astra. |
 
 ### Rakipler ve fark
 | Rakip | Ne yapıyor | Fark |
 | --- | --- | --- |
 | **OK Gamers** (TwitchCon Hackathon 2019 **büyük ödülü**) | Yayıncı "Ok gamers" + soru deyince STT chat anketi başlatır. | Kelimeyi yayıncı seçiyor. |
-| Streamer.bot Voice Control (yaygın) | Yayıncının ayarladığı cümleler aksiyon tetikler. | Kelimeyi yayıncı seçiyor. |
+| Streamer.bot Voice Control (yaygın), Stream Voice Triggers | Yayıncının ayarladığı cümleler aksiyon tetikler. | Kelimeyi yayıncı seçiyor. |
 | Konuşma tanımalı küfür kavanozları (Blabla Radar, obs-popup-overlay) | Listedeki kelimeleri sayar. | Liste yayıncının, oyun yok. |
-| Gizli kelime chat oyunları (AnkhbotSecretWord), Taboo tarzı oyunlar (Wordeous), yayın bingo'su | — | Hepsi yazılı chat'te oynanıyor. |
+| Gizli kelime chat oyunları (AnkhbotSecretWord, RobinSystem Word Guess, Chatexto), Taboo tarzı oyunlar (Wordeous), yayın bingo'su | — | Hepsi yazılı chat'te oynanıyor. |
+| [Heads Up! Phones Down](https://support.aspyr.com/hc/en-us/articles/22586269678093-Heads-Up-Phones-Down-Edition-Twitch-Extension-Overview) (Twitch eklentisi) | Kelime yayıncıdan gizleniyor, izleyiciler chat'e ipucu yazıyor. | Kelimeyi oyun seçiyor, yayıncının konuşması dinlenmiyor. |
+| [Don't Get Got](https://draughtslondon.com/ultimate-guide-to-the-dont-get-got-game/) (parti oyunu) | Gizli görev: "bir oyuncuya 'banana' dedirt". | Yüz yüze; Twitch yok, otomatik hakem yok. |
 
-**Fark (üç araştırmacı ve link kontrolü hemfikir):** Bulunan bütün konuşma tetikleyicileri yayıncının seçtiği kelimeleri kullanıyor; izleyicinin gizli kelime seçtiği bütün oyunlar ise yazılı chat'te geçiyor. **İzleyicinin gizlice seçtiği kelimeyi yayıncının kendi konuşmasının patlatması hiçbir yerde bulunamadı.**
+**Fark:** Bulunan bütün konuşma tetikleyicilerinde kelimeyi yayıncı seçiyor; izleyicinin gizli kelime seçtiği bütün oyunlar ise yazılı chat'te geçiyor. Step 8'de üç model de web'de aradı, daha yakın bir şey bulamadı.
 
-Önemli bir not: 2019'da aynı yarışmanın büyük ödülünü bir STT + chat projesi (OK Gamers) kazanmış. Bu, jürinin bu tür fikirlere açık olduğunu gösteriyor. Ama "OK Gamers'ın devamı" gibi algılanmamak için videoda farkı açıkça göstermek gerekir.
+**Ama tür biliniyor.** "Birine kelime söyletmek" bir parti oyunu fikri. Bunu saklama, sahiplen: *"Inspired by party games like Don't Get Got: a whole chat against one live streamer, refereed automatically by local speech recognition."* Astra: "Yeni bir oyun türü diye sunmazdım. Farkı **tetikleyiciyi gizlice izleyicinin seçmesi** üzerinden anlatın." Gerçekçi Innovation beklentisi 4; fark videoda görünmezse 3.
 
-**Türün kendisi biliniyor (28 Ekim'de ek arama yapıldı; puanlayıcılar bunu görmedi).** "Birine bir kelimeyi söyletmek" eski bir parti oyunu fikri. [Don't Get Got](https://draughtslondon.com/ultimate-guide-to-the-dont-get-got-game/) (Big Potato) adlı oyunun gizli görevlerinden biri "bir oyuncuya 'banana' dedirt". Twitch'te en yakın örnek [Heads Up! Phones Down](https://support.aspyr.com/hc/en-us/articles/22586269678093-Heads-Up-Phones-Down-Edition-Twitch-Extension-Overview) eklentisi: kelime yayıncıdan gizleniyor, izleyiciler chat'e ipucu yazıyor. Ama burada kelimeyi oyun seçiyor ve yayıncının konuşması dinlenmiyor. Bu yüzden bir jüri "Don't Get Got'un Twitch hâli" ya da "STT ile anahtar kelime tetikleme" diyebilir. Bizim puanlayıcılar Innovation'a 5 verdi, ama yalnızca Twitch araçlarındaki kanıtı gördüler. Gerçekçi beklenti 4. Fark videoda görünmezse 3 de verilebilir.
+OK Gamers'ın 2019'da aynı yarışmanın büyük ödülünü kazanması, jürinin STT + chat fikirlerine açık olduğunu gösteriyor. Ama "OK Gamers'ın devamı" gibi algılanmamak için fark videoda açık olmalı.
 
 ### Talep ve karşı sinyaller
-- **Doğrudan talep yok.** Üç araştırmacı da bu oyunu isteyen birini bulamadı.
+- **Doğrudan talep yok.** Üç araştırmacı da bu oyunu isteyen birini bulamadı. Astra: "Eğlence ürünlerinde doğrudan talep bulunamaması tek başına olumsuz değil; birkaç kişinin gerçekten oynamak istemesi bir forum talebinden daha iyi gösterir."
 - **Dolaylı talep:** yayıncılar elle küfür kavanozu ve bingo kartı yürütüyor; iki Reddit başlığında "mikrofonda kelime algılayıp efekt tetikleme" isteniyor (doğrulanmadı).
-- **Karşı sinyal:** troller yayıncılara zaten bir şeyler söyletmeye çalışıyor (Dexerto 2019, doğrulandı). Bu oyun bunu ödüllendirdiği için yasaklı kelime listesi şart.
-- **Teknik karşı sinyal:** faster-whisper `hotwords` sessizlikte kelime uydurabiliyor (GitHub issue 1356, doğrulandı); çözümü VAD'ı açık tutmak.
+- **Karşı sinyal:** troller yayıncılara zaten bir şeyler söyletmeye çalışıyor (Dexerto 2019, doğrulandı). Deste bunu büyük ölçüde kapatıyor.
+- **Teknik karşı sinyal:** faster-whisper `hotwords` sessizlikte kelime uydurabiliyor (issue 1356, PR 731). Sözce bazlı tanıma, ikinci geçiş ve ≤4 mayın bunun için.
 
 ### Kitle
-Yayıncının konuştuğu her yayın: Just Chatting (%14,2), IRL (%1,8) ve konuşkan oyun yayınları. Twitch'in en büyük kategorisi doğrudan hedefte. Ama oyunun gerçekten eğlenceli olup olmadığı test edilmedi.
+Yayıncının konuştuğu her yayın: Just Chatting (%14,2), IRL (%1,8) ve konuşkan oyun yayınları. Oyun gerekmediği için demo oyunu da gerekmiyor.
 
 ### Riskler, test ve yedek plan
 | Risk | Ne kadar ciddi | Önlem |
 | --- | --- | --- |
-| **STT doğal konuşmada kelimeyi kaçırır ya da olmayan kelimeyi yakalar** | **Proje bunun üzerine kurulu.** | T1: en az %80 yakalama, 10 dakikada en fazla 1 yanlış alarm, en fazla 3 saniye gecikme, kare düşmesi yok. |
-| Aksanlı İngilizce | Orta | T1'i kendi sesinle yap; gerekirse `medium.en` ya da `large-v3-turbo` (4070'te sığar). |
-| Gizli ekme sayfası | Düşük–orta | T4: Twitch girişi, herkese açık URL. |
-| Oyun gerçekten eğlenceli mi? | Orta | 3 kişiyle 20 dakikalık deneme. |
-| Trol kelimeler | Düşük | Yasaklı kelime listesi. |
-| "Bir jüri bunu Don't Get Got'un Twitch hâli sayar" | Orta | Benzerliği açıklamada sahiplen; mayın tarama oyunu iki taraflı yapar; ilk 20 saniyede "izleyici seçti + sohbetle tuzak + kuranın adı" görünsün. |
-| **Yedek plan** | **Yok** | Kart bunu açıkça söylüyor. Fitil ve DEFUSE yanlış alarmları yumuşatır: belirsiz tanıma yanlış patlama yerine gerilim olarak görünür. Ama çok sık hata varsa bunlar da kurtarmaz. |
+| **STT kelimeyi kaçırır ya da olmayan kelimeyi yakalar** | **Proje bunun üzerine kurulu.** | T1 (yenilenmiş): senin sesin, deste kelimeleri cümle içinde; ≥%80 isabet, 10 dakikada ≤1 yanlış alarm, medyan gecikme ≤1,5 sn. Sözce bazlı tanıma + ikinci geçiş + fitil + DEFUSE. |
+| **Oyun eğlenceli değil** | Yüksek, henüz ölçülmedi | **T0:** Discord'da kodsuz 20 dakika. Ölçüt: arkadaşlar ikinci tur istiyor mu? |
+| Aksanlı İngilizce | Orta | T1'i kendi sesinle yap; deste kelimeleri harness'te senin sesinle test edilir. Gerekirse `medium.en`. |
+| Ekme sayfası | Düşük–orta | T4. Kalırsa: arkadaşlar kelimelerini Discord'dan mod rolündeki üçüncü kişiye iletir, o da dock'a girer. Sen yine bilmezsin. |
+| "Don't Get Got'un Twitch hâli" algısı | Orta | Benzerliği sahiplen; ilk 20 saniyede "izleyici gizlice seçti + sohbetle tuzak + kuranın adı" görünsün. |
+| Arkadaşların zamanı | Orta | Darboğaz koddan çok insanlar. Arkadaşları şimdiden bağla: 29 Ekim T0, 1 Kasım akşamı kayıt. |
+| **Yedek plan** | — | Proje içinde yedek yok. Testler kötü çıkarsa **VAR**'a geç (bkz. karar ağacı). |
 
-### Puanlar ve modellerin söyledikleri
+### Step 7: puanlar ve modellerin söyledikleri
 | | Innovation | Impact | Tech | Design | Toplam | Risk | Sıra |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | Grok | 5 | 3 | 3 | 5 | 16 | Yüksek | **1** |
@@ -310,218 +329,91 @@ Yayıncının konuştuğu her yayın: Just Chatting (%14,2), IRL (%1,8) ve konu�
 | Claude | 5 | 3 | 4 | 5 | 17 | Orta | **1** |
 | **Ortalama** | **5,0** | **3,0** | **3,3** | **5,0** | **16,3** | | |
 
-- **Grok:** "Aramanın gerçekten kaçırdığı döngü bu." Ama "bir kaçırma ya da sahte bir patlama, ürünün ta kendisi". Yedek yakalayıcı olmamasını en büyük risk olarak görüyor.
-- **Astra:** DEFUSE'un "sık algılama hatalarını telafi etmediğini" söylüyor. İzleyiciler hatayı yakalayıcıya değil mayını ekleyene yormalı; bu güven kurulmazsa şaka çöker. Konuşma tanıma test edilmediği için onu Hint Jar'ın arkasına, 2. sıraya koydu.
-- **Claude:** Tech'e 4 verdi: lokal keyword spotting teknik olarak ilginç ve harness güçlü bir Codex örneği. Riski "Orta" gördü çünkü DEFUSE ve yasaklı liste yanlış tanımaları yumuşatıyor.
-- **Üçünün ortak görüşü:** Setteki en yeni fikir ve ilk 20 saniyede en izlenesi. Kartın kaderi T1'e bağlı.
+- **Grok:** "Aramanın gerçekten kaçırdığı döngü bu." Ama "bir kaçırma ya da sahte bir patlama, ürünün ta kendisi".
+- **Astra:** DEFUSE'un "sık algılama hatalarını telafi etmediğini" söyledi. Konuşma tanıma test edilmediği için 2. sıraya koydu.
+- **Claude:** Tech'e 4 verdi: lokal keyword spotting teknik olarak ilginç ve harness güçlü bir Codex örneği.
+
+### Step 8: serbest incelemeler
+- **Opus: "Seçimim: Minefield."** Şartları T1 ve T0. Dördün en yenisi; ML gücün projenin kalbinde; ölçülmüş bir doğruluk tablosu "how well is it built" sorusuna "kimsenin itiraz edemeyeceği bir cevap". Fitil "en iyi ek".
+- **Grok: "En iyi yarışma fikri bu."** Tek cümlede anlatılıyor, patlama üç saniyede izleniyor. "Kesilemez üç şey: kelimesiz chip, gerçekten söylenmiş bir kelimede gerçek patlama, eken kişinin adı. Gerisi ikinci dakika."
+- **Astra: "Minefield'i seçerdim."** "İzleyici yayındaki olayın gerçek sebebi oluyor... İki arkadaşla bile çekişme, sürpriz ve sahiplenme oluşabilir." Ama: "On dakikada bir yanlış patlama bile saatte altı tartışmalı sonuç demek."
 
 ### Benim görüşüm
-- **Avantaj:** Yarışmayı **kazanabilecek** tek proje bu bence; diğerleri daha çok "finale kalır" profilinde. İnsan bunu bir kez görünce anlatmak ister ("chat bana kelime mayını döşedi!").
-- **ML altyapın burada avantaj.** VAD, hotword, eşik ayarı, değerlendirme harness'i senin uzmanlık alanın.
-- **4070 hız sorununu çözüyor.** Asıl soru, 10 dakikalık doğal konuşmada 1'den az yanlış alarm.
-- **12 saatlik eklemeler neyi değiştiriyor:**
-  - **Fitil**, Grok'un "sahte patlama ürünün kendisi" eleştirisine cevap. Senin ML tarafın burada parlıyor: güven skoruna göre karar vermek bir eşik ayarı problemi.
-  - **Mayın tarama**, Innovation riskine cevap: yayıncıya oyunda bir rol verir. Videoda "söyleyemediği için yazıyor" anı kendi başına komik.
-  - **Bomb Squad**, Impact'i destekler: her yayın yeniden oynanır.
-- **Dezavantaj:** T1 kötü çıkarsa kurtaracak bir şey yok. Eklemeler hatayı yumuşatır, ama tanıma kötüyse oyun yine çöker.
-- **Bunu seçersen:** 1. günün ilk işi T1. Sonuç kötüyse vakit kaybetmeden B planına geç. T1'de güven skorlarını da kaydet: fitil eşiği bu verilerle ayarlanır.
+- **Yarışmayı kazanabilecek tek proje bu.** Altı değerlendirmenin altısında da birinci ya da ikinci; step 8'de üç model de "bunu yapardım" dedi.
+- **Sentezle risk azaldı ama gitmedi.** Deste ve sözce bazlı tanıma, tanıma işini çok kolaylaştırıyor: rastgele bir kelimeyi değil, önceden test edilmiş 150 kelimeden birini arıyoruz. Yine de T1 senin sesinle geçmeli.
+- **En büyük açık soru artık eğlence.** T0 bunu 20 dakikada, kod yazmadan ölçüyor. Arkadaşlar ikinci tur istemiyorsa Minefield'ı zorlama.
+- **Destenin bedeli:** "İzleyici her şeyi seçebilir" hissi biraz azalıyor. Ama gizlilik ve tuzak kurma, yani oyunun özü aynı kalıyor.
 
 ---
 
-## 6.2 Checkpoint — 15,0 puan, risk Orta
+## 6.2 VAR: yedek
 
-### Ne?
-Yayıncı çizim, kodlama ya da oyun gibi bir işe gömülmüşken chat'i görmezden gelmiş olmaz: mesajlar "kayıt kristali" olarak birikir. "Checkpoint" anında yayıncı mesajları **sesli** cevaplar; söylediği kelimeler karta yazılır ve her izleyici kendi mesajının altında yayıncının **gerçek sözlerini alıntılayan** bir yanıt alır.
-
-Cevabı herkes görür: yayını izleyen herkes cevabı duyar ve kartta okur. Chat'teki alıntılı yanıt da herkese açık normal bir chat mesajıdır, fısıltı (whisper) değildir. Bu yanıtın tek farkı, soran kişiyi etiketlemesi ve onun mesajının altına bağlanmasıdır.
-
-**SSS (12 saatlik ekleme, senin kararın):** Aynı soru aynı yayında tekrar gelirse yayıncı ikinci kez cevaplamaz; bot eski cevabı alıntılar.
-
-### Somut örnek
-> Sen mürekkeple çizim yapıyorsun, chat'e bakmıyorsun. 6 kristal birikiyor. Checkpoint'e basıyorsun. Ekranda kart: *"@ana (first time!): what pen is that?"* Elin hâlâ çiziyor ve diyorsun ki: "Ana, it's a Micron 05, it doesn't bleed." Kelimeler karta yazılıyor; 2 saniye sessizlik olunca ✓ ile kart uçuyor. 3 saniye sonra Ana'nın chat'inde, kendi mesajının altında: *"✓ answered on stream: 'It's a Micron 05, it doesn't bleed' (12:04)"*. Ana o sırada yayından çıkmış olsa bile geri döndüğünde cevabı görüyor; yanıttaki klip linkinden cevabı izleyebiliyor da.
->
-> 20 dakika sonra Mehmet yayına geliyor ve "what pen is that?" yazıyor. Sen çizmeye devam ediyorsun. 1 saniye sonra bot Mehmet'in mesajına yanıt veriyor: *"📌 Answered earlier (12:04): 'It's a Micron 05, it doesn't bleed' ▶ clip · type !ask to ask anyway"*.
-
-### Nasıl çalışır (adım adım)
-1. Yayıncı bir kısayol tuşuna basar ya da mod `!focus` yazar. Köşede bir rozet çıkar: "Focus: messages saved 0".
-2. Her normal izleyici mesajı, izleyicinin renginde bir kristal olarak düşer. Komutlar ve bot satırları filtrelenir. Mesajın id'si, yazarı, metni ve "ilk kez yazıyor" bilgisi saklanır.
-3. Yayıncı "checkpoint"e basar. Alt kısımda bir "çağrı kartı" belirir: önce sorular, sonra ilk kez yazanlar.
-4. Yayıncı işini bırakmadan sesli cevap verir. Yerel STT kelimeleri söylendikçe karta yazar.
-5. Yaklaşık 2 saniyelik sessizlik ya da "next" demek kartı kapatır: ✓ damgası basılır, kart uçar. 3 saniye sonra bot izleyicinin mesajına alıntılı bir yanıt gönderir.
-   - **Geri alma penceresi (12 saatlik ekleme):** Bu 3 saniye dock'ta görünür bir sayaç olur. Yayıncı alıntının yanlış olduğunu görürse "undo" tuşuna basar ve makbuz alıntısız düz makbuza döner.
-   - Metin boş ya da güven skoru düşükse alıntı atlanır: "✓ answered on stream (12:04)". Böylece yanlış duyulmuş bir cümle izleyiciye "yayıncı böyle dedi" diye gitmez.
-   - **Klip linki (12 saatlik ekleme):** Kart kapanınca bir klip açılır, linki makbuza eklenir. Yayından çıkmış izleyici cevabı sadece okumaz, izler de.
-   - "Skip" kartı yanıt göndermeden kapatır.
-6. Sonunda bir özet görünür: "Checkpoint cleared: 4 answered, 4 receipts sent, 2 auto-answered".
-7. **SSS (12 saatlik ekleme):**
-   - Her cevaplanan kart saklanır: soru, kesinleşmiş transkript, güven skoru, zaman, klip linki.
-   - Yeni bir chat mesajı soru gibiyse (`?` içeriyor ya da soru kalıbıyla başlıyor), o yayında cevaplanmış sorularla karşılaştırılır.
-   - Eşleşme varsa ve eski cevabın güveni yüksekse bot thread içinde eski cevabı alıntılar. Mesaj "yayıncı böyle dedi" diye değil, "daha önce şöyle cevaplandı" diye yazılır; `!ask` ile izleyici soruyu yine de kuyruğa sokabilir.
-   - Focus modundaysa bu mesaj kristal olmaz; dock'ta "auto-answered" sayacına eklenir.
-
-### 3 dakikalık video akışı
-| Zaman | Ne oluyor |
-| --- | --- |
-| 0:00 | Hook: mürekkep çizimi hızlandırılmış, 6 kristal, checkpoint, Ana'nın sorusu, sesli cevap karta yazılıyor, ✓ ve split-screen'de Ana'nın chat'indeki alıntı. 0:19'da sıradaki kart. |
-| 0:20 | İki kart daha: biri "skip", biri düşük güvenle düz makbuz. |
-| 0:50 | **SSS:** Mehmet aynı soruyu soruyor, bot 1 saniyede eski cevabı ve klibi alıntılıyor. Yayıncı başını bile kaldırmıyor. |
-| 1:15 | Yayından "ayrılmış" bir izleyici sonra chat'i açıp cevabı buluyor, klibi izliyor. |
-| 1:35 | Kaputun altı: ses segmentleme, sessizlik kuralı, geri alma penceresi, reply threading, SSS eşleştirme. |
-| 2:05 | Codex artifact. |
-| 2:30 | Kapanış. |
-
-### Teknik detay
-- **Mimari:** mikrofon → VAD segmentleme → faster-whisper'ın büyüyen ses tamponunu yaklaşık 0,5 saniyede bir yeniden yazıya dökmesi (kısmi metin karta akar).
-  - **Kapanış:** 2 saniye sessizlik olunca metin kesinleşir. "Hold" tuşuna basılıysa düşünme duraklaması kartı kapatmaz.
-  - **Güven skoru:** `avg_logprob` ve `no_speech_prob` eşiklerinden hesaplanır.
-  - **Gönderim:** `Send Chat Message` + `reply_parent_message_id`, metin 500 karaktere kırpılır. Cevaptaki `is_sent` ve `drop_reason` okunur.
-  - **SSS eşleştirme:** Küçük bir embedding modeli (`all-MiniLM-L6-v2`, GPU'da milisaniyeler) ve kosinüs benzerliği. Başlangıç eşiği 0,85, kayıtlı soru çiftleriyle ayarlanır. Sadece aynı yayının cevapları kullanılır; MVP'de yayınlar arası hafıza yok.
-  - **Klip:** Kart kapanınca `Create Clip` çağrılır (pencere yaklaşık 85 saniye geriye uzanıyor, cevap içinde kalır). Klip asenkron oluştuğu için makbuz klip hazır olana kadar birkaç saniye bekler; hazır olmazsa linksiz gider.
-- **Twitch:** EventSub chat (`message_id` gerekli). Bot moderatör olmalı: 30 saniyede 100 mesaj gönderebilir.
-- **Saatler:**
-
-| Parça | Saat |
-| --- | --- |
-| Focus açma/kapama (kısayol, mod `!focus`) + filtre | 1 |
-| Kristal rozet overlay'i | 1,5 |
-| Çağrı kartı overlay'i (canlı transkript satırı, ✓ damgası) | 1,5 |
-| Dock + sıralama + next/skip | 1 |
-| Yerel STT: mikrofon, VAD segmentleme, faster-whisper, kısmi güncellemeler | 2 |
-| Sesle kapanış: sessizlik kuralı, hold tuşu, kayıtlı seslerle ayar | 0,5 |
-| Cevap makbuzu: güven eşiği, 500 karakter, threaded reply, `drop_reason` | 0,5 |
-| Cila | 1 |
-| *Eski MVP toplamı* | *9* |
-| **+ SSS:** soru tespiti, embedding eşleştirme, eşik ayarı, auto-answered sayacı | 1,5 |
-| **+ Cevabın klip linki** (eski stretch) | 1 |
-| **+ Geri alma penceresi:** dock sayacı, undo tuşu | 0,5 |
-| **Yeni MVP toplamı** | **12** |
-| Hâlâ stretch: isimle kapatma 0,5; hatırlatıcı 0,5 | — |
-
-- **Codex artifact:** Sesten makbuza giden pipeline; kayıtlı cevap sesleri ve simüle chat ile test edilir. SSS eşleştirmesi de simülatörün tekrar eden ve benzemeyen soru çiftleriyle test edilir.
-
-### Pivot geçmişi (önemli)
-- **Orijinal hâli** (mesajları biriktir, sonra ekrana çıkar) **Meld X AMA Question Queue** ile aynı çekirdek döngüydü. Meld yaygın bir ürün; sen de "aynı döngü" kararını verdin.
-- **Kural gereği tek pivot hakkı kullanıldı ve C adayı seçildi:** sesli cevap + alıntılı makbuz.
-- **Pivot sonrası fark tek kaynaktan (P) kontrol edildi.** Meld, StreamerQnA, Social Stream Ninja ve Senchabot'un hiçbiri yayıncıyı dinlemiyor ve cevaptan sonra izleyiciye bir şey göndermiyor. En yakın bulunanlar ters yönde çalışıyor: yapay zekânın chat'e sesli cevap verdiği araçlar.
-- **Yedek plan, T1b başarısız olursa "pause trigger" (B adayı).** Uygulama, yayıncının işe ara verdiğini kendisi fark eder: iş ekranı durur (64×36 piksellik ekran görüntüsü farkı, saniyede 2 kez) **ve** mikrofonda konuşma başlar. Bunun üzerine "Checkpoint in 3…" geri sayımı başlar.
-  - **Sorun:** Tetiklendikten sonraki çıktı yine Meld gibi bir soru kuyruğu. Yani yedek plan demoyu kurtarır ama yeniliği kurtarmaz.
-  - **SSS yedek planda da çalışır mı?** Kısmen. Transkript yoksa saklanacak "cevap" da yok. Yayıncı cevabı dock'a kısaca yazarsa SSS yine çalışır, ama bu sesli cevabın sihrini kaybettirir.
-  - **Astra'nın eleştirisi haklı:** Puanlayıcıların gördüğü kartta yedek plan sadece adıyla geçiyordu.
-
-### Talep ve karşı sinyaller
-- **Problem kanıtı orta düzeyde, setin en iyilerinden:**
-  - Streamlabs rehberi elle yapılan versiyonu anlatıyor: odak yayınlarında chat'i okumak için planlı molalar, sorular için mod tarafından tutulan liste.
-  - Art yayıncıları selamları kaçırıyor; cevap alamayan izleyiciler yazmayı bırakıyor (Reddit, doğrulanmadı).
-  - Twitch de yeni gelenler eski mesajları görsün diye Chat History özelliğini geliştirdi.
-- **Karşı sinyaller:**
-  - Bazı izleyiciler beklemiyor; mesajı saklanan kişi yayında kalmayabilir. Makbuz bunu kısmen çözüyor.
-  - Yanlış duyulan bir kelime izleyicinin alıntısına girebilir. Güven eşiği bunu azaltıyor.
-
-### Kitle
-İşe gömülü formatlar: çizim (Art kategorisi #40, kanal başına yaklaşık 17 izleyici), maker, kodlama, yemek ve odak gerektiren oyunlar. Haftalık değil, **her yayın** kullanılabilecek bir araç.
-
-### Riskler, test ve yedek plan
-| Risk | Önlem |
-| --- | --- |
-| STT hızı ve doğruluğu | **T1b:** 10 senaryolu cevapta alıntı en fazla 2 saniyede hazır olmalı, en az 9'u düzeltme gerekmeden okunur olmalı. 4070 hız riskini büyük ölçüde kaldırıyor. |
-| Düşünme duraklaması kartı erken kapatır | 2 saniye eşiği + hold tuşu. |
-| Yanlış duyulan kelime alıntıya girer | Güven eşiği: düşük güvende alıntısız makbuz. Geri alma penceresi: yayıncı 3 saniye içinde iptal eder. |
-| SSS yanlış soruyu eşleştirir | Yüksek eşik; "daha önce şöyle cevaplandı" dili; `!ask` ile kuyruğa girme yolu. |
-| AutoMod yanıtı düşürür | `drop_reason` okunur. |
-| **Yedek plan** | Pause trigger (B). Demo yapılabilir ama yenilik düşer. |
-
-### Puanlar ve modellerin söyledikleri
-| | Innovation | Impact | Tech | Design | Toplam | Risk | Sıra |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| Grok | 3 | 4 | 3 | 4 | 14 | Orta | 4 |
-| Astra | 4 | 4 | 3 | 4 | 15 | **Yüksek** | 3 |
-| Claude | 4 | 4 | 4 | 4 | 16 | Orta | 2 |
-| **Ortalama** | **3,7** | **4,0** | **3,3** | **4,0** | **15,0** | | |
-
-- **Grok:** Innovation'a 3 verdi. Kuyruktan soru öne çıkarmak bilinen bir döngü (Meld, StreamerQnA); farkı, karta yazılan sesli cevap ve alıntılı thread yanıtı. Impact 4: Streamlabs'in elle yapılan versiyonu haftalık bir alışkanlık olarak belgelemesi.
-- **Astra:** Riski "Yüksek" gördü çünkü yedek plan yeterince tanımlanmamış. En büyük zayıflık olarak şunu söylüyor: erken kapanan ya da kendinden emin ama yanlış bir transkript, izleyiciye "yayıncının ağzından" yanlış bir cevap gönderebilir. Tasarımı faydalı ama bir patlamaya ya da tekrar görüntüsüne göre "daha az teatral" buluyor.
-- **Claude:** Her kritere 4 verdi ve şunu ekledi: "Sesli makbuz olmazsa bu, Meld'in soru kuyruğu."
-- **Ortak görüş:** Impact'te en güçlü proje (4/4/4). Yenilik de demo da T1b'ye bağlı.
-
-### Benim görüşüm
-- **Avantajlar:**
-  - Gerçekten **faydalı**: "her yayın açılır" profilinde tek proje.
-  - Minefield ile aynı STT altyapısını kullanıyor; T1 ve T1b tek oturumda test edilebilir.
-  - T1b'nin çıtası T1'den düşük: okunabilir bir transkript Whisper'ın en iyi yaptığı iş.
-- **Dezavantajlar:**
-  - **İkinci sıra kısmen Claude puanlayıcısına dayanıyor.** Grok ve Astra'nın ortalamasında 14,5 ile 6. sıraya düşüyor.
-  - Pivotu ben tasarladım, yani bir taraflılık ihtimali var. Pivot sonrası kanıt da tek kaynaklı.
-  - Video sakin geçiyor: bir kart ve bir chat yanıtı, patlama yok. SSS sahnesi buna ikinci bir "vay" anı ekliyor ama yine de sakin.
-- **12 saatlik eklemeler neyi değiştiriyor:**
-  - **SSS**, Impact'i ve Innovation'ı birlikte güçlendiriyor. Art yayınlarında aynı soru sürekli tekrar sorulur. Rakiplerin hiçbiri cevabı saklayıp yeniden kullanmıyor (bunu ayrıca aramadık; kanıt adımındaki rakip tablosuna göre).
-  - **Geri alma penceresi**, Astra'nın "yayıncının ağzından yanlış cevap" eleştirisine doğrudan cevap.
-  - **Klip linki**, makbuzu "metin" olmaktan çıkarıp "izlenebilir an" yapıyor.
-- **İlginç bir detay:** Yarışmanın resmi eşitlik kuralı önce Innovation'a bakıyor. Checkpoint (3,7) bu kurala göre VAR'ın (3,0) önüne geçerdi. Bu sadece bilgi; bizim kayıtlı kurallarımız bu eşitliği bozamadı.
-- **Bunu seçersen:** Yedek planı (B) karta düzgünce yazmak gerekir. Ayrıca videoda "Meld'den farkı ne?" sorusunun ilk 20 saniyede cevaplanması şart.
-
----
-
-## 6.3 VAR — 15,0 puan, risk Orta
+Puan (step 7): **15,0**, risk Orta. Step 8'de Grok ve Astra'nın ikinci tercihi; Opus'un üçüncüsü.
 
 ### Ne?
 Futboldaki VAR'ın Twitch versiyonu. Chat yayıncının bir iddiasına itiraz edince iki izleyicinin `!var` yazması yeterli: "VAR CHECK" sireni çalar, ağır çekim tekrar oynar, chat 15 saniye oy verir (jüri), "NO BASKET" gibi bir karar damgası basılır ve başlıklı bir klip oluşur.
 
 ### Somut örnek
-> Kâğıt topu çöp kutusuna atıyorsun ve "IN!" diyorsun. Chat'te iki kişi `!var` yazıyor. Siren çalıyor, ekran "VAR CHECK" oluyor. Son 10 saniye tekrar oynuyor, son 4 saniyesi yarı hızda: top çemberden sekip dışarı düşüyor. Chat 15 saniye `!yes`/`!no` oyluyor, oy verenlerin isimleri jüri sırasında görünüyor. **"NO BASKET"** damgası iniyor. Chat'e "VAR: NO BASKET" başlıklı klibin linki düşüyor.
+> Kâğıt topu çöp kutusuna atıyorsun ve "IN!" diyorsun. Chat'te iki kişi `!var` yazıyor. Siren çalıyor, ekran "VAR CHECK" oluyor. Son 10 saniye ağır çekimde oynuyor: top çemberden sekip dışarı düşüyor. Kare donuyor, topun düştüğü yerde bir halka beliriyor. Chat 15 saniye `!yes`/`!no` oyluyor, oy verenlerin isimleri jüri sırasında görünüyor. **"NO BASKET"** damgası iniyor. Chat'e "VAR: NO BASKET" başlıklı klibin linki düşüyor.
 
-### Nasıl çalışır (adım adım)
+### Nasıl çalışır (son hâli)
 1. Yayıncı bir iddiada bulunur ("IN!").
-2. 30 saniye içinde 2 farklı izleyici `!var` yazar. Eşik aktif izleyici sayısına göre büyür; mod ya da yayıncı da VAR çağırabilir.
-3. **VAR beklemede (12 saatlik ekleme):** Eşik dolunca replay buffer hemen dosyaya kaydedilir, ama tekrar hemen oynamaz. Ekranın köşesinde "🟨 VAR PENDING (2 calls)" çıkar. Yayıncı uygun bir anda tuşa basar ve inceleme başlar. "Auto" modunda eskisi gibi hemen başlar.
-4. "VAR CHECK" geçiş animasyonu oynar. Bir OBS Media Source kaydedilen dosyadan son yaklaşık 10 saniyeyi, gecikme payı kadar geri kaydırarak oynatır; son 4 saniye yarı hızdadır.
-5. **Telestrator (12 saatlik ekleme):** Ağır çekimin sonunda kare donar. Mod ya da yayıncı dock'ta fareyle çizgi ya da daire çizer ("top çizginin dışında"). Çizim yayında, donmuş karenin üstünde görünür.
-6. Chat 15 saniye `!yes`/`!no` oylar; isimler jüri sırasına dizilir.
-7. Karar damgası donmuş karenin üstüne basılır. Uygulama 60 saniyelik "VAR: NO BASKET" klibini ve bir marker oluşturur. Klip incelemeyi, inceleme de tekrar görüntüsünü içerir.
-8. **Hakem itibarı (12 saatlik ekleme):** Çağrısı haklı çıkan (karar değişen) ve jüride çoğunlukla oy veren izleyiciler puan kazanır. Yayın sonunda "Referee of the night" anılır. Puanlar yayınlar arasında saklanır.
+2. İlk `!var` geldiği anda replay buffer dosyaya kaydedilir ve **o an sabitlenir**. 30 saniye içinde ikinci bir farklı izleyici `!var` yazarsa çağrı onaylanır. Eşik aktif izleyici sayısına göre büyür; mod ya da yayıncı da VAR çağırabilir. İncelemeler arasında bir bekleme süresi (cooldown) var.
+3. **VAR beklemede (varsayılan):** Tekrar hemen oynamaz. Ekranın köşesinde "🟨 VAR PENDING (2 calls)" çıkar; yayıncı uygun anda tuşa basar. "Auto" modunda hemen başlar (videonun hook'u bu modla çekilir).
+4. "VAR CHECK" geçişi oynar. Arka planda ffmpeg, sabitlenen andan geriye ~10 saniyeyi keser, **önceden yarı hıza çevirir** ve sona donmuş bir kare ekler. Geçişin 2–3 saniyesi bu işlemi gizler. Media Source hazır dosyayı oynatır.
+5. Donmuş karede yayıncı dock'ta bir noktaya tıklar; o noktada **bir halka** belirir.
+6. Chat 15 saniye `!yes`/`!no` oylar; kişi başına tek oy; isimler jüri sırasına dizilir. Oy eşitse ya da kimse oy vermezse karar **"INCONCLUSIVE"**.
+7. Karar damgası donmuş karenin üstüne basılır. Uygulama 60 saniyelik "VAR: NO BASKET" klibini ve bir marker oluşturur.
 
-**Self-VAR:** Yayıncı kendi iddiasına VAR çağırır ("mükemmel bir daire çizebilirim"), chat de iddiayı reddedebilir. Her yayında tekrarlanabilecek bir şaka.
+**Self-VAR:** Yayıncı kendi iddiasına VAR çağırır ("mükemmel bir daire çizebilirim"), chat iddiayı reddedebilir. Her yayında tekrarlanabilecek bir şaka.
 
 ### 3 dakikalık video akışı
 | Zaman | Ne oluyor |
 | --- | --- |
-| 0:00 | Hook: kâğıt top, "IN!", iki `!var`, siren, ağır çekim, donmuş karede çizilen daire, jüri, "NO BASKET". |
+| 0:00 | Hook (auto mod): kâğıt top, "IN!", iki `!var`, siren, ağır çekim, halka, jüri, "NO BASKET". |
 | 0:25 | Klip linki chat'e düşer, klipten 5 saniye. |
 | 0:40 | VAR beklemede: yayıncı bir işin ortasında, "🟨 VAR PENDING" köşede bekliyor; yayıncı işi bitirip tuşa basıyor. |
 | 1:00 | Self-VAR: "mükemmel daire çizerim", chat reddeder. |
-| 1:35 | Gecikme payının tekrarı doğru ana nasıl oturttuğu; geri itme kısayolu. Yayın sonu: "Referee of the night". |
+| 1:35 | İlk çağrının anı nasıl sabitlediği; gecikme payı ve geri itme kısayolu. |
 | 2:10 | Codex artifact, kapanış. |
 
 ### Teknik detay
 - **Mimari:**
-  - **Kayıt:** `SaveReplayBuffer` gönderilir, `ReplayBufferSaved` olayı dosya yolunu verir.
-  - **Oynatma:** Media Source'un dosyası `SetInputSettings` ile değiştirilir, `SetMediaInputCursor` ile "son 10 saniye + gecikme payı" noktasına gidilir.
-  - **Ağır çekim:** Media Source'un `speed_percent` ayarıyla yapılır. Oynatma sırasında hız değişimi sorun çıkarırsa B yolu: ffmpeg ile son 4 saniyeyi önceden yarı hıza çevirmek (NVENC ile yaklaşık 1 saniye). Bu da T2'de doğrulanacak.
-  - **Gecikme payı:** İzleyici yayını 2–5 saniye geriden görür ve `!var` yazması biraz zaman alır. Kayıt ise yerel, gerçek zamanlı. Bu yüzden tekrar, "şu an eksi gecikme" noktasından başlamalı; tutturamazsa "geri it" kısayolu var.
-  - **Oylama:** 15 saniyelik pencerede her izleyicinin yalnızca bir oyu sayılır.
-  - **Klip:** Karardan hemen sonra `Create Clip` çağrılır. Klip penceresi yaklaşık 85 saniye geriye uzandığı için inceleme klibin içinde kalır.
-  - **VAR beklemede:** Eşik dolunca `SaveReplayBuffer` hemen gönderilir, yani bekleme süresi replay buffer'ın 60 saniyesiyle sınırlı değil; dosya diskte durur. Bekleme 2 dakikayı geçerse uyarı çıkar, 5 dakikada çağrı düşer.
-  - **Telestrator:** Dock'taki canvas'ta çizilen noktalar WebSocket ile overlay'deki bir canvas'a gider; overlay, Media Source'un üstünde durur. Kare dondurmak için `TriggerMediaInputAction` ile pause.
-  - **Hakem itibarı:** SQLite; çağıran, oy veren, karar ve karar değişip değişmediği saklanır.
+  - **Kayıt:** İlk `!var`'da `SaveReplayBuffer`; `ReplayBufferSaved` olayı dosya yolunu verir.
+  - **Ağır çekim:** OBS Media Source'ta `speed_percent` değişince kaynak baştan başlıyor (Opus, OBS kaynak kodu). Bu yüzden ağır çekim **önceden ffmpeg ile** hazırlanır: kes → `setpts` ile yarı hız → `tpad` ile donmuş kare → `h264_nvenc` (10 saniyelik klip ~1 sn). Astra'nın notu: tüm replay'i tek hızda oynatmak yeterli; son 4 saniyede hız değiştirmek şart değil.
+  - **Yol dönüşümü:** OBS Windows'ta, sunucu WSL'de. Ya `C:\…` ↔ `/mnt/c/…` dönüşümü ya da ffmpeg'i Windows tarafında çalıştırmak.
+  - **Gecikme payı:** İzleyici yayını 2–5 saniye geriden görür. Tekrar, ilk çağrı anı eksi gecikme noktasından başlar; tutturamazsa "geri it" kısayolu var.
+  - **Oylama:** Astra'nın notu: oy penceresi sunucu saatinden sayılırsa bazı izleyicilerin süresi kısalır; gerçek Twitch oynatıcısıyla dene. Native Polls sadece Affiliate/Partner kanallarda olduğu için `!yes`/`!no` doğru seçim.
+  - **Klip:** Karardan hemen sonra Create Clip, `duration=60`. Ritüel 25 saniyenin altında kalırsa klip anı ve incelemeyi birlikte tutar (Grok). T5'te klibi oynatıp doğrula. Create Clip From VOD'u canlı demonun yoluna koyma: beta'da `vod_offset` klibi birkaç saniye kaydırıyordu, düzeldiği belli değil (Grok).
+  - **Markalar:** "VAR CHECK" tasarımı senin olsun; FIFA ya da lig görseli yok (kurallar üçüncü taraf markalarını yasaklıyor).
 - **Twitch:** EventSub chat, Create Clip, Create Stream Marker, Send Chat Message; OBS replay buffer ve Media Source.
 - **Saatler:**
 
 | Parça | Saat |
 | --- | --- |
-| Replay kaydetme + Media Source oynatma | 2 |
+| Replay kaydı + ffmpeg ön-render + Media Source oynatma | 2,5 |
 | Gecikme payı + kısayol | 1 |
-| Çağrı ve oylama mantığı | 1 |
+| Çağrı ve oylama: ilk çağrıya sabitleme, tek oy, inconclusive, cooldown | 1,5 |
+| VAR beklemede (varsayılan) + auto modu | 1 |
 | Overlay: geçiş, jüri sırası, damga | 2,5 |
+| Donmuş karede halka (basit işaretçi) | 0,5 |
 | Klip + marker | 0,5 |
 | Cila | 1,5 |
-| *Eski MVP toplamı* | *8,5* |
-| **+ VAR beklemede:** pending rozeti, "review now" tuşu, auto modu | 1 |
-| **+ Telestrator:** dock canvas, overlay canvas, kare dondurma | 1,5 |
-| **+ Hakem itibarı:** puan mantığı, SQLite, yayın sonu kartı | 1 |
-| **Yeni MVP toplamı** | **12** |
-| Bilerek alınmayanlar: ikinci kamera açısı (replay buffer sadece program çıktısını kaydediyor; ayrı kayıt ve telefon kamerası kurulumu gerekir, 1 saat iyimser); yayın sonu VAR derlemesi (bütçe kalırsa ilk aday); karar geçmişi şeridi 0,5 | — |
+| **MVP toplamı** | **~11** |
+| Zaman kalırsa: serbest çizimli telestrator 1; yayın sonu VAR derlemesi | — |
+| **Çıkarıldı:** hakem itibarı (yayınlar arası), ikinci kamera açısı, karar geçmişi şeridi | — |
 
-- **Codex artifact:** Tekrar pipeline'ı (buffer → Media Source → ağır çekim) ve simülatörle yapılan eşik ve oylama zamanlaması testleri.
-- **Demo oyunu (isteğe bağlı):** Codex ile "çizgiye değdi mi?" türünden kıl payı anlar üreten küçük bir oyun (yaklaşık 1 saat, tampondan). Kâğıt top gibi masa düelloları için gerekmez.
+- **Codex artifact:** Tekrar pipeline'ı (buffer → ffmpeg → Media Source) ve simülatörle yapılan eşik ve oylama zamanlaması testleri.
+
+### Önceki plandan ne değişti (ve neden)
+| Önceki | Son hâli | Kim önerdi |
+| --- | --- | --- |
+| Media Source `speed_percent` (A), ffmpeg (B) | ffmpeg ön-render A planı | Opus (OBS kaynak kodu bulgusu), Astra (tek hız yeter) |
+| Son 10 sn, ikinci çağrıdan geriye | İlk çağrının anı sabitlenir | Astra: "İkinci çağrıdan sonra son on saniyeyi oynatmak olayın kendisini kaçırabilir." |
+| VAR beklemede bir ek | Varsayılan mod | Üç model de tuttu; Astra varsayılan yapılmasını istedi. |
+| Telestrator (1,5 sa) | Basit halka (0,5 sa); serbest çizim zaman kalırsa | Opus: sadece yayıncı çizsin. Astra: "1,5 saat iyimser." Grok: "Çizim senkronu kolayca kötü görünür." |
+| Hakem itibarı | Çıkarıldı | Üç model de. Astra: "Çoğunluğa katılmayı ödüllendiriyor, doğruluğu ölçmüyor." |
+| — | Inconclusive, tek oy, cooldown | Astra |
 
 ### Rakipler ve fark
 | Rakip | Ne yapıyor | Yaygın mı |
@@ -533,26 +425,27 @@ Futboldaki VAR'ın Twitch versiyonu. Chat yayıncının bir iddiasına itiraz ed
 | BarRaider OBS Tools, Fyre Instant Replay | `!replay` + klip | Hayır |
 | Streamer's Court (Steam oyunu) | Chat suçlu/suçsuz oyluyor; tekrar yok | Hayır |
 
-**Fark:** Tekrar ve oylama ayrı ayrı mevcut. Bulunamayan şey: eşik → tekrar → süreli jüri → karar → başlıklı klip zincirinin **tek bir ritüel** olması. Astra ve Grok farkın "kısmen" var olduğunu, Claude "var" olduğunu söylüyor.
+**Fark:** Tekrar ve oylama ayrı ayrı mevcut. Bulunamayan şey: eşik → tekrar → süreli jüri → karar → başlıklı klip zincirinin **tek bir ritüel** olması. Step 8'de Opus da replay ile chat jürisini birleştiren bir overlay bulamadı. Astra: "Sizin farkınız, replay'i topluluğun rol aldığı bir karar ritüeline dönüştürmeniz. Sunumun bütün ağırlığı buna binmeli."
 
 ### Talep ve karşı sinyaller
-- **Dolaylı talep:** chat ile tetiklenen bir tekrar script'inin 12,6 bin indirmesi var (2019'dan kalma). Bir yayıncı, anları kaydedip raundlar arasında tekrar göstermenin yolunu soruyor (doğrulanmadı).
+- **Dolaylı talep:** chat ile tetiklenen bir tekrar script'inin 12,6 bin indirmesi var (2019'dan kalma).
 - **Chat jürisi ya da VAR incelemesi için doğrudan talep bulunamadı.**
-- **Karşı sinyal:** Tekrar isteyen yayıncı, tekrarın **ne zaman** oynayacağını kendisi belirlemek istiyordu. Otomatik bir durdurma bunun tersi.
+- **Karşı sinyal:** Tekrar isteyen yayıncı, tekrarın ne zaman oynayacağını kendisi belirlemek istiyordu. VAR beklemede bunun için varsayılan.
+- **Kullanım sıklığı:** Opus: "Çoğu oyunda sonucu oyunun kendisi belirliyor; etkinin büyük kısmı self-VAR gibi bir içerik formatına dayanıyor."
 
 ### Kitle
-İtiraz edilebilir, gözle görülür sonuçlar: rekabetçi oyunlar (izlenmenin büyük kısmı), spor tarzı IRL meydan okumalar, masa düelloları. Konuşma tanıma gerektirmediği için aksan riski yok.
+İtiraz edilebilir, gözle görülür sonuçlar: rekabetçi oyunlar (izlenmenin büyük kısmı), spor tarzı IRL meydan okumalar, masa düelloları. Konuşma tanıma gerektirmediği için aksan riski yok. Kâğıt topu demosu ticari oyun gerektirmiyor.
 
 ### Riskler ve test
 | Risk | Önlem |
 | --- | --- |
-| Replay buffer ve Media Source ağır çekimi | **T2:** komuttan sonra en fazla 5 saniyede tekrar ekranda. |
-| Tekrar yanlış ana denk gelir | Gecikme payı + geri itme kısayolu. |
-| 60 saniyelik klip asıl anı dışarıda bırakabilir | İnceleme içindeki tekrar yine de anı gösteriyor. T5: klibin içeriği doğrulanacak. |
-| Yayını kesintiye uğratır | VAR beklemede: tekrarın ne zaman oynayacağına yayıncı karar veriyor. Self-VAR ve eşik de kontrolü yayıncıda tutuyor. |
-| **Yedek plan** | Gerekmiyor; en kötü durumda tekrar ağır çekimsiz oynar. |
+| Replay hattı (kayıt, ffmpeg, Media Source) | **T2:** komuttan sonra en fazla 5 saniyede tekrar ekranda. |
+| Tekrar yanlış ana denk gelir | İlk çağrıya sabitleme + gecikme payı + geri itme kısayolu. |
+| Klip asıl anı dışarıda bırakır | Ritüel 25 sn'nin altında; `duration=60`; T5'te oynatıp doğrula. |
+| Yayını kesintiye uğratır | VAR beklemede varsayılan. |
+| **Yedek plan** | T2 kalırsa bile replay'siz hâli (çağrı, jüri, damga, klip) hâlâ gösterilebilir (Grok). |
 
-### Puanlar ve modellerin söyledikleri
+### Step 7: puanlar ve modellerin söyledikleri
 | | Innovation | Impact | Tech | Design | Toplam | Risk | Sıra |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | Grok | 3 | 3 | 4 | 5 | 15 | Orta | 3 |
@@ -561,138 +454,178 @@ Futboldaki VAR'ın Twitch versiyonu. Chat yayıncının bir iddiasına itiraz ed
 | **Ortalama** | **3,0** | **3,0** | **4,0** | **5,0** | **15,0** | | |
 
 - **Tamamen oybirliğiyle puanlanan tek proje.**
-- **Grok:** "Setteki en yayın-gibi (broadcast-like) video." Zayıflık olarak otomatik durdurmayı görüyor: tekrarın ne zaman oynayacağını kontrol etmek isteyen yayıncıya ters düşüyor.
-- **Astra:** T5'te klibin incelemeyi gerçekten içerdiği gösterilmeli; klip penceresi belgelenmemiş. "Teknik demo başarılı olsa bile yayıncıların chat'in oyunu kesmesini istediği kanıtlanmış olmuyor."
+- **Grok:** "Setteki en yayın-gibi (broadcast-like) video."
 - **Claude:** "Jüri bunu yeni bir fikir yerine cila olarak okuyabilir."
 
+### Step 8: serbest incelemeler
+- **Grok:** "En güvenli gösteri." T1 kalırsa "aynı repoda VAR'a dönerim". Ama: "Innovation en zayıf halka ve beraberlikte ilk kriter bu."
+- **Astra:** "Dört fikir içinde en kolay izlenen gösteriyi üretebilir." İkinci tercihi; "fikrin zayıflığı yüzünden değil, Minefield'deki izleyicinin gizli planı daha kişisel ve ayırt edici olduğu için".
+- **Opus:** "En güvenli 'iyi video' bu. Ama Innovation ve Tech'teki tavanı sınırlı; ilk 5'e girmesi için cilasının kusursuz olması gerekir." AI içermediğini, yarışmanın "with AI" çerçevesine oturmadığını not etti.
+
 ### Benim görüşüm
-- **Avantajlar:**
-  - **En sağlam yedek.** Konuşma tanıma yok, aksan riski yok, setin en esnek bütçesi.
-  - Herkes VAR'ı bildiği için açıklamaya gerek kalmıyor; ilk 10 saniyede anlaşılıyor.
-- **Dezavantajlar:**
-  - Innovation tavanı 3. Jüri "tekrar + anket, güzel paketlenmiş" diyebilir.
-  - OBS ve Twitch tarafında senin daha az deneyimli olduğun işler var (Media Source, gecikme payı). Ama bunlar iyi belgelenmiş API'ler.
-- **12 saatlik eklemeler neyi değiştiriyor:**
-  - **VAR beklemede**, Grok'un ve kanıt dosyasının en büyük karşı sinyaline cevap: tekrar isteyen yayıncı, tekrarın ne zaman oynayacağını kendisi seçmek istiyordu.
-  - **Telestrator**, Design'ı güçlendirir: spor yayınlarından tanıdık "çizgiyi çizen hakem" karesi, videonun en akılda kalan anı olabilir.
-  - **Hakem itibarı**, Impact'e katkı: jüriye katılmanın bir anlamı olur, haftalık kullanım artar.
-  - Innovation tavanı büyük ihtimalle yine 3. Eklemeler ritüeli zenginleştiriyor ama "tekrar + oylama" çekirdeğini değiştirmiyor.
-- **Bunu seçersen:** Ritüeli olabildiğince teatral yap; stinger, ses efekti ve damga animasyonu Design puanını taşır. Self-VAR da "sadece spor için" algısını kırar.
+- **En sağlam yedek.** Minefield'la aynı riski (STT) taşımayan tek seçenek; konuşma tanıma yok, aksan riski yok.
+- Herkes VAR'ı bildiği için ilk 10 saniyede anlaşılıyor.
+- **Dezavantaj:** Innovation tavanı 3. Jüri "tekrar + anket, güzel paketlenmiş" diyebilir. Ritüeli olabildiğince teatral yap; stinger, ses efekti ve damga animasyonu Design puanını taşır.
+- **Bunu seçersen:** OBS tarafı senin daha az deneyimli olduğun alan; T2'yi 29 Ekim'de mutlaka çalıştır.
 
 ---
 
-## 6.4 Tap on the Shoulder — 14,3 puan, risk Orta
+## 6.3 Checkpoint: ikinci yedek
+
+Puan (step 7): **15,0**, risk Orta. Step 8'de Opus'un ikinci, Grok ve Astra'nın üçüncü tercihi.
 
 ### Ne?
-Yayıncı işe ya da tam ekran bir oyuna gömülmüşken chat ona dokunamaz. Bu araçla dokunabilir: izleyici şikâyetleri ("ses uzak geliyor") ve mod uyarıları masadaki bir telefonda **alarm veren bir yüze** dönüşür. Yayıncı sorunu düzeltince chat de "düzeldi" diye onaylar.
+Yayıncı çizim, kodlama ya da oyun gibi bir işe gömülmüşken chat'i görmezden gelmiş olmaz: mesajlar "kayıt kristali" olarak birikir. "Checkpoint" anında yayıncı mesajları **sesli** cevaplar; söylediği kelimeler karta yazılır ve her izleyici kendi mesajının altında yayıncının **gerçek sözlerini alıntılayan** bir yanıt alır.
+
+Cevabı herkes görür: yayını izleyen herkes cevabı duyar ve kartta okur. Chat'teki alıntılı yanıt da herkese açık normal bir chat mesajıdır, fısıltı (whisper) değildir. Bu yanıtın tek farkı, soran kişiyi etiketlemesi ve onun mesajının altına bağlanmasıdır.
+
+**SSS (senin kararın):** Aynı soru aynı yayında tekrar gelirse yayıncı ikinci kez cevaplamaz; bot eski cevabı alıntılar.
 
 ### Somut örnek
-> Mikrofonun kapalı kaldı. OBS bunu görüyor; masadaki telefon yüzü panikliyor: **"MIC MUTED"**. Açıyorsun. Ama sonra mikrofonu yanlışlıkla çevirdin; OBS bunu göremez. Chat'te 2 kişi "you sound far away" yazıyor ve telefon yüzü **"FAR AWAY"** gösteriyor. Düzeltip kısayola basıyorsun. Bot soruyor: "Fix #2: sound right now? 👍/👎". İki 👍 geliyor; ilk bildiren kişi ekranda anılıyor.
+> Sen kod yazıyorsun, chat'e bakmıyorsun. 6 kristal birikiyor. Checkpoint'e basıyorsun. Ekranda kart: *"@ana (first time!): what editor is that?"* Elin hâlâ klavyede ve diyorsun ki: "Ana, it's VS Code with a dark theme." Kelimeler karta yazılıyor; ✓ ile kart uçuyor. 3 saniye sonra Ana'nın mesajının altında: *"✓ answered on stream: 'It's VS Code with a dark theme' (12:04)"*.
+>
+> 20 dakika sonra Mehmet "which editor do you use?" yazıyor. Bot hemen yanıt veriyor: *"📌 Answered earlier (12:04): 'It's VS Code with a dark theme' · type !ask to ask anyway"*.
 
-### Nasıl çalışır (adım adım)
-1. **Girdiler:**
-   - 60 saniye içinde en az 2 farklı izleyici mic, audio, "far away", black screen ya da frozen gibi bir şey yazar, ya da biri `!mic` yazar;
-   - mod özel telefon sayfasından hazır bir uyarıya dokunur ("game too loud" vb.);
-   - obs-websocket mikrofonun kapalı olduğunu ya da N saniyedir sessiz olduğunu bildirir. Bunlar iki ayrı sinyal.
-2. Kadrajdaki telefon yüzü alarm verir ve sorunu büyük harflerle yazar. Sadece yayıncının kulaklığında bir ses çalar. Chat ve OBS aynı şeyi söylüyorsa yüz bunu belirtir: "chat + OBS: mic muted".
-3. Yayıncı sorunu düzeltip "fixed" tuşuna basar.
-4. Bot 👍/👎 sorar. Düzeltme anı artı tahmini yayın gecikmesinden önce gelen cevaplar sayılmaz. Gecikme her izleyicide farklı olduğu için sonuç "herkes duydu" değil, "chat onayladı" diye yazılır.
-5. Sorun kapanır ve ilk bildiren kişi anılır.
-6. **Sakin mod (12 saatlik ekleme, eskiden stretch):** Sorun yokken yüz chat durumunu gösterir: ilk kez yazan biri el sallar, bekleyen bir soru varsa yüz el kaldırır, chat sessizken uyuklar.
-7. **Soundcheck (12 saatlik ekleme):** Yayıncı yayın başında "soundcheck" tuşuna basar. Telefon yüzü "SOUNDCHECK A" gösterir, yayıncı konuşur. Bot chat'e sorar: *"Test A: mic vs game? !heard good / quiet / loud"*. Aynı anda mikrofon ve oyun seviyeleri ölçülür. Yüz ikisini birlikte gösterir: "chat: quiet · meter: −28 dB → raise mic".
-8. **Siyah ya da donmuş ekran (12 saatlik ekleme):** Yayın görüntüsü kararırsa "BLACK SCREEN", 10 saniye hiç değişmezse "FROZEN?" uyarısı çıkar. Chat'te de aynı şikâyet varsa "chat + OBS" olarak gösterilir.
-9. **Sorun raporu (12 saatlik ekleme):** Yayın sonunda dock'ta ve chat'te: "3 issues · avg fix 42 s · first reporter: @ana".
+Notlar: Opus, kodlama yayınının senin için en doğal demo ortamı olduğunu söyledi; çizim yapman gerekmez. Grok, "Micron 05" gibi marka + rakam karışımlarının Whisper'ın en çok yanıldığı yer olduğunu hatırlattı; demoda düz kelimeli cevaplar kullan.
+
+### Nasıl çalışır (son hâli)
+1. Yayıncı bir kısayol tuşuna basar ya da mod `!focus` yazar. Köşede bir rozet çıkar: "Focus: messages saved 0".
+2. Her normal izleyici mesajı, izleyicinin renginde bir kristal olarak düşer. Komutlar ve bot satırları filtrelenir. **Kişi başına bekleyen mesaj sınırı ve toplam kuyruk sınırı** var (Astra: "Selam, emote ve devam mesajları kuyruğu hızla şişirir").
+3. Yayıncı "checkpoint"e basar. Alt kısımda bir "çağrı kartı" belirir: önce sorular, sonra ilk kez yazanlar.
+4. Yayıncı işini bırakmadan sesli cevap verir. Yerel STT kelimeleri söylendikçe karta yazar.
+5. Kart, **tek tuşla** ya da yaklaşık 2 saniyelik sessizlikle kapanır. Otomatik kapanma, doğal konuşma denemesinde güvenilir çıkarsa öne alınır (Astra). ✓ damgası basılır, kart uçar.
+6. 3 saniye sonra bot alıntılı yanıtı gönderir:
+   - **Geri alma:** Bu 3 saniye dock'ta görünür; bir hotkey alıntıyı iptal edip düz makbuza çevirir.
+   - Metin boş ya da güven skoru düşükse alıntı atlanır: "✓ answered on stream (12:04)".
+   - Alıntı göndermeden önce bir blocklist'ten geçer (Opus: "Yanlış duyulmuş bir küfür bot hesabının başını yakar").
+   - "Skip" kartı yanıt göndermeden kapatır.
+7. **SSS (katmanlı, Opus'un önerisi):**
+   - Her cevaplanan kart saklanır (o yayın boyunca).
+   - Soru gibi görünen yeni bir mesaj, cevaplanmış sorularla karşılaştırılır.
+   - Benzerlik **≥0,85**: bot eski cevabı "daha önce şöyle cevaplandı" diye alıntılar; `!ask` ile izleyici yine de kuyruğa girebilir.
+   - **0,70–0,85:** Dock'ta tek tıkla onaylanan bir "bunu mu soruyor?" önerisi çıkar.
+   - Daha düşük: mesaj normal bir kristal olur.
+8. Sonunda bir özet görünür: "Checkpoint cleared: 4 answered, 4 receipts sent, 1 auto-answered".
+
+### 3 dakikalık video akışı
+| Zaman | Ne oluyor |
+| --- | --- |
+| 0:00 | Hook: kodlama yayını hızlandırılmış, 6 kristal, checkpoint, Ana'nın sorusu, sesli cevap karta yazılıyor, ✓ ve split-screen'de Ana'nın mesajının altındaki alıntı. |
+| 0:20 | İki kart daha: biri "skip", biri düşük güvenle düz makbuz. |
+| 0:50 | **SSS:** Mehmet benzer soruyu soruyor, bot eski cevabı alıntılıyor. Yayıncı başını kaldırmıyor. |
+| 1:20 | Kaputun altı: ses segmentleme, güven kapısı, geri alma, reply threading, SSS eşikleri. |
+| 2:05 | Codex artifact. |
+| 2:30 | Kapanış. |
+
+**Çıkarılan sahne:** "Yayından ayrılan izleyici sonra dönüp cevabı buluyor." Opus: Twitch Chat History yeni gelen birine sadece son 50 mesajı ya da son 1 saati gösteriyor; yoğun chat'te cevap pencerenin dışına kayar. Grok ve Astra: threaded reply çevrimdışı bildirim değil. Bu sahne kalırsa "in quiet chats" diye dürüstçe çerçevelenmeli ve "Twitch ona haber verdi" denmemeli.
 
 ### Teknik detay
-- **Telefon yüzü:** HTTPS üzerinde bir web sayfası. Ekranın kapanmaması için Wake Lock API kullanılıyor ve bu API HTTPS istiyor; bu yüzden tünel ya da yerel sertifika (mkcert) gerekiyor. Eşleştirme QR kodla yapılır.
-- **Kulaklık sesi:** Sadece yayıncı duymalı, yayına çıkmamalı. OBS'te "monitor only" ses ya da ayrı bir çıkış cihazıyla yapılır.
-- **Sessizlik algılama:** obs-websocket `InputMuteStateChanged` olayı ve `InputVolumeMeters` (50 ms'de bir gelir) ile eşik.
-- **Soundcheck:** Aynı `InputVolumeMeters` verisinden mikrofon ve oyun kaynağının birkaç saniyelik ortalama seviyesi; chat cevapları 30 saniyelik pencerede sayılır.
-- **Siyah/donmuş ekran:** `GetSourceScreenshot` saniyede 1 kez küçük bir kare (ör. 64×36) alır. Ortalama parlaklık eşiğin altındaysa siyah; 10 saniye boyunca kareler arası fark sıfıra yakınsa donmuş. Statik bir "BRB" sahnesi yanlış alarm vermesin diye sadece oyun/kamera sahnelerinde çalışır.
-- **Video sahnesi (3 dk):** 0:00 hook: OBS mute → telefon yüzü panik; 0:20 "far away" chat şikâyeti → yüz; 0:45 düzeltme ve chat onayı; 1:05 yayın başı soundcheck; 1:30 donmuş ekran "chat + OBS"; 1:50 sakin mod ve yayın sonu raporu; 2:15 Codex artifact.
+- **Mimari:** mikrofon → VAD segmentleme → faster-whisper'ın büyüyen ses tamponunu yaklaşık 0,5 saniyede bir yeniden yazıya dökmesi (kısmi metin karta akar).
+  - **Güven skoru:** `avg_logprob` ve `no_speech_prob` eşiklerinden. Astra'nın uyarısı: güven skoru doğru alıntı garantisi değil; T1b'de "okunabilir" değil, "anlamı ve kritik kelimeleri doğru" ölçülmeli.
+  - **Gönderim:** `Send Chat Message` + `reply_parent_message_id`, 500 karakter; `is_sent` ve `drop_reason` okunur.
+  - **SSS eşleştirme:** `all-MiniLM-L6-v2` + kosinüs benzerliği; eşikler 20–30 soru çiftiyle harness'te ayarlanır.
+- **Twitch:** EventSub chat (`message_id` gerekli). Bot moderatör olmalı: 30 saniyede 100 mesaj.
 - **Saatler:**
 
 | Parça | Saat |
 | --- | --- |
-| Şikâyet dedektörü | 1 |
-| Mod uyarı sayfası + Twitch girişi | 1,5 |
-| Telefon yüzü sayfası + HTTPS eşleştirme | 2,5 |
-| obs-websocket mute/sessizlik kontrolü | 1 |
-| Onay döngüsü + dock | 1,5 |
-| Anma overlay'i | 0,5 |
+| Focus açma/kapama + filtre + kuyruk sınırları | 1,25 |
+| Kristal rozet overlay'i | 1,5 |
+| Çağrı kartı overlay'i (canlı transkript satırı, ✓ damgası) | 1,5 |
+| Dock + sıralama + next/skip | 1 |
+| Yerel STT: mikrofon, VAD segmentleme, faster-whisper, kısmi güncellemeler | 2 |
+| Kapanış: tek tuş + sessizlik kuralı | 0,5 |
+| Cevap makbuzu: güven eşiği, blocklist, 500 karakter, threaded reply, `drop_reason` | 0,5 |
+| Geri alma hotkey'i | 0,25 |
+| SSS (katmanlı): soru tespiti, embedding, iki eşik, dock önerisi | 1,5 |
 | Cila | 1 |
-| *Eski MVP toplamı* | *9* |
-| **+ Sakin mod** (eski stretch) | 1 |
-| **+ Soundcheck:** seviye ölçümü, chat sorusu, yüz ekranı | 1 |
-| **+ Siyah/donmuş ekran algılama** | 0,5 |
-| **+ Yayın sonu sorun raporu** | 0,5 |
-| **Yeni MVP toplamı** | **12** |
+| **MVP toplamı** | **~11** |
+| Zaman kalırsa: soruyu yayıncının kulaklığına okuyan yerel TTS 1 (Opus; "Monitor Only" ile yayından ayrılmalı); cevabın klip linki 1 (Grok ve Astra şüpheli: klip asenkron, VOD zaman eşlemesi doğrulanmalı) | — |
 
-- **Codex artifact:** Telefon yüzü sayfası ve chat simülatörüyle gürültülü chat senaryoları üzerinde çalışan dedektör test seti.
+- **Codex artifact:** Sesten makbuza giden pipeline; kayıtlı cevap sesleri ve simüle chat ile test edilir. SSS eşikleri de simülatörün tekrar eden ve benzemeyen soru çiftleriyle test edilir.
 
-### Rakipler ve fark
-- **Yaygın OBS eklentileri:** Muted Notification (12,4 bin indirme: kapalı mikrofona konuşunca uyarı), Remember to Talk (2,4 bin: mikrofon uzun süre sessiz kalınca uyarı).
-- **Diğerleri:** Twitch Guardian (chat'te anahtar kelime çıkınca masaüstü uyarısı), Elgato Prompter chat modu, Mochi ve WooferBot maskotları.
-- **Fark:** İnsan yargısı (izleyici şikâyeti, mod uyarısı) OBS'in sinyaliyle karşılaştırılıyor, odadaki fiziksel bir sinyale dönüşüyor ve chat'in onayıyla kapanıyor. "Ses uzak geliyor" gibi durumları hiçbir OBS eklentisi göremez.
+### Önceki plandan ne değişti (ve neden)
+| Önceki | Son hâli | Kim önerdi |
+| --- | --- | --- |
+| SSS tek eşik (0,85) | İki eşik + dock önerisi | Opus. Grok ve Astra SSS'ye karşıydı ("dört cevaplık bir yayında ya hiç tutmaz ya yanlış tutar"; "benzer soru, aynı soru olmayabilir"). Senin kararın olduğu için kaldı, ama yanlış eşleşmeye karşı daha temkinli. |
+| Klip linki MVP'de | Zaman kalırsa | Grok, Astra |
+| Görsel geri alma sayacı | Hotkey | Opus (Astra ve Grok geri almayı tutmak istedi) |
+| Sadece sessizlikle kapanma | Tek tuş + sessizlik | Astra |
+| — | Kuyruk sınırları, alıntı blocklist'i | Astra, Opus |
+| "Ayrılan izleyici dönüyor" sahnesi | Çıkarıldı ya da "quiet chats" diye çerçevelendi | Opus, Grok, Astra |
+
+### Pivot geçmişi
+- **Orijinal hâli** (mesajları biriktir, sonra ekrana çıkar) **Meld X AMA Question Queue** ile aynı çekirdek döngüydü; sen "aynı döngü" kararını verdin.
+- **Tek pivot hakkı kullanıldı:** sesli cevap + alıntılı makbuz.
+- **Pivot sonrası fark** tek kaynaktan (P) kontrol edildi; step 8'de Grok da "baktığım araçlarda yok" dedi. Opus en yakın rakip olarak StreamChat A.I.'ı buldu: bir knowledge base'den LLM ile cevap üretiyor. Checkpoint ise yayıncının gerçekten söylediği sözü aktarıyor.
+- **Yedek plan, T1b başarısız olursa "pause trigger":** iş ekranı durur ve mikrofonda konuşma başlarsa "Checkpoint in 3…" geri sayımı. Demoyu kurtarır ama yeniliği kurtarmaz; bu plan seçilirse karta düzgünce yazılmalı.
 
 ### Talep ve karşı sinyaller
-- **Problem güçlü kanıtlı:**
-  - Snoop Dogg bir saatten uzun süre sessiz yayın yaptı; chat sadece emote moduna alındığı için ona söyleyemedi (Kotaku 2021, doğrulandı).
-  - OBS forumunda bir istek: "yayıncılar mikrofonu kapattıklarını sık sık unutuyor" (2018, doğrulandı).
-- **Karşı sinyaller:**
-  - "Kendi mikrofonunu OBS'te izle" tavsiyesi.
-  - DrDisrespect yaklaşık 10 dakika sessiz kaldı ve izleyiciler ona söyleyebildi (doğrulandı).
-  - Gerçek arızalar seyrek, yani araç çoğu zaman boşta bekler.
+- **Problem kanıtı setin en iyilerinden:** Streamlabs rehberi elle yapılan versiyonu anlatıyor (odak yayınlarında planlı chat molaları, mod tarafından tutulan soru listesi).
+- **Karşı sinyaller:** Bazı izleyiciler beklemiyor; yanlış duyulan bir kelime alıntıya girebilir; ayrılan izleyiciye ulaşma vaadi sınırlı (yukarıda).
 
-### Puanlar ve modellerin söyledikleri
+### Kitle
+İşe gömülü formatlar: kodlama, çizim (Art kategorisi #40, kanal başına yaklaşık 17 izleyici), maker, yemek ve odak gerektiren oyunlar. Her yayında kullanılabilecek bir araç.
+
+### Riskler, test ve yedek plan
+| Risk | Önlem |
+| --- | --- |
+| STT doğruluğu | **T1b:** 10 cevabın en az 9'unda anlam ve kritik kelimeler doğru, alıntı ≤2 sn'de hazır. |
+| Düşünme duraklaması kartı erken kapatır | Tek tuş kapanma; sessizlik eşiği ikincil. |
+| Yanlış duyulan kelime alıntıya girer | Güven eşiği, blocklist, geri alma hotkey'i. |
+| SSS yanlış soruyu eşleştirir | İki eşik; arada dock'ta onay; "daha önce şöyle cevaplandı" dili; `!ask`. |
+| "Yine bir soru kuyruğu" algısı | İlk 15 saniyede kartın üstünde beliren kelimeler ve yanındaki thread net görünmeli. |
+| **Yedek plan** | Pause trigger. Demo yapılabilir ama yenilik düşer. |
+
+### Step 7: puanlar ve modellerin söyledikleri
 | | Innovation | Impact | Tech | Design | Toplam | Risk | Sıra |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Grok | 3 | 4 | 4 | 4 | 15 | Orta | **2** |
-| Astra | 3 | 4 | 4 | 4 | 15 | Orta | 5 |
-| Claude | 3 | 3 | 3 | 4 | 13 | Düşük | 5 |
-| **Ortalama** | **3,0** | **3,7** | **3,7** | **4,0** | **14,3** | | |
+| Grok | 3 | 4 | 3 | 4 | 14 | Orta | 4 |
+| Astra | 4 | 4 | 3 | 4 | 15 | **Yüksek** | 3 |
+| Claude | 4 | 4 | 4 | 4 | 16 | Orta | 2 |
+| **Ortalama** | **3,7** | **4,0** | **3,3** | **4,0** | **15,0** | | |
 
-- **Grok onu 2. sıraya koydu:** Problem belgelenmiş, demo için bir mikrofon, yedek bir telefon ve 3 hesap yetiyor.
-- **Astra:** Puanları Grok ile aynı ama sırası 5: "Daha az ayırt edici ve teatral." Günlük kullanım için en güçlü argüman olan sakin mod MVP'nin dışında.
-- **Claude:** Impact 3: arızalar seyrek ve yaygın eklentiler mute durumunu zaten kapsıyor. Tech 3: daha çok entegrasyon işi.
+- **Grok:** Kuyruktan soru öne çıkarmak bilinen bir döngü; fark, karta yazılan sesli cevap ve alıntılı yanıt.
+- **Astra:** Kendinden emin ama yanlış bir transkript, izleyiciye "yayıncının ağzından" yanlış bir cevap gönderebilir.
+- **Claude:** "Sesli makbuz olmazsa bu, Meld'in soru kuyruğu."
+- Impact'te en güçlü proje (4/4/4). Puanı kısmen Claude puanlayıcısına dayanıyor (Grok + Astra ortalaması 14,5).
+
+### Step 8: serbest incelemeler
+- **Opus:** "Dört kart içinde en faydalı ve riski en düşük ML kartı." SSS'yi merkeze almayı önerdi: *"Answer once, out loud. Every later asker gets your own words."* T1 kalır ama T1b geçerse Checkpoint'i seçerdi.
+- **Grok:** "Pivot işe yaramış." Ama SSS'yi ve klip linkini koymazdı. Checkpoint'i ancak T1 düşer, T1b geçer ve VAR'ın replay'i T2'de çalışmazsa açardı.
+- **Astra:** "Uzun vadeli ürün potansiyelini daha yüksek görüyorum, fakat bu hafta içinde onu farklılaştıran kısmı güvenilir biçimde teslim etmek zor." Odak: "Bir soruya verilen gerçek cevabın doğru alıntıyla geri gitmesi."
 
 ### Benim görüşüm
-- **Avantajlar:** Faydalı ve somut bir problem. Telefon yüzü kadrajda hoş bir fiziksel öğe.
-- **Dezavantajlar:**
-  - Kriterlere tek tek bakınca sağlam görünüyor ama iki model onu 5. sıraya koydu. Bunu "akılda kalmaz" diye okuyorum.
-  - Demo, yapay bir arızayı sahnelemeyi gerektiriyor.
-  - Telefon ve HTTPS kurulumu ayrıca uğraştırıyor.
-- **12 saatlik eklemeler neyi değiştiriyor:**
-  - **Sakin mod**, Astra'nın "günlük kullanım argümanı MVP dışında" eleştirisini kapatıyor.
-  - **Soundcheck**, aracın arıza beklemeden her yayının ilk dakikasında çalışmasını sağlıyor. Bu, "gerçek arızalar seyrek" karşı sinyaline en iyi cevap.
-  - **Siyah/donmuş ekran**, "OBS sinyali" tarafını sesten görüntüye genişletiyor.
-  - **Dürüst not:** Bunlar Impact'i güçlendiriyor ama Innovation'ı (3,0) pek değiştirmiyor. "Akılda kalmaz" sorunu sürüyor.
-- **Bunu seçersen:** Telefon yüzünün tasarımına (ifadeler, animasyonlar) ekstra özen göster; videoda akılda kalan tek görsel o.
+- **En faydalı proje** ve aksan riskinin en az zarar verdiği ML kartı.
+- **Ama yarışma için zayıf yanları belirgin:** video sakin, fark ince ve "soru kuyruğu" algısı riski yüksek. Üç model de onu Minefield'ın arkasına koydu.
+- **SSS konusunda dürüst not:** İki model karşı. Katmanlı eşik yanlış eşleşme riskini azaltıyor, ama videoda aynı soruyu ikinci kez yazdırmak sahnelenmiş görünebilir (Grok).
+- **Bunu seçersen:** Kodlama yayınıyla çek; pause trigger yedeğini karta yaz; ilk 15 saniyede "Meld'den farkı ne?" sorusunu cevapla.
 
 ---
 
 ## 7. Karşılaştırma matrisi
 
-| | Minefield | Checkpoint | VAR | Tap |
-| --- | --- | --- | --- | --- |
-| **Toplam (ort., eski kartlara göre)** | **16,3** | 15,0 | 15,0 | 14,3 |
-| Innovation | **5,0** (gerçekçi: 4) | 3,7 | 3,0 | 3,0 |
-| Impact | 3,0 | **4,0** | 3,0 | 3,7 |
-| Tech | 3,3 | 3,3 | **4,0** | 3,7 |
-| Design | **5,0** | 4,0 | **5,0** | 4,0 |
-| Risk (medyan) | Yüksek | Orta | Orta | Orta |
-| Eklemelerin büyük ihtimalle yaradığı kriter | Innovation (tarama), Tech/Design (fitil), Impact (tablo) | Impact + Innovation (SSS), risk (geri alma) | Design (telestrator), Impact (beklemede, itibar) | Impact (sakin mod, soundcheck) |
-| Konuşma tanıma gerekli mi | Evet (kelime) | Evet (cümle) | Hayır | Hayır |
-| Aksan riski | Var | Var (daha az) | Yok | Yok |
-| Yedek planı var mı | **Yok** (fitil yumuşatır) | Var (yeniliği düşürür) | Gerek yok | Gerek yok |
-| İlk 20 saniyedeki "vay" etkisi | **Patlama** | Kelimeler karta yazılıyor + alıntı | **Siren + ağır çekim + çizim + damga** | Telefon yüzü paniği |
-| 3 hesapla gerçekçi demo | Evet (arkadaşla daha iyi) | Evet | Evet | Evet |
-| MVP saati | 12 | 12 | 12 | 12 (+ telefon kurulumu) |
-| Senin ML uzmanlığına uyum | **Yüksek** | **Yüksek** | Düşük | Düşük (sinyal eşikleri biraz) |
-| Ekstra telefon | 1–2 arkadaş | — | — | **1 telefon** |
-| Kitle | Konuşan her yayın (Just Chatting %14,2) | Odak yayınları (art, maker, kod) | Rekabetçi oyun, meydan okuma | Mikrofonlu her yayın |
-| Kullanım sıklığı | Her yayın (arka planda) | Her yayın | Tartışmalı anlarda | Her yayın başı (soundcheck) + arıza olunca |
-| 1. gün testleri | T1, T4 | T1b | T2 | T2, T4 |
+| | Minefield | VAR | Checkpoint |
+| --- | --- | --- | --- |
+| **Step 7 toplam (ort.)** | **16,3** | 15,0 | 15,0 |
+| Innovation | **5,0** (gerçekçi: 4) | 3,0 | 3,7 |
+| Impact | 3,0 | 3,0 | **4,0** |
+| Tech | 3,3 | **4,0** | 3,3 |
+| Design | **5,0** | **5,0** | 4,0 |
+| Risk (medyan) | Yüksek | Orta | Orta |
+| **Step 8 tercihi (Opus / Grok / Astra)** | **1 / 1 / 1** | 3 / 2 / 2 | 2 / 3 / 3 |
+| Konuşma tanıma gerekli mi | Evet (kelime) | Hayır | Evet (cümle) |
+| Aksan riski | Var (deste ile azaldı) | Yok | Var (daha az) |
+| Ana açık soru | T1 ve T0 (eğlence) | T2 (OBS tesisatı) | Farkın ince olması |
+| İlk 20 saniyedeki "vay" etkisi | **Patlama + kuranın adı** | **Siren + ağır çekim + halka + damga** | Kelimeler karta yazılıyor + alıntı |
+| 3 hesapla gerçekçi demo | Evet (arkadaşla daha iyi) | Evet | Evet |
+| MVP saati (son hâli) | ~11,25 | ~11 | ~11 |
+| Senin ML uzmanlığına uyum | **Yüksek** | Düşük | **Yüksek** |
+| "With AI" çerçevesine uyum (Opus) | Var (yerel Whisper) | Yok | Var |
+| Ekstra kişi | 1–2 arkadaş (şart gibi) | — | — |
+| Kitle | Konuşan her yayın (Just Chatting %14,2) | Rekabetçi oyun, meydan okuma | Odak yayınları (kod, çizim, maker) |
+| Kullanım sıklığı | Her yayın (arka planda) | Tartışmalı anlarda, self-VAR | Her yayın |
+| 1. gün testleri | T0, T1, T4, T5 | T2, T5 | T1b, T5 |
 
 ---
 
@@ -703,76 +636,64 @@ Bu, "yüksek tavan" ile "sağlam taban" arasındaki seçim.
 
 | | Minefield | VAR |
 | --- | --- | --- |
-| En iyi senaryo | Jüri "bunu hiç görmemiştim" der; Innovation 4–5 ve eşitlik bozmada da avantaj. | Jüri "çok eğlenceli, çok iyi paketlenmiş" der; telestrator karesi akılda kalır. |
-| En kötü senaryo | T1 başarısız, proje çöker; ya da jüri "Don't Get Got'un Twitch hâli" der. | Jüri "tekrar + anket" deyip Innovation'a 2–3 verir. |
-| Belirsizlik | Yüksek, ama **1. gün testiyle 2 saatte büyük kısmı çözülür.** | Düşük. |
+| En iyi senaryo | Jüri "bunu hiç görmemiştim" der; Innovation 4–5 ve eşitlik bozmada avantaj. | Jüri "çok eğlenceli, çok iyi paketlenmiş" der. |
+| En kötü senaryo | T1 ya da T0 başarısız; ya da jüri "Don't Get Got'un Twitch hâli" der. | Jüri "tekrar + anket" deyip Innovation'a 2–3 verir. |
+| Belirsizlik | Yüksek, ama **29 Ekim'de birkaç saatte büyük kısmı çözülür.** | Düşük. |
+| Step 8 | Üç modelin birinci tercihi | Grok ve Astra'nın ikinci tercihi |
 
-**Karar kuralım:** T1'i koş. Geçerse Minefield, geçmezse VAR. Bu ikisini yarıştırmak yerine test sonucunun seçmesine izin vermek mantıklı.
+**Karar kuralı:** T0 ve T1'i koş. İkisi de geçerse Minefield, geçmezse VAR. İkisini yarıştırmak yerine test sonucunun seçmesine izin vermek mantıklı.
 
-### Minefield mi Checkpoint mi?
-- İkisi de STT kullanıyor ve aynı testte (T1 + T1b) ölçülüyor.
-- **Minefield** daha eğlenceli ve daha yeni. **Checkpoint** daha faydalı (Impact 4), SSS ile daha da faydalı.
-- Jüri videoya baktığı için ilk 20 saniyede patlama, alt yazının karta yazılmasını büyük ihtimalle yener.
-- **İkisi de geçerse ben Minefield derim.** Sadece T1b geçerse Checkpoint masaya gelir.
-
-### Checkpoint mi VAR mı? (puan eşitliği)
-- Bizim kayıtlı kurallarımız bu eşitliği bozamadı.
-- Yarışmanın resmi kuralı uygulansaydı (önce Innovation) Checkpoint öne geçerdi (3,7'ye karşı 3,0).
-- Ama Checkpoint'in puanı kısmen Claude puanlayıcısına dayanıyor; Grok ve Astra'nın ortalamasında Checkpoint 14,5, VAR 15.
-- **Eklemelerden sonra:** SSS, Checkpoint'in Impact ve Innovation tarafını güçlendiriyor; telestrator VAR'ın Design tarafını güçlendiriyor. Yani ikisi de kendi güçlü yanını büyüttü, eşitlik büyük ihtimalle sürüyor.
-- **Faydayı mı, izlenebilirliği mi daha çok önemsiyorsun?** Fayda için Checkpoint, izlenebilirlik için VAR.
-- Ben hâlâ VAR'a yatkınım: riski daha düşük, videosu daha teatral ve puanı tartışmasız. Ama SSS ile fark eskisinden küçük.
-
-### VAR mı Tap mı? (STT gerektirmeyen iki seçenek)
-- **VAR:** Daha izlenesi (Design 5) ve teknik olarak daha ilginç (Tech 4). Ekstra cihaz yok.
-- **Tap:** Daha faydalı (Impact 3,7) ve soundcheck ile her yayında kullanılır. Ama iki puanlayıcı onu 5. sıraya koydu; yedek telefon ve HTTPS kurulumu ek iş.
-- Bence VAR, çünkü jüri videoya bakıyor ve "Design + Tech" toplamı daha yüksek. Tap'i ancak T2'de VAR'ın replay tarafı çalışmazsa öne alırdım.
+### VAR mı Checkpoint mi? (Minefield olmazsa)
+- Step 7'de eşitler (15,0). Resmi eşitlik kuralına göre (önce Innovation) Checkpoint öne geçerdi (3,7'ye karşı 3,0). Ama Checkpoint'in puanı kısmen Claude puanlayıcısına dayanıyor; Grok ve Astra'nın ortalamasında Checkpoint 14,5, VAR 15.
+- Step 8'de Grok ve Astra VAR'ı, Opus Checkpoint'i öne koydu.
+- **VAR'ın lehine:** Minefield'la aynı riski taşımıyor. T1 kaldıysa sorun büyük ihtimalle senin sesinle STT'de; Checkpoint de aynı STT'ye dayanıyor.
+- **Checkpoint'in lehine:** Daha faydalı (Impact 4), ML becerine uygun, T1b T1'den kolay.
+- **Benim önerim VAR.** Checkpoint'i ancak T1b temiz geçer ve T2 kalırsa açarım (Grok'un kuralı).
 
 ---
 
 ## 9. 1. gün testleri ve karar ağacı
 
 ### Hangi test, ne kadar sürer, neyi ölçer
-| Test | Proje | Ne ölçer | Geçme şartı | Tahmini süre |
-| --- | --- | --- | --- | --- |
-| **T1** | Minefield | Doğal İngilizce konuşmada kelime yakalama | ≥%80 yakalama, 10 dakikada ≤1 yanlış alarm, ≤3 saniye gecikme, kare düşmesi yok | ~1–1,5 saat |
-| **T1b** | Checkpoint | Sesli cevabın yazıya dökülmesi | 10 cevabın en az 9'u okunur, alıntı ≤2 saniyede hazır | T1 ile aynı oturumda ~30 dk |
-| **T2** | VAR, Tap | obs-websocket ile replay kaydı ve Media Source ağır çekimi; Tap için mute/sessizlik olayı ve `GetSourceScreenshot` | Tekrar ≤5 saniyede ekranda, mute olayı geliyor, ekran görüntüsü alınabiliyor | ~1–1,5 saat |
-| **T4** | Minefield, Tap | Herkese açık URL arkasında Twitch girişli sayfa; Tap için telefonda HTTPS + Wake Lock (ekran kapanmıyor) | Tek yol uçtan uca çalışıyor | ~1 saat |
-| **T5** | Hepsi | API kontrolleri: başlıklı klip, marker, threaded reply | Yeni kanalımızda hepsi başarılı | ~30 dk |
+| Sıra | Test | Proje | Ne ölçer | Geçme şartı | Süre |
+| --- | --- | --- | --- | --- | --- |
+| 1 | **T0 (yeni)** | Minefield | Kodsuz oyun: Discord'da 2 arkadaş kelimelerini üçüncü arkadaşa DM'ler; o, kelimeyi duyunca "BOOM" der. Sen kelimeleri bilmezsin. | Gülüş var, ilk patlama makul sürede geliyor, **arkadaşlar ikinci tur istiyor**. | 20–30 dk |
+| 2 | **T1 (yenilenmiş)** | Minefield | Senin sesin, deste kelimeleri cümle içinde, OBS açık; sözce bazlı tanıma + ikinci geçiş; negatif örnekler (benzer sesli kelimeler, sessizlik, doğal konuşma) | ≥%80 isabet; 10 dakikada ≤1 yanlış alarm; **medyan gecikme ≤1,5 sn**, en kötü ≤3 sn; kare düşmesi yok. Güven skorları kaydedilir. | 1–1,5 sa |
+| 3 | T1b | Checkpoint | Aynı oturumda 10 senaryolu cevap | 10 cevabın en az 9'unda **anlam ve kritik kelimeler doğru**; alıntı ≤2 sn'de hazır | 30 dk |
+| 4 | T4 | Minefield | Ekme sayfası: arkadaşın telefonundan cloudflared + Twitch girişi | Uçtan uca bir mayın ekleniyor | ~1 sa |
+| 5 | T5 | Hepsi | Create Clip (`title`, `duration`) ve marker; **klibi oynatıp** doğru anı içerdiğini görmek; threaded reply | Klip doğru anı içeriyor | ~30 dk |
+| 6 | T2 | VAR | Replay buffer kaydı → ffmpeg → Media Source | Komuttan sonra ≤5 sn'de tekrar ekranda | ~1 sa |
 
-T2 ve T4, VAR ile Tap'i aynı oturumda test ettiği için 4. finalist 1. güne çok az ek iş getiriyor. Toplam yaklaşık 4–5 saat.
+Toplam yaklaşık 4,5–5 saat. T0 için arkadaşlarla saati şimdiden ayarla.
 
 ### T1 nasıl yapılmalı (somut)
-1. Windows'ta Python + CUDA ile faster-whisper kur (`small.en` ile başla, sonra `medium.en` dene).
-2. 10 kelimelik bir mayın listesi hazırla. Kelimeleri **bir arkadaşın** seçsin ki sen bilmeyesin.
+1. Windows'ta Python + CUDA ile faster-whisper kur; `small.en` ile başla, gerekirse `medium.en` dene.
+2. İlk ~150 kelimelik desteyi hazırla (somut, komik isimler). Arkadaşın içinden 10 kelime seçsin; sen bilme.
 3. **10 dakika doğal İngilizce konuş:** OBS açık, yayın test modunda. Arkadaş kelimeleri sohbete sokmaya çalışsın.
 4. Ölç:
-   - Kaç kelime yakalandı (hit)?
-   - Kaç tanesi söylenmediği halde yakalandı (yanlış alarm)?
-   - Söyleyişten tetiklenmeye kaç saniye geçti (gecikme)?
+   - Kaç kelime yakalandı (isabet)?
+   - Kaç tanesi söylenmediği halde yakalandı (yanlış alarm)? İkinci geçiş bunları eledi mi?
+   - Söyleyişten tetiklenmeye kaç saniye geçti? Medyan ve en kötü değer.
    - OBS kare düşürdü mü?
-   - **Her yakalamanın güven skoru** (fitil eşiği bununla ayarlanacak): yanlış alarmların skorları doğru yakalamalarınkinden ayrışıyor mu?
-5. Aynı oturumda T1b: 10 senaryolu cevabı oku. Her biri için alıntının hazır olma süresini ve düzeltmesiz okunur olup olmadığını ölç.
+   - Her yakalamanın güven skoru: yanlış alarmların skorları doğru yakalamalarınkinden ayrışıyor mu? (Fitil eşiği bununla ayarlanır.)
+5. Aynı oturumda T1b: 10 senaryolu cevabı oku; her birinde anlam ve kritik kelimeler doğru mu, alıntı kaç saniyede hazır?
+6. Kayıtları sakla: harness'in ilk veri seti bunlar olacak.
 
-### Karar ağacı (önerim)
+### Karar ağacı
 ```
-T1 geçti mi? ──Evet──► MINEFIELD
-     │
-    Hayır
-     │
-T1b geçti mi? ──Evet──► CHECKPOINT ya da VAR (sen seçersin; ben VAR'a hafif yatkınım)
-     │
-    Hayır
-     │
-T2 (replay) geçti mi? ──Evet──► VAR
-     │
-    Hayır
-     │
-     ▼
-    TAP  (T2'nin mute/sessizlik kısmı ve T4'ün telefon kısmı geçtiyse)
+T0 eğlenceli VE T1 geçti ─────────────────► MINEFIELD
+        │
+  T1 sınırda (isabet iyi, yanlış alarmların güveni düşük)
+        │  → fitil bunu gerilime çevirebilir; birlikte bakalım
+        │
+  T0 eğlenceli değil YA DA T1 kaldı
+        │
+  T2 geçti ────────────────────────────────► VAR
+        │
+  T2 kaldı, T1b geçti ─────────────────────► CHECKPOINT
+        │
+  Hepsi kaldı ─────────────────────────────► VAR (replay'siz: çağrı, jüri, damga, klip)
 ```
-T1 "sınırda" çıkarsa (ör. %75 yakalama ama yanlış alarmların güven skoru düşük): fitil yanlış alarmları gerilime çevirebilir. Bu durumda Minefield'ı elemeden önce birlikte bakalım.
 
 ---
 
@@ -780,13 +701,15 @@ T1 "sınırda" çıkarsa (ör. %75 yakalama ama yanlış alarmların güven skor
 
 | Tarih | Ne |
 | --- | --- |
-| **28 Ekim (bugün)** | Finalistler seçildi (4 proje), MVP bütçesi 12 saat. |
-| **29 Ekim** | 1. gün testleri: T1 + T1b, T2, T4, T5 (~4–5 saat). Akşam final seçimi. Twitch hesapları ve ayarları (VOD açık, bot mod). |
-| **30 Ekim – 1 Kasım** | Yaklaşık 17,5 saat geliştirme: önce 3,5 saat ortak altyapı, sonra 12 saatlik MVP, en az 2 saat tampon. Günde yaklaşık 6 saat. |
-| **1–2 Kasım** | Video çekimi (arkadaşlarla), montaj (<3 dk), YouTube'a yükleme, repo README, Devpost açıklaması. |
-| **2 Kasım 14:00 PT** | **Son teslim** (Türkiye saatiyle 3 Kasım 01:00; ABD 1 Kasım’da kış saatine geçiyor, yani PST = UTC−8). |
+| **28 Ekim (bugün)** | Finalistler 3 projeye indi; final analiz yapıldı. Arkadaşlarla T0 ve kayıt saatlerini ayarla. |
+| **29 Ekim** | 1. gün testleri: T0, T1 + T1b, T4, T5, T2 (~4,5–5 saat). Akşam final seçimi. Twitch hesapları ve ayarları (VOD açık, bot mod). |
+| **30 Ekim – 1 Kasım** | Yaklaşık 17,5 saat geliştirme: ortak altyapı (seçilen projenin ihtiyacı kadar) 3,5 saat, MVP ~11 saat, kalan tampon. Günde yaklaşık 6 saat. |
+| **1 Kasım akşamı** | Arkadaşlarla kayıt (Minefield seçilirse). |
+| **1–2 Kasım** | Video montajı (<3 dk), YouTube'a yükleme, repo README, Devpost açıklaması (dört kriterle eşleşen başlıklar: Innovation / Potential Impact / Technological implementation + Codex / Design). |
+| **2 Kasım 23:00 TSİ** | **Hedef: Submit'e bas.** Taslak olarak kaydetmek teslim sayılmıyor. |
+| **2 Kasım 14:00 PT** | Resmi son teslim. Kuralların çoğuna göre Türkiye saatiyle **3 Kasım 01:00**; ama `resources.md` kendi içinde çelişiyor ("10 PM London" ve "9 PM UTC" kasımda aynı an değil). Bu yüzden 23:00 hedefi. |
 
-**Dikkat:** Video çekimi ve montaj 17,5 saatin içinde değil. Toplam bütçen 20–25 saatse video için 2,5–7,5 saat kalıyor; alt uçta bu dar. Tampon saatleri video için de kullanılabilir.
+**Dikkat:** Video çekimi ve montaj 17,5 saatin içinde değil. Toplam bütçen 20–25 saatse video için 2,5–7,5 saat kalıyor. MVP'ler 12 yerine ~11 saat olduğu için tampon biraz büyüdü; bu süre video için de kullanılabilir. Astra'nın uyarısı: 3,5 saatlik ortak altyapı Twitch'e yeni biri için iyimser.
 
 ---
 
@@ -814,7 +737,8 @@ T1 "sınırda" çıkarsa (ör. %75 yakalama ama yanlış alarmların güven skor
 - Her model kartları farklı sırayla gördü ve web araması yapmadı.
 - **Hiçbir kriterde modeller arasında 2 puanlık fark çıkmadı;** görüş birliği çok yüksek.
 - Toplam senin kararınla ortalama ile hesaplandı; medyan ile tek fark, Hint Jar ve Tap'in yer değiştirmesi.
-- **12 saatlik eklemeler puanlanmadı.** Puanlar eski kartlara göre.
+- **Son hâller puanlanmadı.** Step 7 puanları eski kartlara göre.
+- **Step 8 (serbest inceleme):** Aynı üç model (Opus ajan, Grok, Astra) finalistleri puan vermeden, web aramasıyla inceledi. Paket yalnızca resmi kuralları, senin koşullarını ve fikirleri içeriyordu; puanlar, sıralama ve benim görüşlerim yoktu. Opus benimle aynı model ailesinden; Grok ve Astra'nın Minefield'da hemfikir olması bu yüzden daha anlamlı.
 
 ### Fikirler nereden çıktı
 Wave 2'de beş kaynak aynı brief'le toplam 101 fikir üretti: L1 (Claude Opus, ihtiyaç odaklı), L2 (Claude Opus, gösteri odaklı), L3 (Claude Opus, yetenek odaklı), G (GPT 6 Astra, serbest), X (Grok, X'e dayalı).
@@ -824,13 +748,18 @@ Wave 2'de beş kaynak aynı brief'le toplam 101 fikir üretti: L1 (Claude Opus, 
 | Minefield | L2-1 | Yok, tek kaynak |
 | Checkpoint | L1-1; bugünkü sesli cevap hâli step 6'daki pivot (Claude yazdı, sen onayladın) | G-18 (Astra), varyant |
 | VAR | L2-11 | Yok, tek kaynak |
-| Tap on the Shoulder | L1-4 | G-2 Soundcheck Relay (Astra), o da tam kart; soundcheck eklemesi buradan geliyor |
 
-Dört finalistin de ana kaynağı Claude. Claude puanlayıcısı bu yüzden kendi fikirlerini puanlamış oldu; Grok ve Astra'nın ortalamasına bakınca sıralama büyük ölçüde aynı kalıyor, en çok etkilenen Checkpoint.
+Üç finalistin de ana kaynağı Claude. Claude puanlayıcısı bu yüzden kendi fikirlerini puanlamış oldu; Grok ve Astra'nın ortalamasına bakınca sıralama büyük ölçüde aynı kalıyor, en çok etkilenen Checkpoint.
 
 ---
 
 ## 12. Finale alınmayan ve elenen projeler
+
+**Finalden çıkarılan (28 Ekim, senin kararın, final analizden sonra):**
+
+| Proje | Ne idi | Puan, risk | Neden çıktı |
+| --- | --- | --- | --- |
+| Tap on the Shoulder | Mikrofon kapalı ya da ses uzak gelince chat'in uyarısı masadaki telefon yüzüne yansır, chat de düzeltmeyi onaylar. | 14,3, Orta | Step 8'de üç model de yapmazdı: "Bunu OBS plugin'leri zaten yapıyor" algısı (Muted Notification 12 bin+ indirme), videoda eğlencenin az olması, yedek telefon ve HTTPS kurulumu. |
 
 **Finale alınmayanlar (28 Ekim, senin kararın; puanlandılar ama finale girmediler):**
 
@@ -840,7 +769,7 @@ Dört finalistin de ana kaynağı Claude. Claude puanlayıcısı bu yüzden kend
 | Studio Audience | Chat tepkileri isimli kahkahalara dönüşür; tepki veren kişi sayısı arttıkça kalabalık büyür. | 13,0, Düşük | Kalabalığın büyümesi 3 test hesabıyla gösterilemiyor; videoda sadece etiketli simülasyon olurdu. |
 | Raid Torch | Raid ile kanaldan kanala taşınan meşale; her chat iz bırakır, izi taşıyanlar yeni kanalda parlar. | 12,3, Yüksek | Topluluk zinciri tek kişiyle gösterilemiyor; ikinci canlı kanal ve gerçek raid gerekiyor; talep bulunamadı. |
 
-Ayrıntıları için: [ranking.md](ranking.md) ve bu dokümanın git geçmişindeki 7 projelik sürüm.
+Ayrıntıları için: [ranking.md](ranking.md) ve bu dokümanın git geçmişindeki önceki sürümler.
 
 **Kanıt adımında elenenler (senin kararın):**
 
@@ -854,18 +783,25 @@ Ayrıntıları için: [ranking.md](ranking.md) ve bu dokümanın git geçmişind
 
 ## 13. Benim önerim
 
-**Karar şekli:** Sezgiyle değil, 29 Ekim'deki test sonuçlarıyla ([karar ağacı](#karar-ağacı-önerim)).
+**Seçim: Minefield. Yedek: VAR. İkinci yedek: Checkpoint.** Karar şekli: sezgiyle değil, 29 Ekim testleriyle ([karar ağacı](#karar-ağacı)).
 
-**Finalistlerin rolleri:**
-- **Minefield** kazanma şansı en yüksek proje. ML becerin ve GPU'n burada avantaj; fitil de bu avantajı doğrudan ürüne çeviriyor. Risk bir günde ölçülebiliyor.
-- **Checkpoint** aynı testle ölçüldüğü için ek maliyeti çok düşük bir B planı. SSS ile fayda tarafı setin en güçlüsü.
-- **VAR** konuşma tanımadan bağımsız, sağlam bir C planı. Telestrator ile videosu daha da yayın gibi.
-- **Tap** STT'siz ikinci güvenli seçenek. Ama bence en düşük kazanma şansı onda; ancak VAR'ın replay tarafı T2'de çalışmazsa öne alırdım.
+**Neden Minefield:**
+1. Step 7'de en yüksek toplam (16,3); step 8'de üç modelin de birinci tercihi. Altı değerlendirmenin altısında birinci ya da ikinci.
+2. Innovation hem bir kriter hem de eşitlik bozucu; üç finalist içinde en yüksek Innovation onda.
+3. ML becerin projenin merkezinde; accuracy harness Tech kriterine sayılarla cevap veriyor.
+4. Riski pahalı değil: T0 ve T1, 29 Ekim'de birkaç saatte ölçülüyor.
+5. Sentezle risk azaldı: deste ve sözce bazlı tanıma, tanıma işini rastgele kelimeden test edilmiş 150 kelimeye indiriyor.
+
+**Neden yedek VAR:** Minefield'la aynı riski (STT) taşımayan tek seçenek; videosu en kolay anlaşılanı; Grok ve Astra'nın ikinci tercihi.
 
 **Final seçilince yapılacaklar:**
-- **Minefield:** Yasaklı kelime listesini hazırlamak; arkadaşlarla ekme provası; T1 verisiyle fitil eşiğini ayarlamak; açıklamaya Don't Get Got benzerliğini sahiplenen bir cümle yazmak.
-- **Checkpoint:** Yedek planı (B) karta düzgünce yazmak; SSS eşiğini kayıtlı soru çiftleriyle ayarlamak; videonun ilk 20 saniyesinde "Meld'den farkı ne?" sorusunu cevaplamak.
-- **VAR:** PROVE IT linkini elle kontrol etmek; stinger, siren ve damga animasyonuna özen göstermek.
-- **Tap:** Yedek telefonu ayarlamak (HTTPS, Wake Lock); telefon yüzünün ifadelerine özen göstermek.
+- **Minefield:** ~150 kelimelik desteyi hazırlamak ve harness'te senin sesinle test etmek; T1 verisiyle fitil eşiğini ayarlamak; arkadaşlarla 1 Kasım kaydını kesinleştirmek; açıklamaya Don't Get Got benzerliğini sahiplenen bir cümle yazmak.
+- **VAR:** ffmpeg ön-render hattını T2'de doğrulamak; stinger, siren ve damga animasyonuna özen göstermek; PROVE IT Devpost linkini elle kontrol etmek.
+- **Checkpoint:** Pause trigger yedeğini karta yazmak; SSS eşiklerini 20–30 soru çiftiyle ayarlamak; kodlama yayınıyla çekmek.
 
-**Son not:** Bu dokümanda puanlar ve modellerin söyledikleri ölçülmüş bilgiler. "Benim görüşüm" bölümleri ve 12 saatlik eklemelerin etkisi ise yorum. Karar senin.
+**Her durumda:**
+- Devpost açıklamasını dört kriterle birebir eşleşen başlıklarla yaz (Opus: değerlendirmede otomatik AI analizi de kullanılabiliyor).
+- Videoda Codex'e 20–30 saniye ayır; kod ekranını gezmek yerine harness'in ya da testlerin yakaladığı somut bir hatayı ve düzeltmesini göster.
+- 2 Kasım 23:00 TSİ'den önce Submit.
+
+**Son not:** Bu dokümanda puanlar ve modellerin söyledikleri ölçülmüş bilgiler. "Benim görüşüm" bölümleri ve son hâllerin etkisi ise yorum. Final analizin tamamı: [../step8/final-analiz.md](../step8/final-analiz.md). Karar senin.

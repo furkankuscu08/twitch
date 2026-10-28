@@ -1,5 +1,7 @@
 # Finalistler ve 12 saatlik MVP paketleri
 
+> **Eski kayıt.** Bu dosya 28 Ekim'deki 4 finalistli ara aşamayı tutuyor. Güncel hâl: finalistler Minefield, VAR, Checkpoint (Tap çıkarıldı); MVP'ler final analize göre yaklaşık 11 saate indi. Bkz. [karar-rehberi.md](karar-rehberi.md) ve [../step8/final-analiz.md](../step8/final-analiz.md).
+
 Ayrıntılı hâli [karar-rehberi.md](karar-rehberi.md) içinde, her projenin "12 saatlik eklemeler" kısımlarında.
 
 28 Ekim 2026. Kullanıcının kararları ve benim önerilerim. Öneriler kullanıcı onaylayana kadar taslaktır.
