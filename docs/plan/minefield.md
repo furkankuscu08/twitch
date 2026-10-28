@@ -229,8 +229,8 @@ Puan:
 - Jüri büyük olasılıkla video ve açıklamaya bakıyor; asıl kanıt oraya konur.
 
 ### Kurulum (29 Ekim, ~20 dk)
-- **Codex CLI** WSL'de zaten kurulu (`codex-cli 0.155.1`). Repo kökünde `codex` çalıştır; projeyi "trusted" yap.
-- **Ağ ve web:** `uv sync` ve dokümanlar için ağ ve canlı web araması açık olmalı. Kullanıcı config'inde (`~/.codex/config.toml`):
+- **Codex masaüstü uygulaması** (Windows), ajan WSL'de çalışıyor (`runCodexInWindowsSubsystemForLinux = true`). Bu repo uygulamada zaten "trusted". Config ve oturumlar Windows tarafında: `C:\Users\furkan\.codex` (WSL'den `/mnt/c/Users/furkan/.codex`). WSL'deki `~/.codex` CLI'a ait, uygulama onu kullanmıyor.
+- **Ağ ve web:** `uv sync` ve dokümanlar için ağ ve canlı web araması açık olmalı. Uygulamanın config'ine (`C:\Users\furkan\.codex\config.toml`) eklenir, sonra uygulama yeniden başlatılır:
 
   ```toml
   web_search = "live"
@@ -238,15 +238,16 @@ Puan:
   [sandbox_workspace_write]
   network_access = true
   ```
-- **Model:** varsayılan `gpt-5.6-sol`. Rutin WP'lerde reasoning `medium`, zor hata ayıklamada `high`. Astra (Plus'ta 5 saatte 5–45 mesaj) sadece takıldığında.
+- **Model:** uygulamada `gpt-6.1-sol`, reasoning şu an `xhigh`. Rutin WP'lerde `medium`, zor işlerde `high`; `xhigh` limiti çok hızlı yer. Astra sadece takıldığında.
 - **Session ID:**
-  - İlk mesajdan sonra `/status` ile al. ID görünmüyorsa `/statusline` ile "session id" öğesini ekle, ya da en yeni `~/.codex/sessions/.../rollout-*-<UUID>.jsonl` dosyasının adındaki UUID'yi kullan.
+  - Uygulamada thread'in ID'sini göster ya da `/status` dene.
+  - Görünmezse: thread'in oturum dosyası `C:\Users\furkan\.codex\sessions\YYYY\MM\DD\rollout-<zaman>-<UUID>.jsonl`; UUID dosya adının sonundaki kısım. İlk mesajdan sonra en yeni dosya ana thread'indir.
   - Buraya yaz: `SESSION ID: ____`.
 - **GitHub code review:** chatgpt.com/codex/settings/code-review'da repo bağlanır, otomatik inceleme kapalı. 15 dk'da çalışmazsa bırakılır.
 
 ### Ana thread: "Minefield build"
 - Bütün WP'ler ve birleştirmeler burada. Kod sadece Codex'te yazılır; Claude plan, spec ve inceleme için kullanılır.
-- Ana thread'de **`/new` ve `/fork` kullanılmaz**, ID değişir. Geri dönmek için `codex resume <UUID>`.
+- Ana thread'de **`/new` ve `/fork` kullanılmaz**, ID değişir. Her gün aynı thread'e uygulamanın kenar çubuğundan dönülür; yeni chat açılmaz.
 - Kısa sorular için `/side`, ana bağlam şişmesin.
 - Yan thread ya da alt ajan: varsayılan olarak yok. Sadece ana thread bir şey beklerken. Darboğaz senin dikkatin, alt ajanlar da limiti hızlı yiyor.
 - Ana thread bozulursa yeni bir thread açılır. Teslimde işin çoğunun olduğu ID verilir, diğeri README'de anılır.
@@ -289,12 +290,12 @@ Kullanılmayacaklar: Codex'i ürünün içinde çalıştırmak (yapay görünür
 
 ### Ekran kaydı
 **Ne:**
-- Sadece Codex'in çalıştığı terminal penceresi.
+- Sadece Codex uygulamasının penceresi.
 - Masaüstünün tamamı değil: e-posta, bildirim ya da başka bir pencere görünmesin.
 
 **OBS kurulumu (bir kez, ~10 dk):**
-- Ayrı bir **"Codex" sahnesi** oluştur; içinde Windows Terminal için tek bir **Window Capture** kaynağı olsun.
-- Terminal: koyu tema, font 16–18 pt, pencere büyük. 1080p'de satırlar okunmalı.
+- Ayrı bir **"Codex" sahnesi** oluştur; içinde Codex uygulaması için tek bir **Window Capture** kaynağı olsun.
+- Uygulama: koyu tema, kod fontu 16 pt (şu an 14), pencere büyük. 1080p'de satırlar okunmalı.
 - Kayıt ayarları:
   - **kayıt formatı:** `mkv` (çökmede dosya bozulmaz; montajdan önce Dosya → Remux ile mp4'e çevrilir);
   - **çözünürlük:** 1080p;
@@ -410,7 +411,7 @@ Kullanılmayacaklar: Codex'i ürünün içinde çalıştırmak (yapay görünür
 | D10 | "Zaman kalırsa" listesi kaldırıldı; dondurmadan sonraki zaman videoya | Verildi | 28 Ekim |
 | D11 | Sadeleştirmeler ([bölüm 13](#13-sadeleştirmeler-28-ekim)) | Verildi | 28 Ekim |
 | D12 | Eşleştiricide onay sayısı ayarlanabilir (`CONFIRM_N`, varsayılan 2); Deepgram'ın ham mesajları ve tahminler kaydedilir; rapordaki tahmin dosyaları commit'lenir ki `replay` anahtarsız çalışsın | Verildi | 28 Ekim |
-| D13 | Codex: tek ana CLI thread'i; her WP'de önce testler, `/review`, commit, `/compact`; harness döngüsü ana hikâye; M1 ve M3'te `@codex review`; çalışırken sürekli ekran kaydı | Verildi | 28 Ekim |
+| D13 | Codex: masaüstü uygulamasında (ajan WSL'de) tek ana thread; her WP'de önce testler, `/review`, commit, `/compact`; harness döngüsü ana hikâye; M1 ve M3'te `@codex review`; çalışırken sürekli ekran kaydı | Verildi | 28 Ekim |
 
 ---
 

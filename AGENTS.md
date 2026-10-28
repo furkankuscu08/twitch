@@ -31,6 +31,15 @@ uv run python -m minefield.harness ...    # accuracy report (see SPEC §7)
 - Assets (sounds, images, fonts) must be your own or CC0; record the source in `web/assets/CREDITS.md`. No third-party trademarks.
 - Don't modify `docs/brainstorm/`, `docs/competition/`, or the local `twitch/` folder.
 
+## Twitch accounts
+| Role | Login | Token scopes (SPEC §6) |
+| --- | --- | --- |
+| Broadcaster (owns the channel and the developer app) | `izleyici0808` | `channel:manage:broadcast`, `clips:edit` |
+| Bot (moderator in the broadcaster's channel; sends chat, reads commands) | `minefield_bot` | `user:read:chat`, `user:write:chat` |
+| Test viewer (for testing commands alone) | `minefield_test` | `user:write:chat` |
+
+The logins and the app's Client ID are configured in `.env` (`TWITCH_CLIENT_ID`, `TWITCH_BROADCASTER_LOGIN`, `TWITCH_BOT_LOGIN`, `TWITCH_TEST_LOGIN`); resolve user IDs at runtime via Get Users. Do not hard-code them.
+
 ## Dependencies and tests
 - No ML or GPU dependencies (no torch, no faster-whisper, no onnxruntime).
 - `DEEPGRAM_API_KEY` and `DEEPGRAM_REGION` come from `.env`; never log the key.

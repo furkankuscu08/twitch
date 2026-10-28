@@ -4,6 +4,8 @@
 >
 > **Karar (28 Ekim, D3):** Flux birincil, Nova-3 yedek kabul edildi. Bölüm 1'deki 29 Ekim karşılaştırma testi **yapılmayacak**: ses beğenilmezse aynı anahtarla model değiştirilir. Mikrofon için relay yerine Chrome `/mic` sayfası seçildi.
 >
+> **Doğrulama (28 Ekim, EU uç noktası, Deepgram'ın örnek kaydının ilk 20 sn'si):** anahtar ve `wss://api.eu.deepgram.com/v2/listen` çalışıyor. `Update` aralığı medyan 0,248 sn (p90 0,283). `Update` mesajlarındaki kelimelerde `word`, `confidence`, `start`, `end` var. Kelimeler noktalama içeriyor (`"Yeah."`); normalizer temizliyor. Kelime bitişinden ilk görünmeye kadar geçen süre kabaca medyan ~0,1 sn, p90 ~0,4 sn (hızlı ölçüm, kendi sesimizle değil). 20 sn'lik kesintisiz konuşma tek bir turn olarak kaldı.
+>
 > İşaretler: **[kanıt]** resmî doküman, fiyat sayfası, SDK ya da bağımsız benchmark. **[zayıf kanıt]** ikincil kaynak, forum ya da üreticinin kendi iddiası. **[tahmin]** benim çıkarımım; 29 Ekim testinde doğrulanmalı.
 
 ---
