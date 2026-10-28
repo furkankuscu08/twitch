@@ -26,7 +26,7 @@ uv run python -m minefield.harness ...    # accuracy report (see SPEC §7)
 - **No persistence:** game state lives in memory only. The only runtime state file is `data/tokens.json`; logs and recordings you ask for (`--save-raw`, `--save-hyps`) also go under `data/`. Never commit `data/`, tokens, `.env` or API keys.
 - **No STT biasing:** never send mine or deck words to Deepgram (`keyterm`, keywords, prompts). A false boom names a viewer.
 - `minefield/core` stays pure (no I/O, no network, no GPU) and fully unit-tested. Put all tunable numbers in `minefield/core/config.py`.
-- Twitch and Deepgram: verify endpoints, scopes, parameters and payloads against https://dev.twitch.tv/docs and https://developers.deepgram.com before coding them. Twitch failures (marker, clip, chat send) are logged and must never crash or block the game.
+- Twitch and Deepgram: verify endpoints, scopes, parameters and payloads against https://dev.twitch.tv/docs and https://developers.deepgram.com before coding them. Twitch failures (chat send, EventSub) are logged and must never crash or block the game.
 - All code, comments, UI text, commit messages and docs you write are in English.
 - Assets (sounds, images, fonts) must be your own or CC0; record the source in `web/assets/CREDITS.md`. No third-party trademarks.
 - Don't modify `docs/brainstorm/`, `docs/competition/`, or the local `twitch/` folder.
@@ -34,7 +34,7 @@ uv run python -m minefield.harness ...    # accuracy report (see SPEC §7)
 ## Twitch accounts
 | Role | Login | Token scopes (SPEC §6) |
 | --- | --- | --- |
-| Broadcaster (owns the channel and the developer app) | `izleyici0808` | `channel:manage:broadcast`, `clips:edit` |
+| Broadcaster (owns the channel and the developer app) | `izleyici0808` | none: no markers or clips (D15) |
 | Bot (moderator in the broadcaster's channel; sends chat, reads commands) | `minefield_bot` | `user:read:chat`, `user:write:chat` |
 | Test viewer (for testing commands alone) | `minefield_test` | `user:write:chat` |
 

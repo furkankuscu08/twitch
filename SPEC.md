@@ -23,7 +23,7 @@ This file is the source of truth for the build. Work packages (WP1–WP14, witho
               ├── /overlay  (OBS browser source, WebSocket)
               ├── /dock     (OBS custom dock, WebSocket + POST)
               ├── /mic      (mic page, opened in Chrome on Windows)
-              └── Twitch    (EventSub WebSocket chat, Helix: chat message, marker, clip)
+              └── Twitch    (EventSub WebSocket chat, Helix: chat message)
            plant app (same process, 127.0.0.1:8001) ◄── cloudflared quick tunnel (in WSL) ◄── viewers' phones
 ```
 
@@ -99,19 +99,28 @@ At round end, every mine that never exploded becomes a `dud`.
 See §5. Only `armed` mines can trigger.
 
 ### Boom
-1. Show the overlay explosion and a banner: `{OWNER}'S MINE: {WORD}` and `planted {n} min ago`.
-2. Create a stream marker and post `💥 @{owner}'s mine {WORD} went off!` immediately.
-3. Start a timer: after `CLIP_DELAY_S` (10 s), create a clip (`duration=30`) unless the boom was marked a false alarm. When the clip is ready, post its link as a second message.
+1. Show the overlay explosion and a banner: `{OWNER}'S MINE: {WORD}`, `planted {n} min ago`, and the **receipt** (below).
+2. Post `💥 @{owner}'s mine {WORD} went off!` immediately.
+
+**Receipt:** the streamer's own words that set the mine off, e.g. *"…honestly I could go for some **pineapple**"*.
+- The last `RECEIPT_WORDS` (8) words of the triggering hypothesis, ending with the boom word (or its multi-word variant), which is highlighted. Words after it are not shown.
+- In typed mode, the same window is taken from the typed text.
+- **Masking:** every other word in the window that matches any deck word or variant (after normalization, §5) is replaced by `•••`, whether or not it is a live mine. A fizzled mine's word must never leak through a receipt.
+- Built in `core` (pure) and unit-tested.
 
 **False alarm** corrects speech-recognition errors; it is not a way for the streamer to escape.
 - Who: `!defuse` from a mod or the broadcaster, or the dock's "False alarm" button.
 - When: within `FALSE_ALARM_WINDOW_S` (10 s) of the boom.
-- Effect: the mine becomes `false_alarm` and does not count in the stats. No clip is created. The overlay shows a "FALSE ALARM" stamp, and the bot posts `🧯 False alarm, @{owner} gets a free re-plant`.
+- Effect: the mine becomes `false_alarm` and does not count in the stats. The overlay shows a "FALSE ALARM" stamp, and the bot posts `🧯 False alarm, @{owner} gets a free re-plant`.
 
 ### Round end
-Overlay and chat reveal the duds (`{owner}'s mine {WORD} never went off`) and the number of booms.
+- The overlay reveals the duds (`{owner}'s mine {WORD} never went off`) and the number of booms.
+- The bot posts **one recap message**: `Round over: {n} booms. 💥 @a (pineapple), @b (volcano). Survived: @c's "banana".`
+  - False alarms are not listed. With no booms: `Round over: no booms.` followed by the survivors.
+  - At most `CHAT_MAX_CHARS` (500, the Send Chat Message limit); if longer, drop list entries from the end and add `…`.
+  - The text is built in `core` (pure) and unit-tested.
 
-**Secrecy invariant:** the words of non-exploded mines must never reach the overlay, the dock, logs at INFO level, or chat. Only the plant page (to its own viewer, for its own hand) and the game state hold them.
+**Secrecy invariant:** the words of non-exploded mines must never reach the overlay, the dock, logs at INFO level, or chat. Receipts are masked for this reason (see Boom). Only the plant page (to its own viewer, for its own hand) and the game state hold them.
 
 ---
 
@@ -149,13 +158,12 @@ WebSocket `/ws/overlay` and `/ws/dock`. JSON messages with a `type` field:
 | `mine_armed` | `id` | ✓ | ✓ |
 | `spark` | `id` | ✓ | ✓ |
 | `fizzle` | `id` | ✓ | ✓ |
-| `boom` | `id, owner, word, planted_ago_s, latency_ms, source, at` | ✓ | ✓ |
+| `boom` | `id, owner, word, planted_ago_s, latency_ms, source, at, receipt` | ✓ | ✓ |
 | `false_alarm` | `id, owner` | ✓ | ✓ |
-| `clip` | `id, url` | — | ✓ |
 | `reveal` | `duds:[{owner, word}], stats` | ✓ | ✓ |
 | `status` | `mic, engine, deepgram, eventsub, tunnel_url` | — | ✓ |
 
-`word` appears only in `boom` and `reveal`. `source` is `stt` or `typed`.
+`word` appears only in `boom` and `reveal`. `source` is `stt` or `typed`. `receipt` is a list of `{"text": str, "hit": bool}` (masked as in §3; exactly one item has `hit: true`; a multi-word variant is one item).
 
 The overlay may show `latency_ms` as a small debug badge, enabled by `?latency=1`; it is used in the demo video.
 
@@ -222,9 +230,9 @@ Verify every endpoint, scope and payload against https://dev.twitch.tv/docs befo
   - Tokens are stored in `data/tokens.json` and refreshed on 401.
   - Public-client refresh tokens are single-use and expire after 30 days: always store the new refresh token returned by a refresh.
   - Scopes:
-    - Broadcaster: `channel:manage:broadcast` (markers), `clips:edit` (clips).
     - Bot (a mod in the channel): `user:read:chat`, `user:write:chat`.
     - One test account (optional, for testing commands alone): `user:write:chat`.
+    - The broadcaster needs no token: there are no markers or clips (decision D15), and the bot reads and sends chat as a moderator. Verify this against the EventSub and Send Chat Message authorization notes; if the broadcaster must authorize after all, say so and propose a spec change.
 - **EventSub WebSocket:** `channel.chat.message` v1, condition `{broadcaster_user_id, user_id: bot}`.
   - Subscribe within 10 s of `session_welcome`.
   - On `session_reconnect`: connect to the given `reconnect_url` and close the old socket only after the new welcome. Subscriptions carry over, so do **not** resubscribe.
@@ -233,12 +241,8 @@ Verify every endpoint, scope and payload against https://dev.twitch.tv/docs befo
   - `!mine`, `!mine CODE`;
   - `!defuse` (badges: broadcaster or moderator).
 - **Send Chat Message:** `POST /helix/chat/messages` as the bot. Log `is_sent` / `drop_reason`.
-- **Marker:** `POST /helix/streams/markers`. Requires a live stream and VODs enabled; failures are logged and never block the game.
-- **Clip:** `POST /helix/clips` with `title` and `duration=30`, `CLIP_DELAY_S` after the boom (see §3).
-  - Creation is async: poll `GET /helix/clips?id=` for up to 60 s (Twitch: "if after 60 seconds Get Clips hasn't returned the clip, assume it failed"), then post the link as a second chat message.
-  - Twitch captures a ~90 s window ending ~5 s after the call and publishes its last `duration` seconds, so a call 10 s after the boom covers roughly boom −15 s … boom +15 s.
-  - On failure, skip the link message.
-  - Do not use Create Clip From VOD (`vod_offset`): offset bugs were reported during its beta.
+- **Not used:** stream markers and clips (cut in D15: they only work on a live stream and added little to the demo). The streamer's native Clip button still works.
+- Chat send failures are logged and never block the game.
 
 ---
 
@@ -283,16 +287,16 @@ Each WP is done when its acceptance criteria pass and `uv run pytest` and `uv ru
 
 | WP | Scope | Acceptance |
 | --- | --- | --- |
-| WP1 | `core`: config, normalize, deck loader, game state machine, matcher | Unit tests cover: spark→boom with `CONFIRM_N` 2 and 3; spark→fizzle; a word below `MIN_WORD_PROB` is not present; occurrence identity with shifted timestamps; final-solo prob rule; multi-word variant; arming delay; live-mine definition; max mines; one live mine per user; false alarm accepted only within the window, excluded from stats, cancels the clip; hand drawn from the whole deck and taken word rejected at bind; secrecy (no word in non-boom events) |
+| WP1 | `core`: config, normalize, deck loader, game state machine, matcher | Unit tests cover: spark→boom with `CONFIRM_N` 2 and 3; spark→fizzle; a word below `MIN_WORD_PROB` is not present; occurrence identity with shifted timestamps; final-solo prob rule; multi-word variant; arming delay; live-mine definition; max mines; one live mine per user; false alarm accepted only within the window, excluded from stats; receipt window, highlight and masking of other deck words (including a fizzled live mine's word); round recap text, false alarms excluded, truncated to `CHAT_MAX_CHARS`; hand drawn from the whole deck and taken word rejected at bind; secrecy (no word in non-boom events) |
 | WP2 | `server`: app, WS hub, dock routes, typed mode, debug plant, engine heartbeat timeout | With `MINEFIELD_DEBUG=1`: plant via the debug route, wait for arming, type a sentence → `boom` reaches a test WS client |
-| WP3 | `web/overlay`: chips, arming ring, spark, fizzle, boom (shake + banner + sfx), static "FALSE ALARM" stamp, reveal, plant URL + QR, latency badge | 1920×1080 transparent; renders every §4 message; the demo page `/overlay?demo=1` replays a scripted sequence |
+| WP3 | `web/overlay`: chips, arming ring, spark, fizzle, boom (shake + banner with receipt + sfx), static "FALSE ALARM" stamp, reveal, plant URL + QR, latency badge | 1920×1080 transparent; renders every §4 message; the demo page `/overlay?demo=1` replays a scripted sequence |
 | WP4 | `web/dock`: round controls, status lights, mine list without words, "False alarm" button (enabled for 10 s after a boom), typed box | Works as an OBS custom browser dock at 400 px width |
 | WP5 | `web/mic` page + `stt` engine: Deepgram client, `flux` and `nova3` backends, reconnect, heartbeat, CLI (`--mic` / `--wav` / `--backend` / `--save-raw` / `--save-hyps`) | Unit tests map recorded Flux and Nova-3 messages (`tests/fixtures/deepgram/`) to the expected hypotheses, including empty updates and a dropped connection; speaking into the mic page produces hypotheses about every 0.25 s with `flux`; the mic page reconnects after an engine restart; the engine reconnects after the Deepgram socket is killed; the heartbeat shows backend, connection state and lag |
 | WP6 | `harness`: `run`, `replay`, `label-assist`, report | `run` produces the §7 report for one WAV in about its duration; `replay` reproduces the same matcher results from saved hypotheses in seconds, without an API key |
 | WP7 | `deck/en.json`: ~120 concrete, funny, everyday-but-not-too-common nouns with variants | No brands, offensive words or homophone pairs; no word among the ~1,000 most frequent English words; a harness pass on the deck-sentence recording drops misheard words |
 | WP8 | `twitch_api.auth`: device code flow CLI per account, token store, refresh | `python -m minefield.twitch_api.auth --account bot` stores a working token |
 | WP9 | EventSub client + commands + chat send | Commands from a test account change state and get replies; reconnect works |
-| WP10 | marker, boom message, clip timer + link message, false alarm | On a live test stream: a boom creates a marker and posts the boom message, then a playable clip link; a false alarm within 10 s cancels the clip |
+| WP10 | boom message, false-alarm message, round recap message | With a fake Twitch client: a boom posts the boom message, a false alarm within 10 s posts the false-alarm message, round end posts one recap message; a failed send is logged and the game continues. Then once on the real channel (no live stream needed): all three messages appear in chat |
 | WP11 | `web/plant` + plant app + code binding + tunnel helper | From a phone: hand → pick → copy `!mine CODE` → paste in chat → chip with the owner's name |
 | WP13 | Polish and rehearsal fixes | Two uninterrupted rounds (typed mode + debug plant, or with a friend) |
 | WP14 | Ops: `scripts/run_all.sh` (server + engine + cloudflared; fails clearly if `DEEPGRAM_API_KEY` is missing), English README (setup, Deepgram key, Twitch app registration, how to open the mic page, no-key demo path: `MINEFIELD_DEBUG=1` + `/overlay?demo=1` + typed mode + debug plant, `harness replay` on the committed hypotheses), demo-day checklist | A fresh clone on the same machine starts with one script plus the mic page in Chrome; the no-key demo path works without the STT engine |
@@ -322,6 +326,6 @@ Order and milestones:
 | `HAND_SIZE` | 6 |
 | `CODE_TTL_S` | 300 |
 | `FALSE_ALARM_WINDOW_S` | 10 |
-| `CLIP_DELAY_S` | 10 |
-| `CLIP_DURATION_S` | 30 |
+| `RECEIPT_WORDS` | 8 |
+| `CHAT_MAX_CHARS` | 500 |
 | `ENGINE_TIMEOUT_S` | 5 |

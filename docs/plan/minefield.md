@@ -34,10 +34,10 @@ Zaman biterse her şey kesilebilir, ama bu üçü kesilemez (Grok):
 - **Tanıma ve oyun:**
   - Akan STT (Deepgram Flux) + iki ardışık tahmin onayı.
   - Kıvılcım / BOOM / "fıss" ve afiş.
-  - Stream marker.
-  - Patlamadan sonraki 10 sn içinde "False alarm" (`!defuse` ya da dock): patlama sayılmaz, klip açılmaz.
-  - Patlama mesajı hemen; 10 sn sonra 30 sn'lik klip ve linki.
-  - Tur sonunda dud'lar ve patlama sayısı.
+  - Afişte **patlama makbuzu**: yayıncının son ~8 kelimesi, tuzak kelime vurgulu; diğer deste kelimeleri `•••` ile maskeli.
+  - Patlamadan sonraki 10 sn içinde "False alarm" (`!defuse` ya da dock): patlama sayılmaz.
+  - Patlama mesajı hemen.
+  - Tur sonunda overlay'de dud'lar ve patlama sayısı; chat'te tek bir **tur özeti** mesajı.
 - **Araçlar:**
   - "Konuşmayı yaz" modu.
   - Doğruluk harness'i (tekrar oynatma ve etiket yardımcısıyla).
@@ -56,7 +56,7 @@ Zaman biterse her şey kesilebilir, ama bu üçü kesilemez (Grok):
 - veritabanı (her şey bellekte; 24 saat kuralı);
 - yerel STT motoru (faster-whisper) ve yerel yedek; STT sağlayıcıları arasında ayrı bir karşılaştırma testi (D3);
 - Twitch Extension;
-- Create Clip From VOD.
+- stream marker, otomatik klip ve klip linki (D15; yayıncı Twitch'in kendi Clip düğmesini kullanabilir).
 
 ---
 
@@ -70,7 +70,7 @@ Ayrıntılar `SPEC.md`'de. Kısaca:
 [WSL]     oyun sunucusu (FastAPI): mayınlar, eşleştirme, Twitch
               ├─► overlay  (OBS browser source)
               ├─► dock     (OBS içi kontrol paneli)
-              ├─► Twitch   (EventSub chat, chat mesajı, marker, klip)
+              ├─► Twitch   (EventSub chat, chat mesajı)
               └─► ekme sayfası (ayrı port; cloudflared ile sadece bu port dışarı açılır)
 ```
 
@@ -100,8 +100,8 @@ Ayrıntılar `SPEC.md`'de. Kısaca:
 | **M0: Hazırlık** (29 Ekim) | Deste v0; Twitch token'ları alınabiliyor (T5 bu araçla yapılır). | WP7, WP8 |
 | **M1: İskelet** | Dock'a yazılan cümle → overlay'de BOOM. Mayınlar dock'tan debug olarak eklenir. Twitch ve STT yok. | WP1, WP2, WP3 (temel), WP4 |
 | **M2: Ses** | Konuşunca BOOM; kıvılcım ve "fıss" çalışıyor; harness raporu çıkıyor (**T1**). | WP5, WP6 |
-| **M3: Twitch** | Chat komutları, bot cevapları, marker, klip ve link. | WP9, WP10 |
-| **M4: İzleyici** | Arkadaşın telefonundan mayın ekleniyor (**T4**). | WP11 |
+| **M3: Twitch** | Chat komutları, bot cevapları, patlama ve tur özeti mesajları. | WP9, WP10 |
+| **M4: İzleyici** | Telefondan (mobil veriyle) mayın ekleniyor (**T4**). | WP11 |
 | **M5: Cila ve teslim hazırlığı** | Animasyonlar, sesler, dud gösterimi, başlatma betikleri, README. **Özellik dondurma.** | WP3 (tam), WP13, WP14 |
 
 Twitch yetkilendirmesi (WP8) inceleme önerisiyle öne alındı. Senin için en bilinmeyen kısım STT değil, Twitch: hesap doğrulama, sadece canlı yayında çalışan API'ler ve token'lar.
@@ -115,15 +115,15 @@ Kabul kriterleri `SPEC.md` §8'de. Codex'e görevler bu kimliklerle verilir ("WP
 | WP | İş | Saat | Kilometre taşı |
 | --- | --- | --- | --- |
 | WP7 | Deste: ~120 isim, yazım biçimleri, sesteş eleme | 0,5 | M0 |
-| WP8 | Twitch kimlik: device code flow, yayıncı + bot (+ 1 test hesabı) token'ları, yenileme | 1 | M0 |
+| WP8 | Twitch kimlik: device code flow, bot (+ 1 test hesabı) token'ları, yenileme | 1 | M0 |
 | WP1 | Çekirdek: normalizasyon, deste, oyun durumu, eşleştirici + birim testleri | 1 | M1 |
 | WP2 | Sunucu: FastAPI, WebSocket yayını, dock/overlay uç noktaları, "konuşmayı yaz", motor nabzı | 0,5 | M1 |
-| WP3 | Overlay: çipler, kurulma halkası, kıvılcım/fıss, BOOM, afiş, sabit "FALSE ALARM" damgası, dud'lar, QR, gecikme rozeti | 2 | M1 → M5 |
+| WP3 | Overlay: çipler, kurulma halkası, kıvılcım/fıss, BOOM, afiş ve makbuz, sabit "FALSE ALARM" damgası, dud'lar, QR, gecikme rozeti | 2,25 | M1 → M5 |
 | WP4 | Dock: tur başlat/bitir, durum ışıkları, mayın listesi (kelimesiz), "False alarm", yazı kutusu | 0,5 | M1 |
 | WP5 | STT: mic sayfası (Chrome, 16 kHz, yeniden bağlanma) + Deepgram motoru (Flux, Nova-3 yedeği, yeniden bağlanma, kayıtlı mesajlarla testler) | 1,5 | M2 |
 | WP6 | Harness: `run`, `replay` (kayıtlı tahminlerden saniyeler içinde), `label-assist`, rapor | 1,5 | M2 |
 | WP9 | EventSub chat + komutlar + chat mesajı | 0,5 | M3 |
-| WP10 | Marker, patlama mesajı, klip zamanlayıcısı + link mesajı, False alarm | 0,5 | M3 |
+| WP10 | Patlama mesajı, False alarm mesajı, tur özeti mesajı | 0,25 | M3 |
 | WP11 | Ekme sayfası (ayrı port) + kod akışı + kopyala düğmesi + cloudflared | 1,5 | M4 |
 | WP13 | Cila ve prova | 1 | M5 |
 | WP14 | Başlatma betiği, İngilizce README (Deepgram anahtarı, anahtarsız demo yolu), demo günü listesi | 0,75 | M5 |
@@ -138,6 +138,7 @@ Kabul kriterleri `SPEC.md` §8'de. Codex'e görevler bu kimliklerle verilir ("WP
 - Yeni WP14: 1.
 - Tampon: 3,5 → 2,5. Önceki planda görünmeyen işler artık iş paketlerinde ya da 29 Ekim'de.
 - Sadeleştirmede: WP7 0,75 → 0,5 (120 kelime), WP10 0,75 → 0,5 (pencere durumu yok), WP14 1 → 0,75 (CPU modu test edilmiyor).
+- Marker ve klip çıkınca (D15): WP10 0,5 → 0,25; WP3 2 → 2,25 (makbuz). Toplam değişmedi; kazanç senin zamanında: T5 kısaldı, canlı yayında hata ayıklama yok.
 - STT kararında (D3): WP5 2 → 1,5 (yerel model, VAD ve uydurma süzgeçleri yok; Windows relay yerine Chrome sayfası). CPU modu tamamen çıktı.
 
 ---
@@ -146,11 +147,11 @@ Kabul kriterleri `SPEC.md` §8'de. Codex'e görevler bu kimliklerle verilir ("WP
 
 | Gün | Saat (insan) | Ne |
 | --- | --- | --- |
-| **28 Ekim (bugün)** | — | Plan, `AGENTS.md`, `SPEC.md`, bağımsız inceleme. Arkadaşlarla T0 ve kayıt saatlerini ayarla. |
-| **29 Ekim** | ~4 | **Kurulum ve veri günü** (aşağıda). Codex ana thread'i açılır: WP7 + WP8. |
+| **28 Ekim (bugün)** | — | Plan, `AGENTS.md`, `SPEC.md`, bağımsız inceleme, Twitch/Deepgram/OBS hazırlığı. 1–2 arkadaşla 1 Kasım 20:00 kaydını ayarla. |
+| **29 Ekim** | ~2,25 | **Kurulum ve veri günü** (aşağıda). Codex ana thread'i açılır: WP7 + WP8. |
 | **30 Ekim** | ~6 | M1 + M2. Akşam **T1**. |
-| **31 Ekim** | ~5 | M3 + M4. Bir arkadaşla **T4**. |
-| **1 Kasım** | ~4 + akşam 2 | M5. Öğlen prova (2 tur). **17:00 özellik dondurma.** 20:00 arkadaşlarla kayıt. |
+| **31 Ekim** | ~4,5 | M3 + M4. Kendi telefonunla **T4**. |
+| **1 Kasım** | ~4 + akşam 2 | M5. Öğlen prova (2 tur). **17:00 özellik dondurma.** 20:00 arkadaşlarla kayıt ([bölüm 9](#arkadaşlar-sadece-kayıt-gecesi)). |
 | **2 Kasım** | ~4 | Video montajı, Devpost metni, repo paylaşımı. **23:00 TSİ Submit.** |
 
 ### 29 Ekim ayrıntısı
@@ -159,12 +160,12 @@ T1 ve T4 kod gerektirdiği için 30 ve 31 Ekim'e kaydı. 29 Ekim'de bunlar yapı
 
 | Sıra | İş | Süre |
 | --- | --- | --- |
-| 1 | Twitch hesapları ve uygulama kaydı (ayrıntı aşağıda) | 60–75 dk |
-| 2 | Codex kurulumu ve OBS'te "Codex" sahnesi ([bölüm 8](#8-codex-kullanımı)). Ana thread'i aç; **kayda bas**, ilk mesaj (`/plan`), sonuç gelince kaydı durdur (an 1), session ID'yi bölüm 8'e yaz. Sonra WP7 (deste) ve WP8 (auth). | 45 dk (senin zamanın) |
-| 3 | Deepgram hesabı (200 $ ücretsiz kredi), API anahtarı `.env`'e. Kısa bir WAV'ı `curl` ile AB uç noktasındaki pre-recorded API'ye gönder: anahtar çalışıyor mu, kelimeler doğru mu? | 15 dk |
-| 4 | **T5:** WP8 aracıyla yayıncı token'ı al. Kısa bir test yayını aç, curl ile marker ve klip oluştur; **klibi oynat**, doğru anı içeriyor mu bak. Aynı yayında OBS'te ve Chrome'da `http://localhost:8000` erişimini dene (Windows → WSL). | 45 dk |
+| 1 | ✅ Twitch hesapları ve uygulama kaydı (28 Ekim'de yapıldı; ayrıntı aşağıda) | — |
+| 2 | Codex ana thread'i ([bölüm 8](#8-codex-kullanımı); OBS "Codex" sahnesi 28 Ekim'de hazırlandı). Thread'i aç; **kayda bas**, ilk mesaj (`/plan`), sonuç gelince kaydı durdur (an 1), session ID'yi bölüm 8'e yaz. Sonra WP7 (deste) ve WP8 (auth). | 45 dk (senin zamanın) |
+| 3 | ✅ Deepgram hesabı, API anahtarı `.env`'de, AB uç noktasında Flux denendi (28 Ekim'de yapıldı) | — |
+| 4 | **T5:** WP8 aracıyla bot token'ını al, curl ile kanala bir chat mesajı gönder (canlı yayın gerekmez). WSL'de `python -m http.server 8000` çalıştır; OBS browser source'ta ve Windows Chrome'da `http://localhost:8000` açılıyor mu bak (Windows → WSL). | 20 dk |
 | 5 | Deste v0'ı gözden geçir | 20 dk |
-| 6 | **T0** arkadaşlarla Discord'da ([protokol](#t0-protokolü)). Bu sırada kendi mikrofonunu kaydet: kayıt (a) | 30 dk |
+| 6 | Kayıt (a): 15 dk İngilizce serbest konuşma, yayındaymış gibi (chat'i okur gibi, bir konu anlatarak). Deste kelimelerini bilerek söyleme. | 15 dk |
 | 7 | Kayıt (b): 10 dk sessizlik ve arka plan (klavye, nefes, sandalye). Kayıt (c): deste kelimeleri kısa cümlelerde; etiketleri sonra `label-assist` çıkarır. | 30 dk |
 
 **Twitch hesapları ve uygulama kaydı:**
@@ -172,29 +173,17 @@ T1 ve T4 kod gerektirdiği için 30 ve 31 Ekim'e kaydı. 29 Ekim'de bunlar yapı
 - Yayıncı hesabında 2FA açılır: geliştirici konsolunda uygulama kaydı için gerekiyor (birden çok kılavuz böyle diyor; resmî sayfa bulunamadı).
 - Uygulama Public client olarak kaydedilir. Form bir Redirect URL isterse `http://localhost:3000` girilir.
 - Bot'a mod yetkisi verilir.
-- Kanal ayarları: VOD saklama açık; klipler açık; chat'te e-posta/telefon doğrulama şartı test hesaplarını engellemeyecek şekilde.
+- Kanal ayarları: VOD saklama açık (kayıt gecesi yedeği); chat'te e-posta/telefon doğrulama şartı test hesaplarını engellemeyecek şekilde.
 
-**Kayıt formatı:** WAV, mono, sadece senin mikrofonun. Arkadaşların sesi kayda girmemeli; Discord'u kulaklıkla dinle. Dosyalar `data/recordings/` altına (git'e girmez).
-
-### T0 protokolü
-1. Deste v0'dan her arkadaşa 6 kelimelik bir el gönder.
-2. Arkadaşlar seçtikleri kelimeyi hakeme DM'ler. Hakem, üçüncü bir arkadaş ya da oynayan arkadaşlardan biri olabilir.
-3. Arkadaşlar tuzağı Discord'un **yazılı** chat'inden kurar, çünkü gerçek izleyiciler de yazarak tuzak kuruyor. Sesle "pineapple de" demek oyunu bozar.
-4. Sen yazılanları sesli okuyup sohbet edersin. Hakem kelimeyi duyunca "BOOM" der.
-5. Not al:
-   - ilk patlamaya kadar geçen süre;
-   - chat'i sesli okumak en kolay tuzak mı, eğlenceli mi yoksa ucuz mu;
-   - arkadaşlar ikinci tur istiyor mu?
-6. Ortalama patlama süresi 5 dakikayı geçiyorsa desteye biraz daha yaygın kelimeler eklenir.
-7. Opsiyonel kural, T0'a göre karar verilecek (D8): kendi kelimesini chat'e yazan mayınını kaybeder.
+**Kayıt formatı:** WAV, mono, sadece senin mikrofonun. Dosyalar `data/recordings/` altına (git'e girmez).
 
 ### İnsan saati
-29 Ekim 4 + 30 Ekim–1 Kasım 14,5 + kayıt 2 + montaj ve teslim 4 ≈ **24,5 saat**. Bu, 20–25 saatlik bütçenin içinde ama üst sınırında. Tampon (2,5) kullanılmazsa ~22'ye iner.
+28 Ekim'de yapılan hazırlık ~1,5 + 29 Ekim 2,25 + 30 Ekim–1 Kasım 14,5 (6 + 4,5 + 4) + kayıt 2 + montaj ve teslim 4 ≈ **24,25 saat**. 29 Ekim sabahından itibaren kalan ≈ **22,75 saat**; tampon (2,5) kullanılmazsa ~20,25. T0 çıkınca 15 dk (kayıt (a) tek başına 15 dk), marker ve klip çıkınca ~1 saat kazanıldı (T5 45 → 20 dk, 31 Ekim'de canlı yayın denemesi yok).
 
 Sıkışırsan kesilecekler, sırasıyla:
 1. dud gösteriminin animasyonu (düz liste);
 2. overlay'deki QR (bot cevabındaki link yeter);
-3. marker (videoda görünmüyor).
+3. tur özeti chat mesajı (overlay'deki dud gösterimi yeter).
 
 ---
 
@@ -202,11 +191,10 @@ Sıkışırsan kesilecekler, sırasıyla:
 
 | Test | Ne zaman | Hedef | Kötüyse |
 | --- | --- | --- | --- |
-| **T0** kodsuz oyun | 29 Ekim akşam | Gülüş; ilk patlama makul sürede; arkadaşlar ikinci tur istiyor | Kurallar değişir: mayın sayısı, kurulma süresi, deste zorluğu |
-| **T5** klip ve marker | 29 Ekim | Klip doğru anı içeriyor; OBS'ten WSL'deki sunucuya erişiliyor | `duration` ya da çağrı zamanı ayarlanır |
+| **T5** bot token'ı ve erişim | 29 Ekim | Bot'un chat mesajı kanalda görünüyor; OBS'ten ve Chrome'dan WSL'deki sunucuya erişiliyor | Scope'lar ve bot'un mod yetkisi kontrol edilir; erişim yoksa `wsl --shutdown` ve tekrar |
 | **T1** harness ilk koşusu | 30 Ekim akşam | ≥%80 isabet · **4 canlı mayına göre** 10 dk'da ≤1 yanlış alarm (kayıt b'de 0) · kelime bitişinden medyan ≤1,5 sn, en kötü ≤3 sn · OBS açıkken kare düşmesi yok · kelime bazında "fıss" oranı | Önce `replay` ile eşleştirici ayarı (`CONFIRM_N` 2 → 3, `MIN_WORD_PROB`); tanıma kötüyse `--backend nova3` ile aynı kayıtlar tekrar; sorunlu kelimeler desteden çıkar |
-| **T4** ekme sayfası | 31 Ekim | Arkadaşın telefonundan uçtan uca bir mayın | Discord + mod yolu: arkadaş kelimeyi mod rolündeki kişiye iletir, o da dock'a girer |
-| Prova | 1 Kasım öğlen | "Konuşmayı yaz" + debug ekleme ya da bir arkadaşla: 2 tur kesintisiz | Dondurmadan önce düzelt, yoksa kes |
+| **T4** ekme sayfası | 31 Ekim | Kendi telefonundan, Wi-Fi kapalı (mobil veri), `minefield_test` hesabıyla uçtan uca bir mayın | Kayıt gecesine kadar düzelt; olmazsa kayıtta Discord + mod yolu: arkadaş kelimeyi mod rolündeki kişiye iletir, o da dock'a girer |
+| Prova | 1 Kasım öğlen | "Konuşmayı yaz" + debug ekleme: 2 tur kesintisiz. Kurallar (D8) burada kesinleşir. | Dondurmadan önce düzelt, yoksa kes. İlk patlama 5 dk'dan uzun sürecek gibiyse desteye yaygın kelimeler eklenir. |
 
 **Yanlış alarm notu:** Harness bütün desteyi (~120 kelime) kurulu sayar. Gerçek oyunda en fazla 4 mayın var, yani harness'in ham yanlış alarm sayısı oyundakinin ~30 katı. Hedef bu yüzden 4 mayına göre normalize edilmiş sayıya uygulanır.
 
@@ -339,22 +327,29 @@ Kullanılmayacaklar: Codex'i ürünün içinde çalıştırmak (yapay görünür
 ### Çekim listesi (taslak; 1 Kasım akşamı)
 | Zaman | Sahne | Gerekenler |
 | --- | --- | --- |
-| 0:00 | Soğuk açılış: sohbet, "pineapple" BOOM, afiş, çipte isim. **Kelime → BOOM arası kesilmez**, köşede gecikme rozeti. | Arkadaşların gerçekten seçtiği kelimeler; birkaç tur çek, en iyisini koy |
+| 0:00 | Soğuk açılış: sohbet, "pineapple" BOOM, afiş ve makbuz (yayıncının cümlesi, kelime vurgulu), çipte isim. **Kelime → BOOM arası kesilmez**, köşede gecikme rozeti. | Arkadaşların gerçekten seçtiği kelimeler; birkaç tur çek, en iyisini koy |
 | 0:08 | Başlık kartı | — |
 | 0:12 | Telefonda QR → kart → kopyala → chat'te `!mine K7QF` → çipte isim | Arkadaşın telefonunun ekran kaydı |
 | 0:35 | İki tuzak: biri tutar, biri tutmaz | — |
 | 1:00 | "Fıss" ya da False alarm gag'i | — |
-| 1:20 | Chat'teki klip linkine tıklanır, klip 2 sn oynar | twitch.tv kaydı |
-| 1:30 | Tur sonu: dud'lar | — |
+| 1:20 | Tur sonu: overlay'de dud'lar, chat'te tur özeti mesajı (izleyici adlarıyla) | twitch.tv kaydı |
 | 1:45 | Kaputun altı: akan STT (Deepgram Flux), iki tahmin onayı, GPU gerekmez; harness tablosu | `reports/` |
 | 2:10 | Codex bölümü (20–30 sn), `/status`'ta session ID | Bölüm 8'deki kayıtlar |
 | 2:40 | Kapanış: repo linki. Video en fazla 2:50. | — |
+
+### Arkadaşlar (sadece kayıt gecesi)
+Arkadaşlar sadece 1 Kasım 20:00 kaydında var (D14); T0 yapılmaz, T4 tek başına yapılır.
+- 1–2 arkadaş, ~1 saat. Her biri kendi Twitch hesabıyla izler, telefondan ekme sayfasıyla mayın ekler, kelimeyi kendisi seçer. Sen kelimeleri bilmezsin.
+- Discord'dan konuşulur, sen kulaklıkla dinlersin (aşağıdaki kontrol listesi).
+- Biri 0:12 sahnesi için telefonunun ekran kaydını alır.
+- **Yedek, karar 1 Kasım öğlen:** arkadaş bulunamazsa ~0,5 saatlik bir **kör ekleme** betiği yazılır (önce `SPEC.md`'ye eklenir): desteden rastgele kelimeleri test hesaplarıyla ekler, kelimeleri ekrana yazmaz. Afişte farklı isimler için 2–3 test hesabı daha açılır (~10 dk/hesap). Bu durumda dürüstlük cümlesi değişir (aşağıda).
 
 **Twitch'te geçtiğinin kanıtı:** Kural "footage that shows the Project functioning on Twitch" istiyor. Kayıt gecesi OBS kaydına ek olarak ikinci bir cihazdan ya da tarayıcı penceresinden **twitch.tv/kanalın + chat** de kaydedilir. Soğuk açılış ve en az bir patlama bu görüntüden de gösterilir.
 
 **Dürüstlük:**
 - "Konuşmayı yaz" modu videoda gerçek STT gibi gösterilmez; gösterilirse "typed fallback" diye etiketlenir.
 - Devpost metninde şu cümleler olur: "Friends picked the words; I did not know them." ve "Typed fallback was not used in the video."
+- Kör ekleme kullanılırsa ilk cümle şu olur: "Words were planted at random by a script that hid them from me; the viewer names are test accounts."
 - Kayıtta yayıncı konuşması İngilizce. Model sadece İngilizce (`flux-general-en`); Türkçe konuşma uydurma bir İngilizce kelimeye "çevrilip" yanlış alarm üretebilir. Arkadaşların Türkçe konuşması Discord'da kalır, mikrofona girmez.
 
 ### Demo günü kontrol listesi
@@ -388,6 +383,7 @@ Kullanılmayacaklar: Codex'i ürünün içinde çalıştırmak (yapay görünür
 - [ ] Devpost açıklaması:
   - dört kriterle eşleşen başlıklar (Innovation / Potential Impact / Technological Implementation + Codex / Design);
   - Don't Get Got benzerliğini sahiplenen bir cümle;
+  - Impact için: kurulumu bir browser source ve bir Chrome sekmesi, GPU yok; 3 izleyicili küçük bir yayında bile her izleyicinin adı ekrana çıkıyor; makbuz ve tur özeti anı chat'e taşıyor; otomatik klip "future work" diye tek cümle (Twitch'in kendi Clip düğmesi zaten var);
   - dürüstlük cümleleri (yukarıda).
 - [ ] Codex session ID.
 - [ ] Galeri görselleri: patlama anı, ekme sayfası, harness tablosu.
@@ -406,12 +402,14 @@ Kullanılmayacaklar: Codex'i ürünün içinde çalıştırmak (yapay görünür
 | D5 | Teknoloji: Python 3.12 + uv + FastAPI; overlay, dock ve sayfa framework'süz HTML/JS | Verildi | 28 Ekim |
 | D6 | Herkese açık adres: cloudflared quick tunnel (WSL'de), sadece ekme sayfası portu | Verildi | 28 Ekim |
 | D7 | Ana yapım tek Codex thread'inde; yan thread sadece ana thread beklerken | Güncellendi (sadeleştirme) | 28 Ekim |
-| D8 | Kurallar (mayın sayısı, kurulma süresi, "kendi kelimesini yazan kaybeder") | T0'dan sonra | — |
-| D9 | False alarm: patlamadan sonraki 10 sn içinde; patlama sayılmaz, klip açılmaz, sahibi yeniden ekebilir. Patlama mesajı beklemeden gider. | Verildi (inceleme + sadeleştirme) | 28 Ekim |
+| D8 | Kurallar (mayın sayısı, kurulma süresi, "kendi kelimesini yazan kaybeder") | 1 Kasım provasında (T0 çıktı) | — |
+| D9 | False alarm: patlamadan sonraki 10 sn içinde; patlama sayılmaz, sahibi yeniden ekebilir. Patlama mesajı beklemeden gider. | Verildi (inceleme + sadeleştirme) | 28 Ekim |
 | D10 | "Zaman kalırsa" listesi kaldırıldı; dondurmadan sonraki zaman videoya | Verildi | 28 Ekim |
 | D11 | Sadeleştirmeler ([bölüm 13](#13-sadeleştirmeler-28-ekim)) | Verildi | 28 Ekim |
 | D12 | Eşleştiricide onay sayısı ayarlanabilir (`CONFIRM_N`, varsayılan 2); Deepgram'ın ham mesajları ve tahminler kaydedilir; rapordaki tahmin dosyaları commit'lenir ki `replay` anahtarsız çalışsın | Verildi | 28 Ekim |
 | D13 | Codex: masaüstü uygulamasında (ajan WSL'de) tek ana thread; her WP'de önce testler, `/review`, commit, `/compact`; harness döngüsü ana hikâye; M1 ve M3'te `@codex review`; sadece 7 hedef an kaydedilir, yedek olarak 2 Kasım'da thread geçmişi | Verildi | 28 Ekim |
+| D14 | Arkadaşlar sadece 1 Kasım kayıt gecesinde; T0 yok, T4 tek başına (kendi telefonun, mobil veri); arkadaş yoksa kör ekleme betiği (~0,5 sa), karar 1 Kasım öğlen | Verildi | 28 Ekim |
+| D15 | Marker, otomatik klip ve klip linki çıktı (sadece canlı yayında test edilebiliyor, videoda ~10 sn). Yerine patlama makbuzu (afişte yayıncının son ~8 kelimesi, diğer deste kelimeleri maskeli) ve tur sonu chat özeti. Yayıncı token'ı gerekmiyor. | Verildi | 28 Ekim |
 
 ---
 
@@ -435,6 +433,8 @@ Kullanılmayacaklar: Codex'i ürünün içinde çalıştırmak (yapay görünür
   - 29 Ekim'deki 45 dk'lık CUDA kontrolü yerine 15 dk'lık Deepgram hesap ve anahtar kontrolü.
   - WP5 1,5 saate indi; CPU modu çıktı; insan saati ~24,5.
   - Eşleştirici: `CONFIRM_N`, `MIN_WORD_PROB`; `AGREE_TOL_S` 0,5.
+- **28 Ekim, arkadaşlar (D14):** T0 çıktı; arkadaşlar sadece 1 Kasım kayıt gecesinde. T4 tek başına (kendi telefonun, mobil veri). Kayıt (a) tek başına 15 dk. Kurallar (D8) provada kesinleşir. Arkadaş yoksa kör ekleme betiği yedek. 28 Ekim'de yapılan hazırlıklar 29 Ekim tablosunda işaretlendi; 29 Ekim ~2,5 saat.
+- **28 Ekim, marker ve klip (D15):** marker, otomatik klip ve klip linki çıktı; yerine patlama makbuzu ve tur sonu chat özeti. Yayıncı token'ı ve `channel:manage:broadcast` / `clips:edit` scope'ları gitti. T5 bot token'ı ve erişim kontrolüne indi (20 dk). Video çekim listesinde klip sahnesi yerine tur özeti.
 - **28 Ekim, Codex kullanımı:** bölüm 8, [codex-usage.md](codex-usage.md) araştırmasına göre yeniden yazıldı: kurulum, ilk mesaj, WP döngüsü (önce testler, `/review`, `/compact`), 7 görünür an, ekran kaydı, dürüstlük cümlesi. Alt ajanlar varsayılan değil; PR incelemesi sadece M1 ve M3'te.
 
 ---
@@ -456,16 +456,16 @@ Rapor: [review-opus.md](review-opus.md). İncelemeci 9 nesnel hatayı doğrudan 
 | 9 | Bütçe kesintileri | ✅ Çoğu alındı. O an "24 saate iner" iddiası alınmadı (hesap ~28 saatti); sadeleştirmeden sonra ~25,5. |
 | 10 | Twitch'i öne al | ✅ Alındı, daha da öne: WP8 29 Ekim'de. T5 Twitch CLI yerine bu araçla yapılır, CLI'ın client secret sorunu da ortadan kalkar. |
 | 11 | Ana thread + yan thread'ler, `/compact` | ✅ Alındı (SSS ile doğrulandı); sadeleştirmede yan thread'ler varsayılan olmaktan çıktı |
-| 12 | Video Twitch'te geçsin, kesintisiz an, klip linki, `/status` | ✅ Alındı |
+| 12 | Video Twitch'te geçsin, kesintisiz an, klip linki, `/status` | ✅ Alındı; klip linki sonra çıktı (D15) |
 | 13 | CPU modu + GPU'suz demo yolu | ✅ Alındı (WP14); STT bulut olunca CPU modu gereksizleşti, anahtarsız demo yolu kaldı |
-| 14 | Klip mesajını ikiye böl | ✅ Alındı. Create Clip From VOD **alınmadı**: beta sırasında `vod_offset` kayması bildirilmişti. |
+| 14 | Klip mesajını ikiye böl | ✅ Alındı, sonra klip tamamen çıktı (D15). Create Clip From VOD **alınmadı**: beta sırasında `vod_offset` kayması bildirilmişti. |
 | 15 | Demo günü kontrol listesi | ✅ Alındı |
 | 16 | 29 Ekim gizli adımları (2FA, e-posta, redirect alanı) | ✅ Alındı |
 | 17 | AGENTS.md test ve bağımlılık kuralları | ✅ Alındı, bir farkla: `silero-vad` pip paketi de torch çekiyor. Bu yüzden VAD doğrudan onnxruntime ile çalıştırılacaktı; STT bulut olunca VAD de çıktı. |
 | 18 | Ekme uygulaması 127.0.0.1'de | ✅ Alındı |
-| 19 | T0 protokolü | ✅ Alındı. "Kendi kelimesini yazan kaybeder" kuralı T0'a bırakıldı (D8). |
+| 19 | T0 protokolü | ✅ Alındı, sonra çıkarıldı (D14). "Kendi kelimesini yazan kaybeder" kuralı 1 Kasım provasına kaldı (D8). |
 | 20 | Dil ve dürüstlük notu | ✅ Alındı |
-| 21 | Deste dengesi (6 kart kalsın) | ⏸ Kısmen: kural değişmedi; T0'da patlama süresi 5 dk'yı geçerse desteye yaygın kelimeler eklenir. |
+| 21 | Deste dengesi (6 kart kalsın) | ⏸ Kısmen: kural değişmedi; provada ilk patlama 5 dk'yı geçecek gibiyse desteye yaygın kelimeler eklenir. |
 | 22 | Süreç bölünmesi doğru; nabız kesilince kırmızı ışık | ✅ Alındı |
 
 ---
@@ -482,14 +482,14 @@ Rapor: [review-opus.md](review-opus.md). İncelemeci 9 nesnel hatayı doğrudan 
 | İstatistik | Patlama sayısı + en hızlı patlama | Sadece patlama sayısı | Videoda fark yaratmıyor. |
 | CPU modu | Test edilen bir yol | Sadece bayraklar ve README notu; STT kararında tamamen çıktı | Jürinin kurması beklenmiyor; anahtarsız demo yolu kalıyor. |
 | Deste | ~300 kelime | ~120 kelime | 4 mayın ve 6 kart için yeterli; kayıt (c) ve eleme işi yarıdan aza indi; yanlış alarm yüzeyi küçüldü. |
-| DEFUSE | 10 sn'lik pencere boyunca mayın "hâlâ canlı"; patlama mesajı ve klip pencereyi bekliyor | Patlama mesajı hemen gider; klip 10 sn'lik bir zamanlayıcıyla açılır; "False alarm" bu süre içinde basit bir geri alma | Durum makinesinden bir durum ve bir mesaj türü çıktı; chat'teki tepki hızlandı. |
+| DEFUSE | 10 sn'lik pencere boyunca mayın "hâlâ canlı"; patlama mesajı ve klip pencereyi bekliyor | Patlama mesajı hemen gider; "False alarm" bu süre içinde basit bir geri alma (klip sonra D15'te tamamen çıktı) | Durum makinesinden bir durum ve bir mesaj türü çıktı; chat'teki tepki hızlandı. |
 | Codex yan thread'leri | Overlay ve ekme sayfası paralel | Varsayılan tek thread | Darboğaz senin dikkatin. |
 
 **Bilerek kalanlar** (karmaşık görünse de puan getiriyor):
 - **Akan tanıma, iki tahmin onayı, kıvılcım ve "fıss":** ürünün kendisi; zamanlama Design puanını taşıyor.
 - **Harness:** Tech kriterinin kanıtı ve videodaki Codex hikâyesi.
 - **Ekme sayfası ve chat kodu:** "izleyici gizlice seçti" fikrinin videodaki kanıtı.
-- **Klip linki ve gecikme rozeti:** "Twitch'te çalışıyor" ve "hızlı" kanıtları.
-- **Marker:** ucuz ve yayıncıya gerçekten faydalı; sıkışırsa ilk kesilecek.
+- **Gecikme rozeti:** "hızlı" kanıtı. "Twitch'te çalışıyor" kanıtı twitch.tv kaydından ve chat mesajlarından gelir.
+- Klip linki ve marker sonradan çıktı (D15); yerlerine makbuz ve tur özeti.
 
 STT kararı (D3) ayrı araştırmalarla verildi: [stt-cloud-options.md](stt-cloud-options.md), [stt-research.md](stt-research.md).
