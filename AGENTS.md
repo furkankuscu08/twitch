@@ -26,8 +26,9 @@ uv run pytest -m live                     # live checks against Twitch and Deepg
 ```
 
 ## Rules
+- **Demo scope:** this is a 4-day hackathon demo. Prefer the simplest design that is also robust and efficient. Robust means a dropped connection, a bad message or a slow client never crashes the server or blocks the game, and it recovers on its own through reconnects and snapshots. Efficient means no needless work on the hot path (audio → hypothesis → matcher → overlay) and nothing that grows without bound. Beyond that, add no abstractions, config options or edge-case handling the spec does not ask for. If something needs more complexity, say so first instead of building it.
 - **Secrecy:** unrevealed mine words never go to the overlay, the dock, chat, Twitch API calls or INFO logs during a round. Only a boom discloses its word during play; round-end `reveal` and the recap disclose duds. Snapshots may restore already-public boom records, never secret words. Receipts mask all other deck words. See SPEC §3-4.
-- **No persistence:** game state lives in memory only. The only runtime state file is `data/tokens.json`; logs and recordings you ask for (`--save-raw`, `--save-hyps`) also go under `data/`. Never commit `data/`, tokens, `.env` or API keys. SPEC §7 separately requires reviewed evaluation reports, transcript-only hypotheses and reproducibility metadata under `reports/`; these are evaluation artifacts, not saved game state.
+- **No persistence:** game state lives in memory only. The only runtime state file is `data/tokens.json`; logs and recordings you ask for (`--save-raw`, `--save-hyps`) also go under `data/`. Never commit `data/`, tokens, `.env` or API keys. SPEC §7 separately requires reviewed evaluation reports and transcript-only hypothesis JSONL files with one config/deck-version header under `reports/`; these are evaluation artifacts, not saved game state. Replay reproduces hits, false alarms and fizzles; latency comes from the original run report. No virtual clock or extra replay metadata.
 - **No STT biasing:** never send mine or deck words to Deepgram (`keyterm`, keywords, prompts). A false boom names a viewer.
 - `minefield/core` stays pure (no I/O, no network, no GPU, no clock reads or mutable process-global game state) and fully unit-tested. Put all tunable numbers and defaults in `minefield/core/config.py`; entrypoints outside `core` read env overrides and inject validated config and explicit times.
 - Twitch and Deepgram: verify endpoints, scopes, parameters and payloads against https://dev.twitch.tv/docs and https://developers.deepgram.com before coding them. Dated claims in SPEC are verification inputs, not proof of current API behavior. Record the official source URL and verification date in implementation comments. Twitch failures (chat send, EventSub) are logged without private words or credentials and must never crash or block the game.
@@ -48,6 +49,7 @@ The test viewer is optional for normal play and required for WP9-WP11's automate
 
 ## Dependencies and tests
 - No ML or GPU dependencies (no torch, no faster-whisper, no onnxruntime).
+- `wordfreq` is a dev dependency only: deck validation rejects words in its top 1,000 English words. Keep frequency checks off the game and audio hot paths.
 - `DEEPGRAM_API_KEY` and `DEEPGRAM_REGION` come from `.env`; never log the key.
 - Tests that need a microphone, the network or an API key are marked `@pytest.mark.live` and are skipped by default.
 - Fake Twitch in unit tests (`respx` or a fake client). Test the Deepgram mapping with recorded messages from `tests/fixtures/deepgram/`. Never call the real APIs from the default test run.
