@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Minefield overlay</title>
+  <link rel="stylesheet" href="/overlay/style.css">
+  <script defer src="/assets/qrcodegen.js"></script>
+  <script defer src="/overlay/demo.js"></script>
+  <script defer src="/overlay/app.js"></script>
+</head>
+<body>
+  <main id="stage" aria-label="Minefield game overlay">
+    <section id="mines" aria-label="Mines"></section>
+    <aside id="plant" hidden>
+      <div><strong>PLANT A MINE</strong><span>Steer the conversation.</span><span id="plant-url"></span></div>
+      <div id="qr" aria-label="Scan to plant a mine"></div>
+    </aside>
+    <section id="boom-banner" hidden aria-live="polite">
+      <div class="eyebrow">YOU SAID IT.</div>
+      <div id="boom-owner"></div>
+      <h1 id="boom-word"></h1>
+      <div id="boom-age"></div>
+      <p id="receipt"></p>
+      <span id="latency" hidden></span>
+      <div id="false-alarm" hidden>FALSE ALARM</div>
+    </section>
+    <section id="reveal" hidden aria-live="polite">
+      <div class="eyebrow">ROUND OVER</div>
+      <h2 id="round-stats"></h2>
+      <div id="duds"></div>
+    </section>
+  </main>
+</body>
+</html>

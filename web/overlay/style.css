@@ -1,0 +1,44 @@
+:root { color-scheme: dark; font-family: "Segoe UI", Arial, sans-serif; color: #faf8f5; }
+* { box-sizing: border-box; }
+html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: transparent; }
+[hidden] { display: none !important; }
+#stage { position: relative; width: 1920px; height: 1080px; transform-origin: top left; }
+#mines { position: absolute; top: 48px; left: 48px; display: flex; gap: 16px; }
+.mine-chip { position: relative; display: flex; align-items: center; gap: 13px; width: 234px; min-height: 96px; padding: 18px; border: 2px solid #514b5a; border-radius: 18px; background: #19171ff5; box-shadow: 0 5px 22px #0005; }
+.mine-chip .owner { display: block; max-width: 155px; overflow: hidden; text-overflow: ellipsis; font-size: 23px; font-weight: 700; }
+.mine-chip .status { display: block; margin-top: 6px; color: #c5bfca; font-size: 16px; }
+.arming-ring { display: grid; flex: 0 0 32px; width: 32px; height: 32px; place-items: center; border-radius: 50%; background: conic-gradient(#c7ff76 var(--progress, 0%), #4c4656 0); }
+.arming-ring::after { content: ""; width: 23px; height: 23px; border-radius: 50%; background: #19171f; }
+.mine-chip[data-status="armed"] { border-color: #c7ff76; }
+.mine-chip[data-status="armed"] .arming-ring { background: #c7ff76; }
+.mine-chip[data-status="sparking"] { border-color: #ffd373; box-shadow: 0 0 32px #ffac40a0; animation: spark .18s infinite alternate; }
+.mine-chip[data-status="exploded"] { border-color: #ff896b; opacity: .75; }
+.mine-chip[data-status="false_alarm"] { border-color: #a9b6ce; opacity: .85; }
+.mine-chip .status.false-alarm-stamp { display: inline-block; padding: 3px 5px; border: 2px solid #bcd4f5; border-radius: 3px; color: #bcd4f5; font-size: 12px; font-weight: 800; text-transform: uppercase; }
+.mine-chip.fizzling { animation: fizzle .45s ease-out; }
+#plant { position: absolute; top: 48px; right: 48px; display: flex; align-items: center; gap: 20px; padding: 18px; border: 1px solid #514b5a; border-radius: 18px; background: #19171ff5; }
+#plant strong { display: block; color: #c7ff76; font-size: 24px; letter-spacing: 2px; }
+#plant span { display: block; margin-top: 9px; color: #ddd6e5; font-size: 18px; }
+#plant-url { max-width: 300px; overflow-wrap: anywhere; }
+#qr { width: 144px; height: 144px; background: #fff; border-radius: 6px; overflow: hidden; }
+#qr canvas { display: block; width: 144px; height: 144px; image-rendering: pixelated; }
+#boom-banner, #reveal { position: absolute; top: 340px; left: 280px; width: 1360px; padding: 42px 60px; border: 3px solid #ff896b; border-radius: 28px; background: #19171ff5; box-shadow: 0 18px 80px #0008; text-align: center; }
+.eyebrow { font-size: 20px; font-weight: 800; letter-spacing: 6px; color: #ffb397; }
+#boom-owner { margin-top: 18px; font-size: 32px; font-weight: 700; overflow-wrap: anywhere; }
+#boom-word { margin: 3px 0 4px; font-size: 104px; line-height: 1.12; letter-spacing: 4px; color: #ffad8f; overflow-wrap: anywhere; }
+#boom-age { color: #c8c0ce; font-size: 20px; }
+#receipt { margin: 25px 0 0; font-size: 31px; line-height: 1.5; overflow-wrap: anywhere; }
+#receipt mark { color: #19171f; background: #c7ff76; border-radius: 5px; padding: 2px 8px; }
+#latency { position: absolute; bottom: 15px; right: 20px; color: #b8b0c0; font-size: 16px; }
+#false-alarm { position: absolute; top: 25px; right: 28px; padding: 10px 16px; border: 5px solid #bcd4f5; border-radius: 6px; font-size: 26px; font-weight: 900; color: #bcd4f5; background: #19171f; transform: rotate(9deg); }
+#reveal { border-color: #c7ff76; }
+#reveal .eyebrow { color: #c7ff76; }
+#round-stats { margin: 18px 0 28px; font-size: 64px; }
+#duds { max-height: 370px; overflow-y: auto; }
+#duds p { margin: 14px 0; color: #ddd6e5; font-size: 27px; overflow-wrap: anywhere; }
+#duds strong { color: #c7ff76; }
+.shaking { animation: shake .4s ease-out; }
+@keyframes spark { to { transform: scale(1.035); } }
+@keyframes fizzle { from { filter: brightness(1.8); opacity: .6; } }
+@keyframes shake { 20%, 60% { transform: translateX(-12px); } 40%, 80% { transform: translateX(12px); } }
+html[data-frozen] *, html[data-frozen] *::after { animation: none !important; transition: none !important; }
