@@ -53,6 +53,7 @@ The test viewer is optional for normal play and required for WP9-WP11's automate
 - `wordfreq` is a dev dependency only: deck validation rejects words in its top 1,000 English words. Keep frequency checks off the game and audio hot paths.
 - `DEEPGRAM_API_KEY` and `DEEPGRAM_REGION` come from `.env`; never log the key.
 - Tests that need a microphone, the network or an API key are marked `@pytest.mark.live` and are skipped by default.
+- Playwright tests are marked `@pytest.mark.browser` and skipped by default; run them explicitly with `uv run pytest -m browser`.
 - Fake Twitch in unit tests (`respx` or a fake client). Test the Deepgram mapping with recorded messages from `tests/fixtures/deepgram/`. Never call the real APIs from the default test run.
 - If you cannot reach dev.twitch.tv, developers.deepgram.com or a package index, say so instead of guessing an API shape.
 - Playwright is a dev dependency only. Install the browser with `uv run playwright install chromium`, without `--with-deps`: there is no sudo, and the system libraries Chromium needs are already present (checked on 28 Oct). If Chromium still fails to start, fall back to the Windows Chrome at `/mnt/c/Program Files/Google/Chrome/Application/chrome.exe --headless --screenshot`.

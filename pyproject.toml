@@ -12,7 +12,13 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = ["pytest>=8", "respx>=0.22", "ruff>=0.9", "wordfreq>=3.1"]
+dev = [
+    "playwright>=1.64.1",
+    "pytest>=8",
+    "respx>=0.22",
+    "ruff>=0.9",
+    "wordfreq>=3.1",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
