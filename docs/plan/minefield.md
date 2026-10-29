@@ -242,7 +242,7 @@ Puan:
 - **Session ID:**
   - Uygulamada thread'in ID'sini göster ya da `/status` dene.
   - Görünmezse: thread'in oturum dosyası `C:\Users\furkan\.codex\sessions\YYYY\MM\DD\rollout-<zaman>-<UUID>.jsonl`; UUID dosya adının sonundaki kısım. İlk mesajdan sonra en yeni dosya ana thread'indir.
-  - Buraya yaz: `SESSION ID: ____`.
+  - **SESSION ID: `01a188b5-edca-79f3-9ee7-1b1d7198d173`** (ana thread "Minefield build", 29 Ekim).
 - **GitHub code review:** chatgpt.com/codex/settings/code-review'da repo bağlanır, otomatik inceleme kapalı. 15 dk'da çalışmazsa bırakılır.
 
 ### Ana thread: "Minefield build"
