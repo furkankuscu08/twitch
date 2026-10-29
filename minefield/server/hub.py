@@ -33,10 +33,13 @@ class Hub:
             pass
         finally:
             self.clients.discard(client)
-            try:
-                await asyncio.wait_for(client.socket.close(code=1013), timeout=1)
-            except (TimeoutError, OSError, RuntimeError, WebSocketDisconnect):
-                pass
+            await self._close(client)
+
+    async def _close(self, client):
+        try:
+            await asyncio.wait_for(client.socket.close(code=1013), timeout=1)
+        except (TimeoutError, OSError, RuntimeError, WebSocketDisconnect):
+            pass
 
     def send(self, client, message):
         if client not in self.clients:
@@ -46,6 +49,8 @@ class Hub:
         except asyncio.QueueFull:
             self.clients.discard(client)
             client.writer.cancel()
+            # A writer cancelled before its first turn never executes its finally.
+            asyncio.create_task(self._close(client))
 
     def broadcast(self, message, channel=None):
         for client in tuple(self.clients):

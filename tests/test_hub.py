@@ -38,3 +38,22 @@ def test_overflow_disconnects_only_slow_client():
         await hub.remove(fast)
 
     asyncio.run(scenario())
+
+
+def test_overflow_closes_socket_before_writer_first_runs():
+    async def scenario():
+        hub = Hub(100)
+        socket = Socket()
+        client = hub.add(socket, "overlay")
+        # Deliberately do not yield: the writer has never entered its try/finally.
+        for index in range(101):
+            hub.send(client, {"type": "spark", "id": str(index)})
+        assert client not in hub.clients
+        for _ in range(10):
+            await asyncio.sleep(0)
+            if socket.closed:
+                break
+        assert socket.closed
+        await hub.remove(client)
+
+    asyncio.run(scenario())
