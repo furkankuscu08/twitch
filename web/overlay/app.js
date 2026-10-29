@@ -76,6 +76,7 @@
 
   function updateChip(chip) {
     chip.element.dataset.status = chip.status;
+    chip.element.querySelector(".status").classList.toggle("false-alarm-stamp", chip.status === "false_alarm");
     const remaining = frozen ? chip.seconds : Math.max(0, (chip.deadline - performance.now()) / 1000);
     chip.element.querySelector(".status").textContent = chip.status === "arming"
       ? `Arming · ${Math.ceil(remaining)}s` : chip.status.replace("_", " ");

@@ -13,7 +13,8 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background:
 .mine-chip[data-status="armed"] .arming-ring { background: #c7ff76; }
 .mine-chip[data-status="sparking"] { border-color: #ffd373; box-shadow: 0 0 32px #ffac40a0; animation: spark .18s infinite alternate; }
 .mine-chip[data-status="exploded"] { border-color: #ff896b; opacity: .75; }
-.mine-chip[data-status="false_alarm"] { border-color: #a9b6ce; opacity: .65; }
+.mine-chip[data-status="false_alarm"] { border-color: #a9b6ce; opacity: .85; }
+.mine-chip .status.false-alarm-stamp { display: inline-block; padding: 3px 5px; border: 2px solid #bcd4f5; border-radius: 3px; color: #bcd4f5; font-size: 12px; font-weight: 800; text-transform: uppercase; }
 .mine-chip.fizzling { animation: fizzle .45s ease-out; }
 #plant { position: absolute; top: 48px; right: 48px; display: flex; align-items: center; gap: 20px; padding: 18px; border: 1px solid #514b5a; border-radius: 18px; background: #19171ff5; }
 #plant strong { display: block; color: #c7ff76; font-size: 24px; letter-spacing: 2px; }

@@ -237,3 +237,41 @@ def test_false_alarm_stamp_appears_late_within_legal_window(page):
     page.clock.fast_forward(8000)
     send(page, type="false_alarm", id="a", owner="mira")
     assert page.locator("#false-alarm").is_visible()
+
+
+def test_older_boom_correction_stamps_its_chip_without_relabeling_banner(page):
+    snapshot(
+        page,
+        mines=[
+            {"id": "a", "owner": "mira", "status": "armed", "arms_in_s": 0},
+            {"id": "b", "owner": "alex", "status": "armed", "arms_in_s": 0},
+        ],
+    )
+    boom(page)
+    send(
+        page,
+        type="boom",
+        id="b",
+        owner="alex",
+        word="volcano",
+        planted_ago_s=61,
+        latency_ms=300,
+        source="stt",
+        at=1730000001,
+        receipt=[{"text": "volcano", "hit": True}],
+    )
+    send(page, type="false_alarm", id="b", owner="alex")
+    send(page, type="false_alarm", id="a", owner="mira")
+    assert page.locator('[data-id="a"] .false-alarm-stamp').is_visible()
+    assert page.locator('[data-id="b"] .false-alarm-stamp').is_visible()
+    assert page.locator("#boom-owner").inner_text() == "ALEX'S MINE:"
+    assert page.locator("#boom-word").inner_text() == "VOLCANO"
+    assert page.locator("#false-alarm").is_visible()
+    snapshot(
+        page,
+        mines=[
+            {"id": "a", "owner": "mira", "status": "false_alarm", "arms_in_s": 0},
+        ],
+    )
+    assert page.locator('[data-id="a"] .false-alarm-stamp').is_visible()
+    assert not page.locator("#boom-banner").is_visible()
