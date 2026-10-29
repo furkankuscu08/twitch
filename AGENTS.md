@@ -26,8 +26,8 @@ uv run pytest -m live                     # live checks against Twitch and Deepg
 ```
 
 ## Rules
-- **Demo scope:** this is a 4-day hackathon demo. Prefer the simplest design that is also robust and efficient. Robust means a dropped connection, a bad message or a slow client never crashes the server or blocks the game, and it recovers on its own through reconnects and snapshots. Efficient means no needless work on the hot path (audio → hypothesis → matcher → overlay) and nothing that grows without bound. Beyond that, add no abstractions, config options or edge-case handling the spec does not ask for. If something needs more complexity, say so first instead of building it.
-- **Secrecy:** unrevealed mine words never go to the overlay, the dock, chat, Twitch API calls or INFO logs during a round. Only a boom discloses its word during play; round-end `reveal` and the recap disclose duds. Snapshots may restore already-public boom records, never secret words. Receipts mask all other deck words. See SPEC §3-4.
+- **Demo scope:** this is a 4-day hackathon demo. Prefer the simplest design that is also robust and efficient. Robust means a dropped connection, a bad message or a slow client never crashes the server or blocks the game, and it recovers on its own through reconnects and snapshots. Efficient means no needless work on the hot path (audio → hypothesis → matcher → overlay) and nothing that grows without bound. Beyond that, add no abstractions, config options or edge-case handling the spec does not ask for. If something needs more complexity, say so first instead of building it. This also applies to `SPEC.md`: add text only when requested or needed to resolve a real contradiction.
+- **Secrecy:** unrevealed mine words never go to the overlay, the dock, chat, Twitch API calls or INFO logs during a round. Only a boom discloses its word during play; round-end `reveal` and the recap disclose duds. Snapshots never contain words. Receipts mask all other deck words. See SPEC §3-4.
 - **No persistence:** game state lives in memory only. The only runtime state file is `data/tokens.json`; logs and recordings you ask for (`--save-raw`, `--save-hyps`) also go under `data/`. Never commit `data/`, tokens, `.env` or API keys. SPEC §7 separately requires reviewed evaluation reports and transcript-only hypothesis JSONL files with one config/deck-version header under `reports/`; these are evaluation artifacts, not saved game state. Replay reproduces hits, false alarms and fizzles; latency comes from the original run report. No virtual clock or extra replay metadata.
 - **No STT biasing:** never send mine or deck words to Deepgram (`keyterm`, keywords, prompts). A false boom names a viewer.
 - `minefield/core` stays pure (no I/O, no network, no GPU, no clock reads or mutable process-global game state) and fully unit-tested. Put all tunable numbers and defaults in `minefield/core/config.py`; entrypoints outside `core` read env overrides and inject validated config and explicit times.
@@ -69,7 +69,7 @@ The test viewer is optional for normal play and required for WP9-WP11's automate
 
 ## Review guidelines
 When reviewing a diff or a PR, flag as P0/P1:
-- any path where an unrevealed mine word can reach the overlay, the dock, chat, INFO logs or a Twitch API call outside the explicit boom and round-end disclosure rules (SPEC §3; snapshots may contain already-public boom records only);
+- any path where an unrevealed mine word can reach the overlay, the dock, chat, INFO logs or a Twitch API call outside the explicit boom and round-end disclosure rules (SPEC §3; snapshots never contain words);
 - I/O, network or global state in `minefield/core`;
 - API keys or tokens in code, logs or committed files;
 - mine or deck words sent to Deepgram (no biasing);
