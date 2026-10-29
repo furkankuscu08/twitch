@@ -422,3 +422,58 @@ def test_audio_gap_invalidates_session_without_buffering_backlog():
     audio.feed(bytes(640), 2000)
     assert audio.generation > generation
     assert not audio.accepting and not audio.buffer and audio.queue.empty()
+
+
+@pytest.mark.parametrize("backend", ["flux", "nova3"])
+def test_utterance_storage_is_bounded_without_inventing_a_final(backend):
+    config = replace(Config(), STT_MAX_UTTERANCE_WORDS=10)
+    mapper = Mapper(backend, "p", 1, 1000, config=config)
+    if backend == "flux":
+        message = next(
+            r["message"] for r in recording(backend) if r["message"].get("words")
+        )
+        message = json.loads(json.dumps(message))
+        message["words"] *= 11
+        with pytest.raises(ValueError, match="Utterance word limit"):
+            mapper.process(message, 1001)
+    else:
+        message = next(
+            r["message"]
+            for r in recording(backend)
+            if r["message"].get("is_final") and r["message"].get("speech_final")
+        )
+        message = json.loads(json.dumps(message))
+        message["speech_final"] = False
+        assert not mapper.process(message, 1003)[0]["final"]
+        message["start"] += 3
+        for word in message["channel"]["alternatives"][0]["words"]:
+            word["start"] += 3
+            word["end"] += 3
+        with pytest.raises(ValueError, match="Utterance word limit"):
+            mapper.process(message, 1006)
+        assert mapper.utt_id is not None
+        assert len(mapper.committed) <= config.STT_MAX_UTTERANCE_WORDS
+
+
+def test_engine_instances_have_fresh_process_identifiers():
+    assert (
+        Engine("fake", Config(), None).engine_id
+        != Engine("fake", Config(), None).engine_id
+    )
+
+
+def test_nova_boundary_lag_uses_processed_audio_window_not_last_spoken_word():
+    mapper = Mapper("nova3", "p", 1, 1000)
+    latest_window_end = 0
+    checked = False
+    for row in recording("nova3"):
+        message = row["message"]
+        if message.get("type") == "Results":
+            latest_window_end = message["start"] + message["duration"]
+        output = mapper.process(message, row["received_wall"])
+        if message.get("type") == "UtteranceEnd" and output:
+            checked = True
+            assert output[0]["lag_ms"] == pytest.approx(
+                (row["received_wall"] - 1000 - latest_window_end) * 1000
+            )
+    assert checked

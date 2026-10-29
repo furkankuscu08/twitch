@@ -11,6 +11,8 @@ TTS fixtures verify that both backends' word times are connection-relative.
 import math
 from urllib.parse import urlencode
 
+from minefield.core.config import Config
+
 
 def connection_url(config):
     params = dict(encoding="linear16", sample_rate=16000, mip_opt_out="true")
@@ -62,7 +64,7 @@ def words_from(raw):
 
 
 class Mapper:
-    def __init__(self, backend, engine_id, session, stream_start_wall):
+    def __init__(self, backend, engine_id, session, stream_start_wall, *, config=None):
         self.backend = backend
         self.prefix = f"{engine_id}-s{session}"
         self.stream_start_wall = stream_start_wall
@@ -74,9 +76,11 @@ class Mapper:
         self.closed_turn = -1
         self.closed_end = -1
         self.final_cursor = 0
+        self.window_end = 0
         self.committed = []
         self.interim = []
         self.aborted = False
+        self.word_limit = (config or Config()).STT_MAX_UTTERANCE_WORDS
 
     def abort(self):
         utt_id = self.utt_id
@@ -146,6 +150,8 @@ class Mapper:
             raise ValueError("Flux turn changed without EndOfTurn")
         event = message["event"]
         words = words_from(message["words"])
+        if len(words) > self.word_limit:
+            raise ValueError("Utterance word limit")
         if self.utt_id is None and words:
             # Freeze the origin: the audio window can slide in later Updates.
             self._open(
@@ -176,11 +182,11 @@ class Mapper:
             carry = [
                 w for w in self.committed + self.interim if w["end"] > boundary + 1e-6
             ]
-            output = [self._hypothesis(old, True, now, boundary)]
+            output = [self._hypothesis(old, True, now, self.window_end)]
             if carry:
                 self._open(self.turn, carry[0]["start"])
                 self.interim = carry
-                output.append(self._hypothesis(carry, False, now, carry[-1]["end"]))
+                output.append(self._hypothesis(carry, False, now, self.window_end))
             return output
         if kind != "Results":
             return []
@@ -193,12 +199,19 @@ class Mapper:
         window_end = start + number(message["duration"])
         if start < self.final_cursor - 1e-6:
             return []
+        self.window_end = window_end
         if words and self.utt_id is None:
             self._open(self.turn, min(start, words[0]["start"]))
+        remaining = [w for w in self.interim if w["start"] >= window_end - 1e-6]
+        size = len(self.committed) + len(words)
+        if message["is_final"]:
+            size += len(remaining)
+        if size > self.word_limit:
+            raise ValueError("Utterance word limit")
         if message["is_final"]:
             self.committed.extend(words)
             self.final_cursor = window_end
-            self.interim = [w for w in self.interim if w["start"] >= window_end - 1e-6]
+            self.interim = remaining
         else:
             self.interim = words
         combined = self.committed + self.interim

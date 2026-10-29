@@ -63,3 +63,51 @@ def test_mic_route_injects_engine_port_and_serves_worklet():
         assert "__STT_" not in page.text
         assert client.get("/mic/worklet.js").status_code == 200
         assert client.get("/mic/resampler.js").status_code == 200
+
+
+def test_worklet_bounds_unacknowledged_frames_and_marks_dropped_audio():
+    node = shutil.which("node")
+    if node is None:
+        pytest.skip("Node.js is required for the plain JavaScript worklet test")
+    script = r"""
+      import fs from 'node:fs';
+      import assert from 'node:assert/strict';
+      const dataUrl = text => 'data:text/javascript;base64,' +
+        Buffer.from(text).toString('base64');
+      const resampler = dataUrl(fs.readFileSync('web/mic/resampler.js'));
+      const source = fs.readFileSync('web/mic/worklet.js', 'utf8')
+        .replace('./resampler.js', resampler);
+      const posts = [];
+      let Processor;
+      globalThis.sampleRate = 48000;
+      globalThis.AudioWorkletProcessor = class {
+        constructor() { this.port = {postMessage: data => posts.push(data)}; }
+      };
+      globalThis.registerProcessor = (name, constructor) => {
+        Processor = constructor;
+      };
+      await import(dataUrl(source));
+      const processor = new Processor({processorOptions:{maxPendingFrames:16}});
+      processor.port.onmessage({data:{type:'reset', generation:1}});
+      const input = [[new Float32Array(960)]];
+      for (let i = 0; i < 100; i++) processor.process(input);
+      assert.equal(posts.length, 16);
+      processor.port.onmessage({data:{type:'ack', generation:1}});
+      processor.process(input);
+      assert.equal(posts.length, 17);
+      assert.equal(posts[16].gap, true);
+      processor.port.onmessage({data:{type:'reset', generation:2}});
+      processor.process(input);
+      processor.port.onmessage({data:{type:'ack', generation:1}});
+      for (let i = 0; i < 100; i++) processor.process(input);
+      assert.equal(posts.length, 33);
+      assert.equal(posts[17].generation, 2);
+    """
+    result = subprocess.run(
+        [node, "--input-type=module", "-e", script],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        timeout=10,
+    )
+    assert result.returncode == 0, result.stderr

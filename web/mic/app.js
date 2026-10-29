@@ -78,11 +78,14 @@ async function start() {
     }});
     context = new AudioContext();
     await context.audioWorklet.addModule('/mic/worklet.js');
-    worklet = new AudioWorkletNode(context, 'minefield-mic', {channelCount: 1, channelCountMode: 'explicit'});
+    worklet = new AudioWorkletNode(context, 'minefield-mic', {channelCount: 1, channelCountMode: 'explicit',
+      processorOptions: {maxPendingFrames: Number(settings.audioQueue) * 4}});
     context.createMediaStreamSource(stream).connect(worklet);
     worklet.connect(context.destination); // Unwritten outputs are silent; keeps processing active.
     worklet.port.onmessage = ({data}) => {
+      worklet?.port.postMessage({type: 'ack', generation: data.generation});
       if (!running || data.generation !== generation) return;
+      if (data.gap) { generation += 1; socket?.close(); return; }
       if (performance.now() - lastLevel >= 100) {
         const value = Math.min(100, Math.round(data.level * 300));
         level.style.width = `${value}%`; meter.setAttribute('aria-valuenow', String(value));
@@ -91,7 +94,7 @@ async function start() {
       }
       if (socket?.readyState === WebSocket.OPEN) {
         // Do not retain a backlog after a transport stall. Reconnect with fresh audio.
-        if (socket.bufferedAmount > 2560) socket.close();
+        if (socket.bufferedAmount > 2560) { generation += 1; socket.close(); }
         else socket.send(data.pcm);
       }
     };

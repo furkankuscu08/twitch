@@ -28,6 +28,7 @@ class Config:
     STT_MIC_PORT: int = 8765
     STT_AUDIO_QUEUE_SIZE: int = 4
     STT_LAG_WINDOW: int = 100
+    STT_MAX_UTTERANCE_WORDS: int = 1000
     STT_HEARTBEAT_S: float = 2
     STT_HTTP_TIMEOUT_S: float = 2
     STT_RECONNECT_MIN_S: float = 0.5

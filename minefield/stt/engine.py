@@ -121,7 +121,11 @@ class Engine:
             wall, pcm = item
             if self.mapper is None:
                 self.mapper = Mapper(
-                    self.config.STT_BACKEND, self.engine_id, self.session, wall
+                    self.config.STT_BACKEND,
+                    self.engine_id,
+                    self.session,
+                    wall,
+                    config=self.config,
                 )
             await socket.send(pcm)
 

@@ -253,6 +253,7 @@ def create_app(*, config=None, deck=None, clock=time.time, debug=False):
 
     mic_html = (ROOT / "web/mic/index.html").read_text()
     mic_html = mic_html.replace("__STT_MIC_PORT__", str(config.STT_MIC_PORT))
+    mic_html = mic_html.replace("__STT_AUDIO_QUEUE__", str(config.STT_AUDIO_QUEUE_SIZE))
     mic_html = mic_html.replace(
         "__STT_RECONNECT_MIN__", str(config.STT_RECONNECT_MIN_S)
     )
