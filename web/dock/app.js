@@ -13,7 +13,8 @@
     byId("typed").disabled = byId("send").disabled = !connected || !running;
     byId("empty").hidden = mines.size > 0;
     const rows = [];
-    for (const mine of mines.values()) {
+    for (const [id, mine] of mines) {
+      if (mine.inactiveDeadline && mine.inactiveDeadline <= Date.now()) { mines.delete(id); continue; }
       const row = document.createElement("li");
       const owner = document.createElement("span");
       owner.className = "owner";
@@ -25,6 +26,7 @@
       row.append(owner, status); rows.push(row);
     }
     byId("mines").replaceChildren(...rows);
+    byId("empty").hidden = mines.size > 0;
     booms = booms.filter(boom => boom.deadline > Date.now());
     byId("false-alarm").disabled = !connected || !running || !booms.length;
   }
@@ -38,7 +40,8 @@
         if (!message.round || !Array.isArray(message.mines)) return;
         running = message.round.running === true;
         mines = new Map(message.mines.map(mine => [mine.id, {...mine,
-          armsDeadline: Date.now() + Math.max(0, mine.arms_in_s || 0) * 1000}]));
+          armsDeadline: Date.now() + Math.max(0, mine.arms_in_s || 0) * 1000,
+          inactiveDeadline: ["exploded", "false_alarm"].includes(mine.status) ? Date.now() + correctionWindow : null}]));
         booms = [];
         break;
       case "mine_planted":
@@ -49,8 +52,9 @@
         if (mine) mine.status = {mine_armed:"armed", spark:"sparking", fizzle:"armed",
           boom:"exploded", false_alarm:"false_alarm"}[message.type];
         if (message.type === "boom") {
-          booms.push({id:message.id, deadline: Math.min(Date.now() + correctionWindow,
-            message.at * 1000 + correctionWindow)});
+          const deadline = Math.min(Date.now() + correctionWindow, message.at * 1000 + correctionWindow);
+          booms.push({id:message.id, deadline});
+          if (mine) mine.inactiveDeadline = deadline;
         }
         if (message.type === "false_alarm") booms = booms.filter(boom => boom.id !== message.id);
         break;
@@ -96,7 +100,8 @@
   }
   setInterval(() => {
     const expired = booms.some(boom => boom.deadline <= Date.now());
-    if (expired || [...mines.values()].some(mine => mine.status === "arming")) render();
+    if (expired || [...mines.values()].some(mine => mine.status === "arming" ||
+      (mine.inactiveDeadline && mine.inactiveDeadline <= Date.now()))) render();
   }, 100);
   connect();
 })();

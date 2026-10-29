@@ -172,7 +172,7 @@ WebSocket `/ws/overlay` and `/ws/dock`. JSON messages with a `type` field:
 | `reveal` | `duds:[{owner, word}], stats` | ✓ | ✓ |
 | `status` | `mic, engine, deepgram, eventsub, tunnel_url` | — | ✓ |
 
-`word` appears only in `boom` and `reveal`; snapshots never contain words. `arms_in_s` is the seconds remaining until arming, clamped to zero. A reloaded overlay restores chips with their status without replaying banners or sounds. `at` is the boom's server-clock Unix time; the server remains authoritative for the false-alarm deadline.
+`word` appears only in `boom` and `reveal`; snapshots never contain words. `arms_in_s` is the seconds remaining until arming, clamped to zero. A reloaded overlay restores chips with their status without replaying banners or sounds. Snapshots retain live mines and recent inactive mines through the false-alarm window. Older inactive records are discarded; uncorrected booms are compacted into a total and a recap prefix bounded by `CHAT_MAX_CHARS`. `at` is the boom's server-clock Unix time; the server remains authoritative for the false-alarm deadline.
 
 `source` is `stt` or `typed`. `receipt` is a list of `{"text": str, "hit": bool}` (masked as in §3; exactly one item has `hit: true`; a multi-word variant is one item). The dock receives a current `status` message when it connects as well as subsequent health updates.
 

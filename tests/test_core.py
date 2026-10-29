@@ -337,3 +337,66 @@ def test_false_alarm_uses_latest_emission_when_boom_times_tie(deck):
         "bob",
     ]
     assert game.false_alarm(104)[0]["owner"] == "bob"
+
+
+def test_expired_history_is_compact_but_preserves_total_and_recap_prefix(deck):
+    game = Game(deck, replace(Config(), ARM_DELAY_S=0))
+    game.start(100)
+    matcher = Matcher(game)
+    for index in range(100):
+        now = 100 + index * 11
+        game.plant(f"viewer_{index}", "pineapple", now)
+        matcher.process(
+            hypothesis(final=True, utt_id=f"u{index}", utt_start_wall=now), now + 2
+        )
+        game.snapshot(now + 13)
+        assert len(game.mines) == 0
+        assert (
+            sum(len(entry) for entry in game.archived_entries)
+            <= game.config.CHAT_MAX_CHARS
+        )
+    events, recap = game.end(1300)
+    assert events[-1]["stats"] == {"booms": 100}
+    assert "@viewer_0 (pineapple)" in recap
+    assert "viewer_99" not in recap
+    assert len(recap) <= 500 and recap.endswith("…")
+    assert game.archived_entries == []
+    assert game.archived_booms == 0
+
+
+def test_compaction_preserves_correction_window_and_excludes_false_alarms(deck):
+    game, matcher = setup_game(deck)
+    matcher.process(hypothesis(final=True), 103)
+    assert game.snapshot(113)["mines"][0]["status"] == "exploded"
+    assert game.false_alarm(113)
+    assert game.snapshot(113)["mines"][0]["status"] == "false_alarm"
+    assert game.snapshot(113.01)["mines"] == []
+    assert game.false_alarm(114) == []
+    events, recap = game.end(115)
+    assert events[-1]["stats"] == {"booms": 0}
+    assert recap == "Round over: no booms."
+
+
+def test_compacted_and_recent_recap_entries_follow_boom_emission_order(deck):
+    game, matcher = setup_game(deck)
+    game.plant("bob", "volcano", 100)
+    matcher.process(hypothesis(final=True, texts=("volcano",)), 103)
+    matcher.process(hypothesis(final=True, utt_id="u2", utt_start_wall=101), 104)
+    game.snapshot(113.5)  # Only Bob's earlier boom has expired.
+    events, recap = game.end(114)
+    assert events[-1]["stats"] == {"booms": 2}
+    assert recap.index("@bob") < recap.index("@alice")
+
+
+def test_compaction_does_not_skip_an_oversized_first_recap_entry(deck):
+    game, matcher = setup_game(deck, CHAT_MAX_CHARS=70)
+    game.mines["1"].owner = "x" * 100
+    matcher.process(hypothesis(final=True), 103)
+    game.snapshot(114)
+    game.plant("bob", "volcano", 114)
+    matcher.process(
+        hypothesis(final=True, texts=("volcano",), utt_id="u2", utt_start_wall=114), 116
+    )
+    events, recap = game.end(117)
+    assert events[-1]["stats"] == {"booms": 2}
+    assert "@bob" not in recap and recap.endswith("…")

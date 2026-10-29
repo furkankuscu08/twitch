@@ -92,6 +92,7 @@ def test_false_alarm_expires_after_ten_seconds(page, server_url):
     expect(button).to_be_enabled()
     page.clock.fast_forward(10_100)
     expect(button).to_be_disabled()
+    expect(page.locator("#mines")).not_to_contain_text("bob")
 
 
 def test_status_snapshot_reload_and_400px_layout(page, server_url):
