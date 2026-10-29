@@ -104,6 +104,31 @@ def test_pending_cleanup(deck, cleanup):
     assert matcher.process(hypothesis(3), 105) == []
 
 
+def test_abort_before_first_hypothesis_ignores_late_updates_and_final(deck):
+    game, matcher = setup_game(deck)
+    assert matcher.abort("u1") == []
+    assert matcher.abort("u1") == []
+    for seq, final in [(1, False), (2, False), (3, True)]:
+        assert matcher.process(hypothesis(seq, final=final), 103) == []
+    assert game.mines["1"].status == "armed"
+    assert matcher.candidates == {}
+    assert types(
+        matcher.process(hypothesis(final=True, utt_id="u2", utt_start_wall=104), 106)
+    ) == ["spark", "boom"]
+
+
+def test_unknown_abort_does_not_replace_another_open_utterance(deck):
+    game, matcher = setup_game(deck)
+    matcher.process(hypothesis(), 103)
+    assert matcher.abort("u2") == []
+    assert (
+        matcher.process(hypothesis(final=True, utt_id="u2", utt_start_wall=101), 104)
+        == []
+    )
+    assert game.mines["1"].status == "sparking"
+    assert types(matcher.process(hypothesis(2), 104)) == ["boom"]
+
+
 @pytest.mark.parametrize(
     "prob,expected", [(0.59, []), (0.65, ["spark", "fizzle"]), (0.7, ["spark", "boom"])]
 )

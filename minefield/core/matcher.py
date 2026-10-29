@@ -15,10 +15,13 @@ class Matcher:
         self.utt_id = None
         self.utt_start = float("-inf")
         self.closed_through = float("-inf")
+        self.last_aborted_utt_id = None
         self.seq = -1
         self.candidates = {}
 
     def abort(self, utt_id=None):
+        if utt_id is not None:
+            self.last_aborted_utt_id = utt_id
         if utt_id is not None and utt_id != self.utt_id:
             return []
         events = self._clear_candidates()
@@ -44,7 +47,7 @@ class Matcher:
             return []
         start = hypothesis["utt_start_wall"]
         utt_id = hypothesis["utt_id"]
-        if start <= self.closed_through:
+        if utt_id == self.last_aborted_utt_id or start <= self.closed_through:
             return []
         events = []
         if self.utt_id != utt_id:

@@ -101,6 +101,18 @@ def test_duplicate_out_of_order_final_and_late_hypotheses(setup):
     assert runtime.game.mines["1"].status == "exploded"
 
 
+def test_abort_before_first_hypothesis_blocks_late_final(setup):
+    client, runtime, clock = setup
+    client.post("/dock/round/start")
+    plant(client)
+    clock[0] = 104
+    client.portal.call(runtime.tick)
+    assert client.post("/stt/abort", json={"utt_id": "u1"}).status_code == 200
+    assert client.post("/stt/hypothesis", json=hyp(final=True)).status_code == 200
+    assert runtime.game.mines["1"].status == "armed"
+    assert runtime.matcher.candidates == {}
+
+
 @pytest.mark.parametrize("cleanup", ["abort", "disconnected", "timeout", "replacement"])
 def test_pending_cleanup(setup, cleanup):
     client, runtime, clock = setup
