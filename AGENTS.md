@@ -2,7 +2,7 @@
 
 Minefield: a Twitch game for the Codex x TwitchCon Hackathon. Viewers plant secret words; when the streamer says one on stream, the overlay explodes and names the viewer who planted it.
 
-**Read `SPEC.md` first.** It is the source of truth for architecture, messages, game rules and the work packages (WP1–WP14). When asked to "do WPn", implement exactly that package and meet its acceptance criteria. If the spec is wrong or unclear, say so and propose a spec change; don't silently diverge.
+**Read `SPEC.md` first.** It is the source of truth for architecture, messages, game rules and the work packages (WP1–WP14, without WP12). When asked to "do WPn", implement exactly that package and meet its acceptance criteria. If the spec is wrong or unclear, say so and propose a spec change; don't silently diverge. `docs/plan/` contains Turkish planning notes, not implementation requirements; do not modify it for spec work.
 
 ## Stack
 - Python 3.12, managed with `uv`; the package is `minefield/`.
@@ -26,11 +26,11 @@ uv run pytest -m live                     # live checks against Twitch and Deepg
 ```
 
 ## Rules
-- **Secrecy:** the words of live mines never go to the overlay, the dock, chat, or INFO logs. See SPEC §3.
-- **No persistence:** game state lives in memory only. The only runtime state file is `data/tokens.json`; logs and recordings you ask for (`--save-raw`, `--save-hyps`) also go under `data/`. Never commit `data/`, tokens, `.env` or API keys.
+- **Secrecy:** unrevealed mine words never go to the overlay, the dock, chat, Twitch API calls or INFO logs during a round. Only a boom discloses its word during play; round-end `reveal` and the recap disclose duds. Snapshots may restore already-public boom records, never secret words. Receipts mask all other deck words. See SPEC §3-4.
+- **No persistence:** game state lives in memory only. The only runtime state file is `data/tokens.json`; logs and recordings you ask for (`--save-raw`, `--save-hyps`) also go under `data/`. Never commit `data/`, tokens, `.env` or API keys. SPEC §7 separately requires reviewed evaluation reports, transcript-only hypotheses and reproducibility metadata under `reports/`; these are evaluation artifacts, not saved game state.
 - **No STT biasing:** never send mine or deck words to Deepgram (`keyterm`, keywords, prompts). A false boom names a viewer.
-- `minefield/core` stays pure (no I/O, no network, no GPU) and fully unit-tested. Put all tunable numbers in `minefield/core/config.py`.
-- Twitch and Deepgram: verify endpoints, scopes, parameters and payloads against https://dev.twitch.tv/docs and https://developers.deepgram.com before coding them. Twitch failures (chat send, EventSub) are logged and must never crash or block the game.
+- `minefield/core` stays pure (no I/O, no network, no GPU, no clock reads or mutable process-global game state) and fully unit-tested. Put all tunable numbers and defaults in `minefield/core/config.py`; entrypoints outside `core` read env overrides and inject validated config and explicit times.
+- Twitch and Deepgram: verify endpoints, scopes, parameters and payloads against https://dev.twitch.tv/docs and https://developers.deepgram.com before coding them. Dated claims in SPEC are verification inputs, not proof of current API behavior. Record the official source URL and verification date in implementation comments. Twitch failures (chat send, EventSub) are logged without private words or credentials and must never crash or block the game.
 - All code, comments, UI text, commit messages and docs you write are in English.
 - Assets (images, fonts) must be your own or CC0; record the source in `web/assets/CREDITS.md`. No third-party trademarks. Sounds are synthesized (see Stack), so they need no credits.
 - Don't modify `docs/brainstorm/`, `docs/competition/`, or the local `twitch/` folder.
@@ -43,6 +43,8 @@ uv run pytest -m live                     # live checks against Twitch and Deepg
 | Test viewer (for testing commands alone) | `minefield_test` | `user:write:chat` |
 
 The logins and the app's Client ID are configured in `.env` (`TWITCH_CLIENT_ID`, `TWITCH_BROADCASTER_LOGIN`, `TWITCH_BOT_LOGIN`, `TWITCH_TEST_LOGIN`); resolve user IDs at runtime via Get Users. Do not hard-code them.
+
+The test viewer is optional for normal play and required for WP9-WP11's automated live acceptance checks.
 
 ## Dependencies and tests
 - No ML or GPU dependencies (no torch, no faster-whisper, no onnxruntime).
@@ -65,7 +67,7 @@ The logins and the app's Client ID are configured in `.env` (`TWITCH_CLIENT_ID`,
 
 ## Review guidelines
 When reviewing a diff or a PR, flag as P0/P1:
-- any path where the word of a non-exploded mine can reach the overlay, the dock, chat, INFO logs or a Twitch API call (SPEC §3 secrecy invariant);
+- any path where an unrevealed mine word can reach the overlay, the dock, chat, INFO logs or a Twitch API call outside the explicit boom and round-end disclosure rules (SPEC §3; snapshots may contain already-public boom records only);
 - I/O, network or global state in `minefield/core`;
 - API keys or tokens in code, logs or committed files;
 - mine or deck words sent to Deepgram (no biasing);
