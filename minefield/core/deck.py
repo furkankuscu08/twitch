@@ -1,5 +1,6 @@
 """Validate decoded deck data and index forms once, outside the audio hot path."""
 
+import re
 from dataclasses import dataclass
 
 from .normalize import normalize
@@ -74,10 +75,16 @@ class Deck:
         # Include the complete hit even when a multiword form spans the window.
         first = min(first, hit.first)
         masked = set()
-        for occurrence in self.occurrences(words):
-            if occurrence.first == hit.first and occurrence.last == hit.last:
-                continue
-            masked.update(range(occurrence.first, occurrence.last))
+        runs = [
+            (index, run)
+            for index, word in enumerate(words[: hit.last])
+            for run in re.findall(r"[^\W\d_]+", normalize(word["text"]))
+        ]
+        for offset, (_, token) in enumerate(runs):
+            for _, form in self.index.get(token, ()):
+                matched = runs[offset : offset + len(form)]
+                if tuple(run for _, run in matched) == form:
+                    masked.update(index for index, _ in matched)
         result = []
         index = first
         while index < hit.last:

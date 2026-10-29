@@ -62,6 +62,28 @@ def test_debug_plant_arm_typed_boom(setup):
         assert runtime.game.mines["1"].status == "exploded"
 
 
+def test_typed_boom_receipt_masks_punctuation_joined_private_word(setup):
+    client, runtime, clock = setup
+    client.post("/dock/round/start")
+    plant(client)
+    plant(client, "bob", "volcano")
+    clock[0] = 103
+    with client.websocket_connect("/ws/overlay") as ws:
+        ws.receive_json()
+        response = client.post(
+            "/dock/typed", json={"text": "volcano/pineapple pineapple"}
+        )
+        assert response.status_code == 200
+        event = ws.receive_json()
+        while event["type"] != "boom":
+            event = ws.receive_json()
+        assert event["receipt"] == [
+            {"text": "•••", "hit": False},
+            {"text": "pineapple", "hit": True},
+        ]
+        assert runtime.game.mines["2"].status == "armed"
+
+
 def test_duplicate_out_of_order_final_and_late_hypotheses(setup):
     client, runtime, clock = setup
     client.post("/dock/round/start")

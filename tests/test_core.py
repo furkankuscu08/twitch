@@ -255,6 +255,26 @@ def test_receipt_window_highlight_masking_and_secrecy(deck):
     assert "pineapple" not in json.dumps(game.snapshot(104))
 
 
+@pytest.mark.parametrize(
+    "texts, expected",
+    [
+        (("volcano/pineapple", "pineapple"), ["•••", "pineapple"]),
+        (("VOLCANO—bananas", "pineapple"), ["•••", "pineapple"]),
+        (("volcano123bananas", "pineapple"), ["•••", "pineapple"]),
+        (("plain/comment", "pineapple"), ["plain/comment", "pineapple"]),
+        (("pine", "apple", "volcano"), ["•••", "•••", "volcano"]),
+        (("pine/", "apple!", "volcano"), ["•••", "•••", "volcano"]),
+        (("pine/apple", "volcano"), ["•••", "volcano"]),
+    ],
+)
+def test_receipt_masks_letter_runs_and_multiword_forms(deck, texts, expected):
+    words = hypothesis(texts=texts)["words"]
+    hit = next(item for item in deck.occurrences(words) if item.last == len(words))
+    receipt = deck.receipt(words, hit, 8)
+    assert [item["text"] for item in receipt] == expected
+    assert [item["hit"] for item in receipt] == [False] * (len(receipt) - 1) + [True]
+
+
 def test_round_end_duds_clear_and_recap(deck):
     game, matcher = setup_game(deck)
     game.plant("bob", "volcano", 100)
