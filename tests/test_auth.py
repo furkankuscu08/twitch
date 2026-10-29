@@ -140,24 +140,24 @@ def test_test_account_requests_only_write_scope(make_auth, device_flow, respx_mo
 
 
 @pytest.mark.parametrize(
-    "changes",
+    "changes, reason",
     [
-        {"login": "wrong_account"},
-        {"client_id": "wrong_client"},
-        {"scopes": ["user:write:chat"]},
-        {"user_id": None},
-        {"expires_in": "broken"},
+        ({"login": "wrong_account"}, "Expected test_bot; authorized as wrong_account"),
+        ({"client_id": "wrong_client"}, "different Twitch app"),
+        ({"scopes": ["user:write:chat"]}, "Missing required Twitch scopes"),
+        ({"user_id": None}, "invalid token validation response"),
+        ({"expires_in": "broken"}, "invalid token validation response"),
     ],
 )
 def test_unverified_tokens_are_not_stored(
-    changes, make_auth, device_flow, respx_mock, tmp_path
+    changes, reason, make_auth, device_flow, respx_mock, tmp_path
 ):
     device_flow.respond(200, json=token_pair())
     respx_mock.get(VALIDATE).respond(200, json=identity(**changes))
 
     async def scenario():
         async with httpx.AsyncClient() as client:
-            with pytest.raises(auth.AuthError):
+            with pytest.raises(auth.AuthError, match=reason):
                 await make_auth(client).login("bot", lambda *_: None)
 
     asyncio.run(scenario())

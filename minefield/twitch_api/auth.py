@@ -163,20 +163,29 @@ class TwitchAuth:
         data = payload(response)
         scopes = data.get("scopes")
         if (
-            data.get("client_id") != self.client_id
+            not isinstance(data.get("client_id"), str)
             or not isinstance(data.get("login"), str)
-            or data["login"].lower() != self.login_name(account)
             or not isinstance(data.get("user_id"), str)
             or not data["user_id"]
             or not isinstance(scopes, list)
             or not all(isinstance(scope, str) for scope in scopes)
-            or not set(SCOPES[account]).issubset(scopes)
             or type(data.get("expires_in")) is not int
             or data["expires_in"] <= 0
         ):
+            raise AuthError("Twitch returned an invalid token validation response.")
+        if data["client_id"] != self.client_id:
             raise AuthError(
-                "Token has the wrong account, client or scopes; "
-                f"run {account} login again."
+                "Token belongs to a different Twitch app; check TWITCH_CLIENT_ID."
+            )
+        expected = self.login_name(account)
+        if data["login"].lower() != expected:
+            raise AuthError(
+                f"Expected {expected}; authorized as {data['login']} instead. "
+                "Switch browser accounts and run login again."
+            )
+        if not set(SCOPES[account]).issubset(scopes):
+            raise AuthError(
+                f"Missing required Twitch scopes; run {account} login again."
             )
         return {
             "client_id": data["client_id"],
