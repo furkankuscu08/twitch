@@ -1,0 +1,737 @@
+[
+  {
+    "word": "alien",
+    "variants": [
+      "aliens"
+    ]
+  },
+  {
+    "word": "alligator",
+    "variants": [
+      "alligators"
+    ]
+  },
+  {
+    "word": "astronaut",
+    "variants": [
+      "astronauts"
+    ]
+  },
+  {
+    "word": "avalanche",
+    "variants": [
+      "avalanches"
+    ]
+  },
+  {
+    "word": "avocado",
+    "variants": [
+      "avocados"
+    ]
+  },
+  {
+    "word": "backpack",
+    "variants": [
+      "backpacks",
+      "back pack",
+      "back packs"
+    ]
+  },
+  {
+    "word": "balloon",
+    "variants": [
+      "balloons"
+    ]
+  },
+  {
+    "word": "banana",
+    "variants": [
+      "bananas"
+    ]
+  },
+  {
+    "word": "bicycle",
+    "variants": [
+      "bicycles"
+    ]
+  },
+  {
+    "word": "binoculars",
+    "variants": []
+  },
+  {
+    "word": "blanket",
+    "variants": [
+      "blankets"
+    ]
+  },
+  {
+    "word": "blender",
+    "variants": [
+      "blenders"
+    ]
+  },
+  {
+    "word": "broccoli",
+    "variants": []
+  },
+  {
+    "word": "burrito",
+    "variants": [
+      "burritos"
+    ]
+  },
+  {
+    "word": "butterfly",
+    "variants": [
+      "butterflies"
+    ]
+  },
+  {
+    "word": "cactus",
+    "variants": [
+      "cacti",
+      "cactuses"
+    ]
+  },
+  {
+    "word": "candle",
+    "variants": [
+      "candles"
+    ]
+  },
+  {
+    "word": "cashew",
+    "variants": [
+      "cashews"
+    ]
+  },
+  {
+    "word": "caterpillar",
+    "variants": [
+      "caterpillars"
+    ]
+  },
+  {
+    "word": "chocolate",
+    "variants": [
+      "chocolates"
+    ]
+  },
+  {
+    "word": "cinnamon",
+    "variants": []
+  },
+  {
+    "word": "coconut",
+    "variants": [
+      "coconuts"
+    ]
+  },
+  {
+    "word": "cookie",
+    "variants": [
+      "cookies"
+    ]
+  },
+  {
+    "word": "crocodile",
+    "variants": [
+      "crocodiles"
+    ]
+  },
+  {
+    "word": "cucumber",
+    "variants": [
+      "cucumbers"
+    ]
+  },
+  {
+    "word": "cupcake",
+    "variants": [
+      "cupcakes",
+      "cup cake",
+      "cup cakes"
+    ]
+  },
+  {
+    "word": "curtain",
+    "variants": [
+      "curtains"
+    ]
+  },
+  {
+    "word": "dinosaur",
+    "variants": [
+      "dinosaurs"
+    ]
+  },
+  {
+    "word": "dolphin",
+    "variants": [
+      "dolphins"
+    ]
+  },
+  {
+    "word": "dragon",
+    "variants": [
+      "dragons"
+    ]
+  },
+  {
+    "word": "dumpling",
+    "variants": [
+      "dumplings"
+    ]
+  },
+  {
+    "word": "elephant",
+    "variants": [
+      "elephants"
+    ]
+  },
+  {
+    "word": "ferret",
+    "variants": [
+      "ferrets"
+    ]
+  },
+  {
+    "word": "flamingo",
+    "variants": [
+      "flamingos"
+    ]
+  },
+  {
+    "word": "flashlight",
+    "variants": [
+      "flashlights"
+    ]
+  },
+  {
+    "word": "gorilla",
+    "variants": [
+      "gorillas"
+    ]
+  },
+  {
+    "word": "grasshopper",
+    "variants": [
+      "grasshoppers"
+    ]
+  },
+  {
+    "word": "hammock",
+    "variants": [
+      "hammocks"
+    ]
+  },
+  {
+    "word": "hamster",
+    "variants": [
+      "hamsters"
+    ]
+  },
+  {
+    "word": "hedgehog",
+    "variants": [
+      "hedgehogs"
+    ]
+  },
+  {
+    "word": "helicopter",
+    "variants": [
+      "helicopters"
+    ]
+  },
+  {
+    "word": "helmet",
+    "variants": [
+      "helmets"
+    ]
+  },
+  {
+    "word": "iceberg",
+    "variants": [
+      "icebergs"
+    ]
+  },
+  {
+    "word": "jellyfish",
+    "variants": [
+      "jellyfishes"
+    ]
+  },
+  {
+    "word": "kangaroo",
+    "variants": [
+      "kangaroos"
+    ]
+  },
+  {
+    "word": "kettle",
+    "variants": [
+      "kettles"
+    ]
+  },
+  {
+    "word": "koala",
+    "variants": [
+      "koalas"
+    ]
+  },
+  {
+    "word": "lantern",
+    "variants": [
+      "lanterns"
+    ]
+  },
+  {
+    "word": "lasagna",
+    "variants": [
+      "lasagne"
+    ]
+  },
+  {
+    "word": "lizard",
+    "variants": [
+      "lizards"
+    ]
+  },
+  {
+    "word": "lobster",
+    "variants": [
+      "lobsters"
+    ]
+  },
+  {
+    "word": "macaroni",
+    "variants": []
+  },
+  {
+    "word": "mango",
+    "variants": [
+      "mangoes",
+      "mangos"
+    ]
+  },
+  {
+    "word": "mattress",
+    "variants": [
+      "mattresses"
+    ]
+  },
+  {
+    "word": "mermaid",
+    "variants": [
+      "mermaids"
+    ]
+  },
+  {
+    "word": "mosquito",
+    "variants": [
+      "mosquitoes",
+      "mosquitos"
+    ]
+  },
+  {
+    "word": "mountain",
+    "variants": [
+      "mountains"
+    ]
+  },
+  {
+    "word": "muffin",
+    "variants": [
+      "muffins"
+    ]
+  },
+  {
+    "word": "mushroom",
+    "variants": [
+      "mushrooms"
+    ]
+  },
+  {
+    "word": "octopus",
+    "variants": [
+      "octopuses",
+      "octopi"
+    ]
+  },
+  {
+    "word": "omelette",
+    "variants": [
+      "omelettes",
+      "omelet",
+      "omelets"
+    ]
+  },
+  {
+    "word": "pancake",
+    "variants": [
+      "pancakes"
+    ]
+  },
+  {
+    "word": "paprika",
+    "variants": []
+  },
+  {
+    "word": "parachute",
+    "variants": [
+      "parachutes"
+    ]
+  },
+  {
+    "word": "parrot",
+    "variants": [
+      "parrots"
+    ]
+  },
+  {
+    "word": "peanut",
+    "variants": [
+      "peanuts"
+    ]
+  },
+  {
+    "word": "pelican",
+    "variants": [
+      "pelicans"
+    ]
+  },
+  {
+    "word": "penguin",
+    "variants": [
+      "penguins"
+    ]
+  },
+  {
+    "word": "pickle",
+    "variants": [
+      "pickles"
+    ]
+  },
+  {
+    "word": "pillow",
+    "variants": [
+      "pillows"
+    ]
+  },
+  {
+    "word": "pineapple",
+    "variants": [
+      "pineapples",
+      "pine apple",
+      "pine apples"
+    ]
+  },
+  {
+    "word": "pirate",
+    "variants": [
+      "pirates"
+    ]
+  },
+  {
+    "word": "platypus",
+    "variants": [
+      "platypuses"
+    ]
+  },
+  {
+    "word": "popcorn",
+    "variants": [
+      "pop corn"
+    ]
+  },
+  {
+    "word": "potato",
+    "variants": [
+      "potatoes"
+    ]
+  },
+  {
+    "word": "pretzel",
+    "variants": [
+      "pretzels"
+    ]
+  },
+  {
+    "word": "pumpkin",
+    "variants": [
+      "pumpkins"
+    ]
+  },
+  {
+    "word": "pyramid",
+    "variants": [
+      "pyramids"
+    ]
+  },
+  {
+    "word": "rabbit",
+    "variants": [
+      "rabbits"
+    ]
+  },
+  {
+    "word": "raccoon",
+    "variants": [
+      "raccoons"
+    ]
+  },
+  {
+    "word": "rainbow",
+    "variants": [
+      "rainbows"
+    ]
+  },
+  {
+    "word": "robot",
+    "variants": [
+      "robots"
+    ]
+  },
+  {
+    "word": "rocket",
+    "variants": [
+      "rockets"
+    ]
+  },
+  {
+    "word": "salami",
+    "variants": [
+      "salamis"
+    ]
+  },
+  {
+    "word": "satellite",
+    "variants": [
+      "satellites"
+    ]
+  },
+  {
+    "word": "scarecrow",
+    "variants": [
+      "scarecrows"
+    ]
+  },
+  {
+    "word": "shampoo",
+    "variants": [
+      "shampoos"
+    ]
+  },
+  {
+    "word": "skateboard",
+    "variants": [
+      "skateboards",
+      "skate board",
+      "skate boards"
+    ]
+  },
+  {
+    "word": "skeleton",
+    "variants": [
+      "skeletons"
+    ]
+  },
+  {
+    "word": "snowball",
+    "variants": [
+      "snowballs",
+      "snow ball",
+      "snow balls"
+    ]
+  },
+  {
+    "word": "snowflake",
+    "variants": [
+      "snowflakes",
+      "snow flake",
+      "snow flakes"
+    ]
+  },
+  {
+    "word": "snowman",
+    "variants": [
+      "snowmen",
+      "snow man",
+      "snow men"
+    ]
+  },
+  {
+    "word": "spaghetti",
+    "variants": []
+  },
+  {
+    "word": "spatula",
+    "variants": [
+      "spatulas"
+    ]
+  },
+  {
+    "word": "submarine",
+    "variants": [
+      "submarines"
+    ]
+  },
+  {
+    "word": "suitcase",
+    "variants": [
+      "suitcases",
+      "suit case",
+      "suit cases"
+    ]
+  },
+  {
+    "word": "sunflower",
+    "variants": [
+      "sunflowers"
+    ]
+  },
+  {
+    "word": "tarantula",
+    "variants": [
+      "tarantulas"
+    ]
+  },
+  {
+    "word": "teapot",
+    "variants": [
+      "teapots"
+    ]
+  },
+  {
+    "word": "telescope",
+    "variants": [
+      "telescopes"
+    ]
+  },
+  {
+    "word": "thunderstorm",
+    "variants": [
+      "thunderstorms"
+    ]
+  },
+  {
+    "word": "toaster",
+    "variants": [
+      "toasters"
+    ]
+  },
+  {
+    "word": "toothbrush",
+    "variants": [
+      "toothbrushes",
+      "tooth brush",
+      "tooth brushes"
+    ]
+  },
+  {
+    "word": "toothpaste",
+    "variants": [
+      "toothpastes",
+      "tooth paste"
+    ]
+  },
+  {
+    "word": "tornado",
+    "variants": [
+      "tornadoes",
+      "tornados"
+    ]
+  },
+  {
+    "word": "tortilla",
+    "variants": [
+      "tortillas"
+    ]
+  },
+  {
+    "word": "trampoline",
+    "variants": [
+      "trampolines"
+    ]
+  },
+  {
+    "word": "treasure",
+    "variants": [
+      "treasures"
+    ]
+  },
+  {
+    "word": "turtle",
+    "variants": [
+      "turtles"
+    ]
+  },
+  {
+    "word": "umbrella",
+    "variants": [
+      "umbrellas"
+    ]
+  },
+  {
+    "word": "unicorn",
+    "variants": [
+      "unicorns"
+    ]
+  },
+  {
+    "word": "unicycle",
+    "variants": [
+      "unicycles"
+    ]
+  },
+  {
+    "word": "vacuum",
+    "variants": [
+      "vacuums"
+    ]
+  },
+  {
+    "word": "vampire",
+    "variants": [
+      "vampires"
+    ]
+  },
+  {
+    "word": "volcano",
+    "variants": [
+      "volcanoes",
+      "volcanos"
+    ]
+  },
+  {
+    "word": "waffle",
+    "variants": [
+      "waffles"
+    ]
+  },
+  {
+    "word": "waterfall",
+    "variants": [
+      "waterfalls"
+    ]
+  },
+  {
+    "word": "wizard",
+    "variants": [
+      "wizards"
+    ]
+  },
+  {
+    "word": "zombie",
+    "variants": [
+      "zombies"
+    ]
+  },
+  {
+    "word": "zucchini",
+    "variants": [
+      "zucchinis"
+    ]
+  }
+]
