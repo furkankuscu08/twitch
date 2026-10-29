@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Minefield control dock</title>
+  <link rel="stylesheet" href="/dock/style.css">
+  <script src="/dock/app.js" defer></script>
+</head>
+<body>
+  <header><p class="eyebrow">STREAM CONTROL</p><h1>Minefield<span class="mark">✳</span></h1>
+    <p id="connection" role="status">Connecting…</p></header>
+  <main>
+    <section aria-label="Connection health" class="health">
+      <span data-health="mic" data-state="disconnected">Mic</span>
+      <span data-health="engine" data-state="disconnected">Engine</span>
+      <span data-health="deepgram" data-state="disconnected">Deepgram</span>
+      <span data-health="eventsub" data-state="disconnected">Chat</span>
+      <span data-health="tunnel" data-state="disconnected">Tunnel</span>
+    </section>
+    <section class="panel"><div class="section-heading"><h2>Round</h2><span id="round-state">Idle</span></div>
+      <div class="buttons"><button id="start" disabled>Start round</button><button id="end" class="secondary" disabled>End round</button></div>
+    </section>
+    <section class="panel"><div class="section-heading"><h2>Minefield</h2><span class="muted">Words stay secret</span></div>
+      <ul id="mines" aria-live="polite"></ul><p id="empty" class="muted">No mines planted.</p>
+      <button id="false-alarm" class="secondary correction" disabled>False alarm</button>
+      <p id="correction-note" class="muted">Available for 10 seconds after a boom.</p>
+    </section>
+    <section class="panel"><h2>Typed mode</h2><p class="muted">Send speech manually when you need it.</p>
+      <form id="typed-form"><label for="typed">Typed speech</label><textarea id="typed" rows="3" placeholder="What did you say?" disabled></textarea>
+        <button id="send" type="submit" disabled>Send typed speech</button></form>
+    </section>
+    <p id="error" role="alert"></p>
+  </main>
+</body>
+</html>

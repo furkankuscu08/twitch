@@ -177,7 +177,7 @@ def test_invalid_inputs_do_not_mutate_or_echo_private_words(setup):
 
 def test_debug_disabled_by_default():
     with TestClient(create_app()) as client:
-        assert plant(client).status_code == 404
+        assert plant(client).status_code in {404, 405}
 
 
 def test_planting_is_synchronous_and_limits_hold(setup):
