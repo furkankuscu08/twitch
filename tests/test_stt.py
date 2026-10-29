@@ -105,6 +105,38 @@ def test_nova_late_utterance_end_does_not_finalize_new_speech():
     assert mapper.utt_id is not None
 
 
+def test_nova_exact_duplicate_cannot_confirm_but_distinct_same_words_can():
+    from minefield.core.deck import Deck
+    from minefield.core.game import Game
+    from minefield.core.matcher import Matcher
+
+    message = next(
+        row["message"]
+        for row in recording("nova3")
+        if row["message"].get("type") == "Results"
+    )
+    game = Game(
+        Deck([{"word": "pineapple", "variants": []}]),
+        replace(Config(), ARM_DELAY_S=0),
+    )
+    game.start(999)
+    game.plant("viewer", "pineapple", 999)
+    game.arm(1000)
+    matcher = Matcher(game)
+    mapper = Mapper("nova3", "process", 1, 1000)
+    first = mapper.process(message, 1002)
+    assert [event["type"] for event in matcher.process(first[0], 1002)] == ["spark"]
+
+    duplicate = json.loads(json.dumps(message))
+    assert mapper.process(duplicate, 1002.1) == []
+
+    distinct = dict(message, duration=message["duration"] + 0.1)
+    second = mapper.process(distinct, 1002.2)
+    assert second[0]["words"] == first[0]["words"]
+    assert second[0]["seq"] == first[0]["seq"] + 1
+    assert [event["type"] for event in matcher.process(second[0], 1002.2)] == ["boom"]
+
+
 @pytest.mark.parametrize("backend,version", [("flux", 2), ("nova3", 1)])
 def test_urls_have_required_options_and_no_biasing(backend, version):
     from urllib.parse import parse_qs, urlsplit

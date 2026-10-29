@@ -9,6 +9,7 @@ TTS fixtures verify that both backends' word times are connection-relative.
 """
 
 import math
+from copy import deepcopy
 from urllib.parse import urlencode
 
 from minefield.core.config import Config
@@ -77,6 +78,7 @@ class Mapper:
         self.closed_end = -1
         self.final_cursor = 0
         self.window_end = 0
+        self.previous_result = None
         self.committed = []
         self.interim = []
         self.aborted = False
@@ -190,6 +192,9 @@ class Mapper:
             return output
         if kind != "Results":
             return []
+        if message == self.previous_result:
+            return []
+        self.previous_result = deepcopy(message)
         if not isinstance(message["is_final"], bool) or not isinstance(
             message["speech_final"], bool
         ):
