@@ -2,7 +2,7 @@
 
 Minefield: a Twitch game for the Codex x TwitchCon Hackathon. Viewers plant secret words; when the streamer says one on stream, the overlay explodes and names the viewer who planted it.
 
-**Read `SPEC.md` first.** It is the source of truth for architecture, messages, game rules and the work packages (WP1–WP14, without WP12). When asked to "do WPn", implement exactly that package and meet its acceptance criteria. If the spec is wrong or unclear, say so and propose a spec change; don't silently diverge. `docs/plan/` contains Turkish planning notes, not implementation requirements; do not modify it for spec work.
+**Read `SPEC.md` first.** It is the source of truth for architecture, messages, game rules and the work packages (WP1–WP14, without WP6 and WP12). When asked to "do WPn", implement exactly that package and meet its acceptance criteria. If the spec is wrong or unclear, say so and propose a spec change; don't silently diverge. `docs/plan/` contains Turkish planning notes, not implementation requirements; do not modify it for spec work.
 
 ## Stack
 - Python 3.12, managed with `uv`; the package is `minefield/`.
@@ -20,7 +20,6 @@ uv run ruff check . && uv run ruff format .
 uv run python -m minefield.server         # game server (127.0.0.1:8100, mic page at /mic) + plant app (:8101)
 uv run python -m minefield.stt --mic      # STT engine, live (open http://localhost:8100/mic in Chrome on Windows)
 uv run python -m minefield.stt --wav FILE # STT engine on a recording
-uv run python -m minefield.harness ...    # accuracy report (see SPEC §7)
 uv run python scripts/shoot.py PAGE       # screenshots of overlay/dock/plant/mic into data/shots/
 uv run pytest -m live                     # live checks against Twitch and Deepgram (needs .env and data/tokens.json)
 ```
@@ -30,7 +29,7 @@ Default ports are `GAME_PORT=8100` and `PLANT_PORT=8101`, overridable by environ
 ## Rules
 - **Demo scope:** this is a 4-day hackathon demo. Prefer the simplest design that is also robust and efficient. Robust means a dropped connection, a bad message or a slow client never crashes the server or blocks the game, and it recovers on its own through reconnects and snapshots. Efficient means no needless work on the hot path (audio → hypothesis → matcher → overlay) and nothing that grows without bound. Beyond that, add no abstractions, config options or edge-case handling the spec does not ask for. If something needs more complexity, say so first instead of building it. This also applies to `SPEC.md`: add text only when requested or needed to resolve a real contradiction.
 - **Secrecy:** unrevealed mine words never go to the overlay, the dock, chat, Twitch API calls or INFO logs during a round. Only a boom discloses its word during play; round-end `reveal` and the recap disclose duds. Snapshots never contain words. Receipts mask all other deck words. See SPEC §3-4.
-- **No persistence:** game state lives in memory only. The only runtime state file is `data/tokens.json`; logs and recordings you ask for (`--save-raw`, `--save-hyps`) also go under `data/`. Never commit `data/`, tokens, `.env` or API keys. SPEC §7 separately requires reviewed evaluation reports and transcript-only hypothesis JSONL files with one config/deck-version header under `reports/`; these are evaluation artifacts, not saved game state. Replay reproduces hits, false alarms and fizzles; latency comes from the original run report. No virtual clock or extra replay metadata.
+- **No persistence:** game state lives in memory only. The only runtime state file is `data/tokens.json`; requested engine logs (`--save-raw`, `--save-hyps`) also go under `data/`. Never commit `data/`, tokens, `.env` or API keys.
 - **No STT biasing:** never send mine or deck words to Deepgram (`keyterm`, keywords, prompts). A false boom names a viewer.
 - `minefield/core` stays pure (no I/O, no network, no GPU, no clock reads or mutable process-global game state) and fully unit-tested. Put all tunable numbers and defaults in `minefield/core/config.py`; entrypoints outside `core` read env overrides and inject validated config and explicit times.
 - Twitch and Deepgram: verify endpoints, scopes, parameters and payloads against https://dev.twitch.tv/docs and https://developers.deepgram.com before coding them. Dated claims in SPEC are verification inputs, not proof of current API behavior. Record the official source URL and verification date in implementation comments. Twitch failures (chat send, EventSub) are logged without private words or credentials and must never crash or block the game.
@@ -59,11 +58,11 @@ The test viewer is optional for normal play and required for WP9-WP11's automate
 - Playwright is a dev dependency only. Install the browser with `uv run playwright install chromium`, without `--with-deps`: there is no sudo, and the system libraries Chromium needs are already present (checked on 28 Oct). If Chromium still fails to start, fall back to the Windows Chrome at `/mnt/c/Program Files/Google/Chrome/Application/chrome.exe --headless --screenshot`.
 
 ## Workflow
-- Tests first: for each WP, write failing tests from its acceptance criteria in SPEC §8, run them, then implement.
+- Tests first: for each WP, write failing tests from its acceptance criteria in SPEC §7, run them, then implement.
 - **Verify it yourself before asking the human.** The human's time is the bottleneck; only ask for what you cannot do.
   - Web pages: after a change, run `scripts/shoot.py`, look at the screenshots, and fix what is off before reporting.
   - Twitch and Deepgram: once `data/tokens.json` and `.env` exist, run `uv run pytest -m live` yourself. Live Twitch tests send commands as the test account and check the bot's replies. No live stream is needed.
-  - Harness: run `harness run` and `harness replay` yourself on the recordings in `data/recordings/`.
+  - After the 1 Nov rehearsal: read saved hypotheses to diagnose missed words and false booms, tune config and prune misheard deck words.
   - Only the human can: complete device-code logins, speak into the mic, use the phone, configure OBS, and judge how it feels. Ask for those explicitly, as a short checklist.
 - **Chains:** when asked for several WPs (e.g. "do M1: WP1, WP2, WP4"), do them in order, run tests and lint and commit after each, and stop at the first failure you cannot fix. End with one report covering all of them.
 - Small commits, prefixed with the WP id (e.g. `WP5: streaming hypotheses`).

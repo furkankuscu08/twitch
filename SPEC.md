@@ -4,7 +4,7 @@
 
 Viewers secretly pick a word from a deck and plant it as a "mine". The streamer talks as usual. Streaming speech recognition (Deepgram) listens to the streamer's mic; when the streamer says a live mine word, the overlay explodes and names the viewer who planted it.
 
-This file is the source of truth for the build. Work packages (WP1–WP14, without WP12) and their acceptance criteria are in §8. The project plan (schedule, decisions; Turkish) is in `docs/plan/minefield.md`.
+This file is the source of truth for the build. Work packages (WP1–WP14, without WP6 and WP12) and their acceptance criteria are in §7. The project plan (schedule, decisions; Turkish) is in `docs/plan/minefield.md`.
 
 ---
 
@@ -35,7 +35,7 @@ Ports default to `GAME_PORT=8100` and `PLANT_PORT=8101`; both can be overridden 
   - `getUserMedia` with `echoCancellation`, `noiseSuppression` and `autoGainControl` off. An AudioWorklet resamples to 16 kHz mono int16 and sends 20 ms frames.
   - Reconnects automatically when the engine restarts.
 - **STT engine**: a separate process, so a stalled network call never blocks the server.
-  - It reads audio from the mic page or from a WAV file (`--wav`, sent at real-time pace; used for dev and the harness).
+  - It reads audio from the mic page or from a WAV file (`--wav`, sent at real-time pace; optional for development).
   - It streams the audio to Deepgram and turns Deepgram's messages into hypotheses (§5). Backends: `flux` (default) and `nova3`, same API key.
   - There is no local model, no GPU work and no VAD of our own.
 - **game server**: holds all state in memory. Nothing is persisted except Twitch tokens.
@@ -56,14 +56,12 @@ minefield/
   stt/         engine: audio input (mic page WS, WAV), Deepgram client, backends (flux, nova3), hypothesis mapping, CLI
   server/      FastAPI app, WebSocket hub, dock/overlay/mic routes, plant app
   twitch_api/  auth (device code flow), EventSub client, Helix calls
-  harness/     accuracy runs, hypothesis replay, label assist, reports
 scripts/run_all.sh   server + engine + cloudflared in one command
 scripts/shoot.py     dev only: headless screenshots (Playwright) of overlay, dock, plant and mic pages into data/shots/
 web/overlay/  web/dock/  web/mic/  web/plant/  web/assets/   plain HTML/CSS/JS, no build step
 deck/en.json
 tests/         tests/fixtures/deepgram/: recorded Deepgram messages (JSONL) for unit tests
-data/          gitignored: tokens, recordings, raw Deepgram logs, hypothesis logs
-reports/       harness reports (committed; shown in the video)
+data/          gitignored: tokens, raw Deepgram logs, hypothesis logs
 ```
 
 Do not create a top-level `twitch/` package; that path is an unrelated local folder.
@@ -129,7 +127,7 @@ See §5. Only `armed` mines can trigger. Eligibility uses the spoken occurrence'
   - At most `CHAT_MAX_CHARS` (500, the Send Chat Message limit); if longer, drop list entries from the end and add `…`.
   - The text is built in `core` (pure) and unit-tested.
 
-**Secrecy invariant:** while a round is running, the words of mines that have not exploded must never reach the overlay, the dock, logs at INFO level, chat or a Twitch API call. A boom makes only that mine's word public; a later false-alarm correction does not make it secret again. At round end, dud words may be disclosed in `reveal` and the single chat recap, as required above. These are the only game-output disclosure exceptions. Receipts mask every other deck word, even one already public. The plant page may show its viewer their own hand; private server-side hand/code mappings and game state may hold those words. Live game recognition hypotheses are private engine/server inputs and must not be broadcast as a public transcript; separately reviewed evaluation artifacts follow §7. Do not log live mine words through request bodies, state dumps or exception messages.
+**Secrecy invariant:** while a round is running, the words of mines that have not exploded must never reach the overlay, the dock, logs at INFO level, chat or a Twitch API call. A boom makes only that mine's word public; a later false-alarm correction does not make it secret again. At round end, dud words may be disclosed in `reveal` and the single chat recap, as required above. These are the only game-output disclosure exceptions. Receipts mask every other deck word, even one already public. The plant page may show its viewer their own hand; private server-side hand/code mappings and game state may hold those words. Live game recognition hypotheses are private engine/server inputs and must not be broadcast as a public transcript. Do not log live mine words through request bodies, state dumps or exception messages.
 
 ---
 
@@ -217,7 +215,7 @@ Verify every URL, parameter and message field below against https://developers.d
 - **Clock:** `stream_start_wall` is the engine-clock time of the first sample sent on the current Deepgram connection. Deepgram's times are offsets in the audio sent on that connection. Check on the first raw log whether word times are relative to the stream or to the turn, and convert accordingly. `utt_start_wall = stream_start_wall + turn start`.
 - **Audio continuity:** after an audio-source interruption or a gap that breaks PCM continuity (disconnect, replacement, pause/resume or dropped audio), abort the open utterance and reset the Deepgram session before forwarding resumed audio. Reanchor its clock to the first resumed sample on the engine's clock. The initial `hello` clock anchor is valid only for uninterrupted mic audio; do not carry it across a gap, insert silence to fill the gap or replay a buffered backlog. Ordinary recorded silence remains PCM audio, not a gap.
 - **Reconnect:** on a dropped connection, reconnect with exponential backoff (0.5 s → 8 s), `session += 1`. The open utterance is discarded via `/stt/abort` (§4), not a synthetic `final` that could cause a boom. Audio that arrives while disconnected is dropped. If the mic page sends nothing, send Deepgram's `KeepAlive` message so the connection stays open, subject to verification for the selected backend as required above.
-- **Logs:** `--save-raw FILE` writes every Deepgram message with its receive time (JSONL). `--save-hyps FILE` writes every emitted hypothesis (JSONL); the harness replays these files (§7). Small anonymized raw logs go to `tests/fixtures/deepgram/` so the mapping is unit-tested without the network.
+- **Logs:** `--save-raw FILE` writes every Deepgram message with its receive time (JSONL). `--save-hyps FILE` writes every emitted hypothesis (JSONL). After the 1 Nov rehearsal, inspect the saved hypotheses to diagnose missed words and false booms and tune config. Small anonymized raw logs go to `tests/fixtures/deepgram/` so the mapping is unit-tested without the network.
 
 ### Matcher (`minefield.core`, pure)
 Input: the ordered, deduplicated hypothesis stream above plus the armed mines, explicit times and utterance cleanup calls. Output: `spark`, `fizzle` and `boom` events. A pending candidate remains eligible for confirmation while its mine is `sparking`; the armed-only rule prevents opening candidates for an `arming`, exploded or otherwise inactive mine.
@@ -235,11 +233,11 @@ Input: the ordered, deduplicated hypothesis stream above plus the armed mines, e
 
 After processing a final hypothesis, fizzle any candidates that remain unconfirmed and close the utterance. An abort or round end also clears pending candidates without counting as a confirmation hypothesis. Cleanup cannot undo an already emitted boom.
 
-Flux sends an update about every 0.25 s, so `CONFIRM_N = 2` confirms about 0.25 s after a word first appears. If replay shows too many false confirmations, raise it to 3.
+Flux sends an update about every 0.25 s, so `CONFIRM_N = 2` confirms about 0.25 s after a word first appears. If the rehearsal logs show too many false confirmations, raise it to 3.
 
 **Typed mode:** `/dock/typed` text is treated as `CONFIRM_N` identical hypotheses of a synthetic utterance, with confidence 1 and occurrence times equal to submission time. That means an immediate boom for eligible mines, marked `source: "typed"`.
 
-All runtime tunable numbers and their defaults live in one config module (`minefield/core/config.py`) and can be overridden by env vars. The report acceptance targets in §7 are fixed, not tuning options. Entrypoints outside `core` read the environment and inject a validated config into pure logic. Core modules must not read environment variables, call a clock, or keep mutable process-global game state; callers supply config, time and state explicitly.
+All runtime tunable numbers and their defaults live in one config module (`minefield/core/config.py`) and can be overridden by env vars. Entrypoints outside `core` read the environment and inject a validated config into pure logic. Core modules must not read environment variables, call a clock, or keep mutable process-global game state; callers supply config, time and state explicitly.
 
 ---
 
@@ -268,49 +266,7 @@ Verify every endpoint, scope and payload against https://dev.twitch.tv/docs befo
 
 ---
 
-## 7. Accuracy harness (`minefield.harness`)
-
-The harness has three subcommands:
-
-```
-python -m minefield.harness run    --wav data/recordings/a.wav --labels data/recordings/a.labels.json --deck deck/en.json [--save-hyps data/hyps/a.jsonl]
-python -m minefield.harness replay --hyps data/hyps/a.jsonl   --labels data/recordings/a.labels.json --deck deck/en.json [config overrides]
-python -m minefield.harness label-assist --wav data/recordings/a.wav --deck deck/en.json
-```
-
-- **`run`:**
-  - Runs the **same engine and matcher** on a WAV, streamed to Deepgram at real-time pace (`--backend` as in the engine).
-  - Every deck word is armed (or only the labeled ones, with `--armed-from-labels`). Harness-only: rearm exploded words between utterances so repeated labels can be scored. A word still booms at most once per utterance; normal game replanting rules are unchanged.
-  - With `--save-hyps`, save one JSONL header `{"type":"header","config":{...},"deck_version":"..."}` followed by the hypotheses. `config` is the effective matcher config and `deck_version` identifies the exact deck (a content hash is sufficient). For WAV logs, subtract the WAV's start-wall time from the existing wall-time fields when saving, so the log's time origin is the file start; live HTTP payloads keep their original wall-clock meaning.
-- **`replay`:** re-runs only the matcher on a saved hypothesis stream. Tuning matcher thresholds (`CONFIRM_N`, `MIN_WORD_PROB`, deck variants) takes seconds, costs nothing and needs no API key. Changing the backend or Deepgram parameters still needs `run`.
-  - Reproduce hits, false alarms and fizzles with the same deck, config and armed-word selection; identify any overrides in the report. Read the config/deck-version header, feed hypotheses in file order and close unfinished candidates at utterance changes and EOF. No virtual clock, saved evaluation times, cleanup timeline or extra metadata files are needed.
-  - Replay does not calculate or reproduce latency. Latency and its pass/fail lines come only from the original `run` report.
-- **`label-assist`:**
-  - Sends the whole file to Deepgram's pre-recorded API (`POST /v1/listen`, `model=nova-3`, word timestamps) and writes candidate labels for every deck word found. A human corrects the file.
-  - For deck-sentence recordings, the same output is checked against the sentence list.
-- **Labels:** `{"events":[{"word":"pineapple","t":63.2}]}`.
-  - `t` is the **end** of the spoken word, in seconds from the start of the file; latency is measured from it, as in §5 rule 8.
-  - Silence recordings have empty events.
-- **Report** (`reports/<name>.md` + `.json`):
-  - hits / misses: match booms to labels of the same canonical word using the recognized occurrence's word-end time, not boom-emission time. Require a difference of at most ±2 s, with each boom and label used at most once. Match in occurrence order to the nearest remaining eligible label. Hit rate is matched labels divided by all labels;
-  - false alarms, reported two ways:
-    - raw unmatched booms, with the full deck armed by default;
-    - **normalized to `MAX_MINES` live mines**: raw × `MAX_MINES` ÷ armed words. For the rate per 10 minutes, multiply by 600 ÷ WAV duration in seconds. This scaling is an estimate assuming uniformly selected armed words, not a guarantee for viewers' choices;
-  - latency median / p95 / max, in `run` only: actual boom wall time minus the matched label's word-end wall time; the WAV is streamed at real-time pace. Latency from recognition timestamps in §5 remains a diagnostic on the live boom event;
-  - sparks that fizzled, per word;
-  - per-word table;
-  - backend, Deepgram `lag_ms` p95, reconnects (`run` only).
-- Add simple `PASS`/`FAIL` lines to the `run` report for these fixed targets; no scoring framework or additional tuning options. Replay reproduces counts and does not recreate the run's duration-based rate or latency checks:
-  - hits ≥ 80%;
-  - normalized false alarms ≤ 1 per 10 min; the silence recording instead requires zero raw false alarms with the full deck armed;
-  - latency median ≤ 1.5 s and max ≤ 3 s (`run` report only).
-  - With no labels, hit rate and latency are not applicable; the silence check still applies. With labels but no hits, the hit and latency checks fail.
-- Commit the hypothesis files behind the reported numbers (`reports/hyps/*.jsonl`, one config/deck-version header plus transcripts, no audio) and the run reports, so anyone can rerun `replay` without an API key. Do not require additional replay metadata. Review these artifacts for credentials, viewer identifiers and unintended private content before committing; do not copy live game state into reports.
-- Keep it readable: the table is shown on screen in the demo video.
-
----
-
-## 8. Work packages and acceptance
+## 7. Work packages and acceptance
 
 Each WP is done when its acceptance criteria pass and `uv run pytest` and `uv run ruff check` are clean.
 
@@ -321,26 +277,25 @@ Each WP is done when its acceptance criteria pass and `uv run pytest` and `uv ru
 | WP3 | `web/overlay`: chips, arming ring, spark, fizzle, boom (shake + banner with receipt + sfx), static "FALSE ALARM" stamp, reveal, plant URL + QR, latency badge; `scripts/shoot.py` | 1920×1080 transparent; renders every §4 message; keeps a received reveal displayed until the next round starts even after the server clears its state; the demo page `/overlay?demo=1` replays a scripted sequence and `&step=N` freezes it at step N; sfx are synthesized with WebAudio (no audio files); `scripts/shoot.py overlay` saves one PNG per step and the boom banner is readable in it |
 | WP4 | `web/dock`: round controls, status lights, mine list without words, "False alarm" button (enabled for 10 s after a boom), typed box | Works as an OBS custom browser dock at 400 px width; `scripts/shoot.py dock` renders it at 400 px without overflow |
 | WP5 | `web/mic` page + `stt` engine: Deepgram client, `flux` and `nova3` backends, reconnect, heartbeat, CLI (`--mic` / `--wav` / `--backend` / `--save-raw` / `--save-hyps`) | Unit tests map recorded Flux and Nova-3 messages (`tests/fixtures/deepgram/`) to the expected hypotheses, including empty updates, a dropped connection with explicit abort, session/clock reset after interrupted audio, and utterance IDs unique across engine restarts; speaking into the mic page produces hypotheses about every 0.25 s with `flux`; the mic page reconnects after an engine restart; the engine reconnects after the Deepgram socket is killed; the heartbeat shows backend, connection state and lag |
-| WP6 | `harness`: `run`, `replay`, `label-assist`, report | `run` produces the §7 report and target pass/fail lines for one WAV in about its duration; `replay` reproduces hits, false alarms and fizzles from saved hypotheses with one config/deck-version header in seconds, without an API key, virtual clock or extra metadata. Latency comes only from the original run report. During the T1 deck-sentence harness run, prune misheard deck words and rerun against §7 targets |
-| WP7 | `deck/en.json`: ~120 concrete, funny, everyday-but-not-too-common nouns with variants | Static checks only: no brands, offensive words, homophone pairs or ambiguous normalized variants; use `wordfreq` as a dev dependency and reject canonical words or variants in its top 1,000 English words, with the package version pinned by the uv lockfile. Frequency filtering runs during deck validation, never on the runtime hot path |
+| WP7 | `deck/en.json`: ~120 concrete, funny, everyday-but-not-too-common nouns with variants | Static checks only: no brands, offensive words, homophone pairs or ambiguous normalized variants; use `wordfreq` as a dev dependency and reject canonical words or variants in its top 1,000 English words, with the package version pinned by the uv lockfile. Frequency filtering runs during deck validation, never on the runtime hot path. Later, prune misheard words from the 1 Nov rehearsal log |
 | WP8 | `twitch_api.auth`: device code flow CLI per account, token store, refresh | `python -m minefield.twitch_api.auth --account bot` stores a working token |
 | WP9 | EventSub client + commands + chat send | Unit tests with a fake client; a `live` test sends `!mine` and `!mine CODE` as the test account through Send Chat Message, and the server's state changes and the bot's replies report `is_sent`; reconnect works |
 | WP10 | boom message, false-alarm message, round recap message | With a fake Twitch client: a boom posts the boom message, a false alarm within 10 s corrects the latest eligible boom and posts the false-alarm message, round end posts one recap message; a failed or timed-out send gets no retry, is logged, and the game continues. Each chat send has a 5 s total timeout. A `live` test does the same on the real channel (no live stream needed) |
 | WP11 | `web/plant` + plant app + code binding + tunnel helper | Unit tests cover anonymous bearer codes consumed only on successful bind, hand/code TTL and round-end invalidation, and rejection at the combined pending-storage cap. `scripts/shoot.py plant` renders the page at 390 px phone width; a `live` test drives hand → pick → `!mine CODE` as the test account through the tunnel URL; then the human repeats it once from a phone (T4) |
 | WP13 | Polish and rehearsal fixes | Two uninterrupted rounds (typed mode + debug plant, or with a friend) |
-| WP14 | Ops: `scripts/run_all.sh` (server + engine + cloudflared; fails clearly if `DEEPGRAM_API_KEY` is missing), English README (setup, Deepgram key, Twitch app registration, how to open the mic page, no-key demo path: `MINEFIELD_DEBUG=1` + `/overlay?demo=1` + typed mode + debug plant, `harness replay` on the committed hypotheses), demo-day checklist | A fresh clone on the same machine starts with one script plus the mic page in Chrome; the no-key demo path works without the STT engine |
+| WP14 | Ops: `scripts/run_all.sh` (server + engine + cloudflared; fails clearly if `DEEPGRAM_API_KEY` is missing), English README (setup, Deepgram key, Twitch app registration, how to open the mic page, no-key demo path: typed mode + debug plant (`MINEFIELD_DEBUG=1`) + `/overlay?demo=1`), demo-day checklist | A fresh clone on the same machine starts with one script plus the mic page in Chrome; the no-key demo path works without the STT engine |
 
 Order and milestones:
 - **M0:** WP7, WP8;
 - **M1:** WP1–WP4 (WP3 basic);
-- **M2:** WP5, WP6;
+- **M2:** WP5;
 - **M3:** WP9, WP10;
 - **M4:** WP11 (WP12, the chat simulator, was removed);
 - **M5:** WP3 full, WP13, WP14.
 
 ---
 
-## 9. Config defaults
+## 8. Config defaults
 
 | Name | Default |
 | --- | --- |
@@ -349,7 +304,7 @@ Order and milestones:
 | `STT_BACKEND` | `flux` |
 | `DEEPGRAM_REGION` | `eu` |
 | `CONFIRM_N` | 2 |
-| `MIN_WORD_PROB` | 0.6 (tune with `replay`) |
+| `MIN_WORD_PROB` | 0.6 |
 | `AGREE_TOL_S` | 0.5 |
 | `FINAL_SOLO_MIN_PROB` | 0.7 |
 | `ARM_DELAY_S` | 30 |
