@@ -373,6 +373,60 @@ def test_failed_hypothesis_post_aborts_instead_of_retrying():
     asyncio.run(scenario())
 
 
+@pytest.mark.parametrize("abort_response", [200, 503, "timeout"])
+def test_failed_final_aborts_its_own_id_once_before_session_cleanup(abort_response):
+    import httpx
+
+    from minefield.stt.engine import SourceChanged
+
+    async def scenario():
+        posts = []
+        messages = [row["message"] for row in recording("flux")]
+        interim = next(
+            message
+            for message in messages
+            if message.get("event") == "Update" and message["words"]
+        )
+        final = next(
+            message for message in messages if message.get("event") == "EndOfTurn"
+        )
+
+        def handle(request):
+            body = json.loads(request.content)
+            posts.append((request.url.path, body))
+            if request.url.path.endswith("abort"):
+                if abort_response == "timeout":
+                    raise httpx.ReadTimeout("test timeout", request=request)
+                return httpx.Response(abort_response)
+            return httpx.Response(503 if body["final"] else 200)
+
+        class Socket:
+            def __aiter__(self):
+                return self.messages()
+
+            async def messages(self):
+                yield json.dumps(interim)
+                yield json.dumps(final)
+
+        async with httpx.AsyncClient(transport=httpx.MockTransport(handle)) as http:
+            engine = Engine("not-a-real-key", Config(), http)
+            engine.mapper = Mapper("flux", "p", 1, 1000)
+            with pytest.raises(SourceChanged):
+                await engine._receive(Socket(), engine.audio.generation)
+            assert [path for path, _ in posts] == [
+                "/stt/hypothesis",
+                "/stt/hypothesis",
+                "/stt/abort",
+            ]
+            failed_hypothesis = posts[1][1]
+            assert failed_hypothesis["final"]
+            assert posts[-1][1] == {"utt_id": failed_hypothesis["utt_id"]}
+            await engine._abort()
+            assert sum(path.endswith("abort") for path, _ in posts) == 1
+
+    asyncio.run(scenario())
+
+
 def test_mic_replacement_and_bad_frames_are_isolated():
     import httpx
 

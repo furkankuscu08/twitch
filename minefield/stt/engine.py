@@ -147,6 +147,8 @@ class Engine:
                     self._save(self.hyp_log, hypothesis)
                     self.lags.append(hypothesis["lag_ms"])
                     if not await self._post("hypothesis", hypothesis):
+                        await self._post("abort", {"utt_id": hypothesis["utt_id"]})
+                        self.mapper.abort()
                         raise SourceChanged
         except websockets.ConnectionClosed:
             if not self.closing:
