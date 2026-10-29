@@ -17,13 +17,15 @@ Minefield: a Twitch game for the Codex x TwitchCon Hackathon. Viewers plant secr
 uv sync                                   # install
 uv run pytest                             # tests
 uv run ruff check . && uv run ruff format .
-uv run python -m minefield.server         # game server (127.0.0.1:8000, mic page at /mic) + plant app (:8001)
-uv run python -m minefield.stt --mic      # STT engine, live (open http://localhost:8000/mic in Chrome on Windows)
+uv run python -m minefield.server         # game server (127.0.0.1:8100, mic page at /mic) + plant app (:8101)
+uv run python -m minefield.stt --mic      # STT engine, live (open http://localhost:8100/mic in Chrome on Windows)
 uv run python -m minefield.stt --wav FILE # STT engine on a recording
 uv run python -m minefield.harness ...    # accuracy report (see SPEC §7)
 uv run python scripts/shoot.py PAGE       # screenshots of overlay/dock/plant/mic into data/shots/
 uv run pytest -m live                     # live checks against Twitch and Deepgram (needs .env and data/tokens.json)
 ```
+
+Default ports are `GAME_PORT=8100` and `PLANT_PORT=8101`, overridable by environment variables. Use the configured ports in local URLs and the tunnel target.
 
 ## Rules
 - **Demo scope:** this is a 4-day hackathon demo. Prefer the simplest design that is also robust and efficient. Robust means a dropped connection, a bad message or a slow client never crashes the server or blocks the game, and it recovers on its own through reconnects and snapshots. Efficient means no needless work on the hot path (audio → hypothesis → matcher → overlay) and nothing that grows without bound. Beyond that, add no abstractions, config options or edge-case handling the spec does not ask for. If something needs more complexity, say so first instead of building it. This also applies to `SPEC.md`: add text only when requested or needed to resolve a real contradiction.

@@ -11,21 +11,23 @@ This file is the source of truth for the build. Work packages (WP1–WP14, witho
 ## 1. Components
 
 ```
-[Windows]  mic ──► mic page (Chrome tab, http://localhost:8000/mic)
+[Windows]  mic ──► mic page (Chrome tab, http://localhost:8100/mic)
                       │  16 kHz mono int16 PCM over WebSocket
                       ▼
 [WSL]      STT engine (minefield.stt) ──80 ms chunks──► Deepgram streaming STT (EU endpoint)
                       │                ◄──interim results with word timings──┘
                       │  hypotheses (HTTP POST)
                       ▼
-[WSL]      game server (minefield.server, FastAPI, 127.0.0.1:8000)
+[WSL]      game server (minefield.server, FastAPI, 127.0.0.1:8100)
               ├── matcher + game state (minefield.core)
               ├── /overlay  (OBS browser source, WebSocket)
               ├── /dock     (OBS custom dock, WebSocket + POST)
               ├── /mic      (mic page, opened in Chrome on Windows)
               └── Twitch    (EventSub WebSocket chat, Helix: chat message)
-           plant app (same process, 127.0.0.1:8001) ◄── cloudflared quick tunnel (in WSL) ◄── viewers' phones
+           plant app (same process, 127.0.0.1:8101) ◄── cloudflared quick tunnel (in WSL) ◄── viewers' phones
 ```
+
+Ports default to `GAME_PORT=8100` and `PLANT_PORT=8101`; both can be overridden by environment variables. Local URLs and the tunnel target use the configured ports.
 
 - **mic page** (`web/mic`; Windows Chrome, because WSL2 has no reliable mic access):
   - Served by the game server, opened in a normal Chrome tab on Windows (`localhost` counts as a secure context, so `getUserMedia` works). Not an OBS dock: OBS docks do not grant mic access reliably.
@@ -185,7 +187,7 @@ The overlay may show `latency_ms` as a small debug badge, enabled by `?latency=1
 
 Debug only, behind `MINEFIELD_DEBUG=1`: `/dock/debug/plant {"owner","word"}`.
 
-### Plant app (port 8001)
+### Plant app (default port 8101)
 - `GET /`: the page.
 - `GET /api/hand` → `{"hand_id","cards":[6 words]}`.
 - `POST /api/pick {"hand_id","word"}` → `{"code","command","expires_at"}`. `word` must be in that hand.
@@ -342,6 +344,8 @@ Order and milestones:
 
 | Name | Default |
 | --- | --- |
+| `GAME_PORT` | 8100 |
+| `PLANT_PORT` | 8101 |
 | `STT_BACKEND` | `flux` |
 | `DEEPGRAM_REGION` | `eu` |
 | `CONFIRM_N` | 2 |
