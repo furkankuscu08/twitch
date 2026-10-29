@@ -359,6 +359,7 @@ def test_cli_stores_working_token_without_printing_secrets(
     monkeypatch, device_flow, tmp_path, capsys, make_auth
 ):
     device_flow.respond(200, json=token_pair())
+    monkeypatch.setattr(auth, "load_dotenv", lambda *_: None)
     monkeypatch.setenv("TWITCH_CLIENT_ID", "client-id")
     monkeypatch.setenv("TWITCH_BOT_LOGIN", "test_bot")
     monkeypatch.setattr(auth, "TOKEN_PATH", tmp_path / "tokens.json")
