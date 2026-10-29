@@ -148,3 +148,81 @@ def test_dropped_socket_reconnects_and_restores_snapshot(page, server_url):
     )
     expect(page.get_by_text("Connected", exact=True)).to_be_visible()
     expect(page.locator("#mines")).to_contain_text("reconnect_viewer")
+
+
+def test_reconnect_preserves_pending_correction_and_original_deadline(page, server_url):
+    from playwright.sync_api import expect
+
+    page.clock.install()
+    page.add_init_script("""
+      window.dockSnapshots = 0;
+      window.WebSocket = class extends WebSocket {
+        constructor(...args) {
+          super(...args);
+          window.testSocket = this;
+          this.addEventListener("message", event => {
+            if (JSON.parse(event.data).type === "snapshot") window.dockSnapshots++;
+          });
+        }
+      };
+    """)
+    page.goto(server_url + "/dock")
+    page.locator("#start").click()
+    page.request.post(
+        server_url + "/dock/debug/plant",
+        data={"owner": "correction_viewer", "word": "pineapple"},
+    )
+    page.locator("#typed").fill("pineapple")
+    page.locator("#send").click()
+    button = page.locator("#false-alarm")
+    expect(button).to_be_enabled()
+    page.clock.fast_forward(3000)
+    snapshots = page.evaluate("window.dockSnapshots")
+    page.evaluate("window.oldSocket = window.testSocket; window.testSocket.close()")
+    page.wait_for_function(
+        "count => window.dockSnapshots > count && "
+        "window.testSocket !== window.oldSocket && "
+        "window.testSocket.readyState === WebSocket.OPEN",
+        arg=snapshots,
+    )
+    expect(button).to_be_enabled()
+    page.clock.fast_forward(7100)
+    expect(button).to_be_disabled()
+
+
+@pytest.mark.parametrize("status", ["false_alarm", None])
+def test_snapshot_drops_pending_corrections_for_nonexploded_mines(
+    page, server_url, status
+):
+    from playwright.sync_api import expect
+
+    page.add_init_script("""
+      window.WebSocket = class extends WebSocket {
+        constructor(...args) {
+          super(...args);
+          window.testSocket = this;
+          this.addEventListener("message", event => {
+            const message = JSON.parse(event.data);
+            if (message.type === "boom") window.lastBoomId = message.id;
+          });
+        }
+      };
+    """)
+    page.goto(server_url + "/dock")
+    page.locator("#start").click()
+    page.request.post(
+        server_url + "/dock/debug/plant",
+        data={"owner": "correction_viewer", "word": "pineapple"},
+    )
+    page.locator("#typed").fill("pineapple")
+    page.locator("#send").click()
+    expect(page.locator("#false-alarm")).to_be_enabled()
+    page.evaluate(
+        """status => window.testSocket.onmessage({data: JSON.stringify({
+          type: "snapshot", round: {running: true}, plant_url: null,
+          mines: status ? [{id: window.lastBoomId,
+            owner: "correction_viewer", status, arms_in_s: 0}] : []
+        })})""",
+        status,
+    )
+    expect(page.locator("#false-alarm")).to_be_disabled()

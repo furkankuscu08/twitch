@@ -42,7 +42,7 @@
         mines = new Map(message.mines.map(mine => [mine.id, {...mine,
           armsDeadline: Date.now() + Math.max(0, mine.arms_in_s || 0) * 1000,
           inactiveDeadline: ["exploded", "false_alarm"].includes(mine.status) ? Date.now() + correctionWindow : null}]));
-        booms = [];
+        booms = booms.filter(boom => mines.get(boom.id)?.status === "exploded");
         break;
       case "mine_planted":
         mines.set(message.id, {id:message.id, owner:message.owner, status:"arming",
