@@ -247,7 +247,7 @@
       case "reveal":
         hideBanner();
         byId("plant").hidden = true;
-        byId("round-stats").textContent = `${message.stats.booms} booms`;
+        byId("round-stats").textContent = `${message.stats.booms} boom${message.stats.booms === 1 ? "" : "s"}`;
         byId("duds").replaceChildren();
         for (const dud of message.duds) {
           const line = document.createElement("p");

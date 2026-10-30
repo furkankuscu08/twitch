@@ -17,8 +17,14 @@ window.overlayDemoSteps = [
       {text: "could", hit: false}, {text: "go", hit: false}, {text: "for", hit: false},
       {text: "some", hit: false}, {text: "pineapple", hit: true}]}],
   [{type: "false_alarm", id: "a", owner: "mira"}],
-  [{type: "reveal", stats: {booms: 0}, duds: [
-    {owner: "alex", word: "volcano"}, {owner: "sam", word: "telescope"},
+  [{type: "spark", id: "b"}],
+  [{type: "boom", id: "b", owner: "alex", word: "volcano", planted_ago_s: 142,
+    latency_ms: 410, source: "stt", at: 1730000005,
+    receipt: [{text: "we", hit: false}, {text: "could", hit: false},
+      {text: "hike", hit: false}, {text: "up", hit: false}, {text: "a", hit: false},
+      {text: "volcano", hit: true}]}],
+  [{type: "reveal", stats: {booms: 1}, duds: [
+    {owner: "sam", word: "telescope"},
     {owner: "jules", word: "avocado"}]}],
   [{type: "snapshot", round: {running: false}, plant_url: "", mines: []}],
   [{type: "snapshot", round: {running: true}, plant_url: "https://example.org/plant", mines: []}]

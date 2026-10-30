@@ -203,6 +203,42 @@ def test_demo_never_connects_and_steps_are_frozen(page, static_url):
     page.wait_for_function("document.documentElement.dataset.demoStep !== '0'")
 
 
+def test_demo_keeps_second_boom_and_reveals_only_the_remaining_duds(page, static_url):
+    page.goto(f"{static_url}/overlay/?demo=1&step=0")
+    page.wait_for_function("window.overlayReady === true")
+    steps = page.evaluate("window.overlayDemoSteps")
+    booms = [
+        (i, event)
+        for i, step in enumerate(steps)
+        for event in step
+        if event["type"] == "boom"
+    ]
+    assert len(booms) == 2
+    second_step, second = booms[1]
+    assert not any(
+        event["type"] == "false_alarm" and event["id"] == second["id"]
+        for step in steps
+        for event in step
+    )
+    page.goto(f"{static_url}/overlay/?demo=1&step={second_step}")
+    page.wait_for_function("window.overlayReady === true")
+    assert page.locator("#boom-word").inner_text() == second["word"].upper()
+    assert not page.locator("#false-alarm").is_visible()
+    assert page.locator(f'[data-id="{second["id"]}"]').get_attribute("data-status") == (
+        "exploded"
+    )
+    reveal_step = next(
+        i
+        for i, step in enumerate(steps)
+        if any(event["type"] == "reveal" for event in step)
+    )
+    page.goto(f"{static_url}/overlay/?demo=1&step={reveal_step}")
+    page.wait_for_function("window.overlayReady === true")
+    assert page.locator("#round-stats").inner_text() == "1 boom"
+    assert second["word"] not in page.locator("#duds").inner_text()
+    assert page.locator("#duds p").count() == 2
+
+
 def test_no_tunnel_url_hides_plant_panel(page):
     send(
         page,
