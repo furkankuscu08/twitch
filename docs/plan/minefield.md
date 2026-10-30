@@ -331,7 +331,7 @@ Kullanılmayacaklar: Codex'i ürünün içinde çalıştırmak (yapay görünür
 
 ### Açıklama ve README
 - README'de "How this was built with Codex" bölümü (WP14). Taslak: [codex-usage.md](codex-usage.md) bölüm 5. Sadece gerçekten yapılanlar kalır.
-- **Dürüstlük cümlesi:** "Planning and spec review with another AI assistant; all code was written in Codex." SSS başka araçlara izin veriyor; açık olmak güven verir.
+- **Dürüstlük cümlesi:** "The core of Minefield was built with Codex; other coding agents helped now and then." SSS başka araçlara izin veriyor; ayrıntıya girmeden açık olmak yeterli (karar 30 Ekim).
 - Devpost'ta Tech başlığının altında aynı maddelerin 3–4 cümlelik özeti ve provadaki hatanın Codex'le bulunup düzeltilmesi.
 
 ---
@@ -430,7 +430,7 @@ Arkadaş kaydı yok (D18). Mayınları `scripts/blind_plant.py` üç test hesab�
 
 ### Teslim listesi
 - [ ] YouTube'a **public** video: 2:50'nin altında, altyazılı; telifli müzik ya da marka yok. Ses efektleri CC0 ya da kendi üretimin.
-- [ ] Repo private kalabilir, GitHub'da **testing@devpost.com** ile paylaşılır. Ya da public yapılır; ama o zaman eski commit'lerdeki kişisel e-posta görünür (72 commit), bu yüzden paylaşım öneriliyor.
+- [ ] Repo teslimden önce **public** yapılır (karar 30 Ekim; eski commit'lerdeki e-posta sorun değil).
 - [ ] İngilizce `README.md` (WP14):
   - ne yapar;
   - kurulum (Windows + WSL), Deepgram anahtarı ve Twitch uygulama kaydı;
