@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080" class="frame-a">
+  <title>Minefield architecture: a viewer's secret word and the streamer's voice meet only in the game server</title>
+  <style>
+    text { font-family: "Segoe UI", "Ubuntu Sans", "DejaVu Sans", sans-serif; fill: #faf8f5; }
+    .eyebrow { font-size: 30px; font-weight: 800; letter-spacing: 6px; fill: #c7ff76; }
+    .lede { font-size: 30px; fill: #c5bfca; }
+    .title { font-size: 38px; font-weight: 800; }
+    .sub { font-size: 30px; fill: #d0cdd6; }
+    .label { font-size: 28px; font-weight: 700; }
+    .box { fill: #1d1c24; stroke: #635e6c; stroke-width: 2; }
+    .viewer .box { stroke: #c7ff76; }
+    .viewer .label { fill: #c7ff76; }
+    .viewer .wire { stroke: #c7ff76; }
+    .voice .box { stroke: #ffb27b; }
+    .voice .label { fill: #ffb27b; }
+    .voice .wire { stroke: #ffb27b; }
+    .server { fill: #24222b; stroke: #faf8f5; stroke-width: 3; }
+    .wire { fill: none; stroke: #8f8899; stroke-width: 5; }
+    .out .wire { stroke: #8f8899; }
+    .rule { fill: #1b1b21; stroke: #faf8f5; stroke-width: 2; }
+    .badge { fill: #faf8f5; }
+    .rule-text { font-size: 30px; font-weight: 700; }
+    .num { font-size: 30px; font-weight: 900; fill: #15191a; }
+    .frame-b .voice, .frame-b .rules { opacity: .22; }
+    .frame-c .viewer { opacity: .22; }
+    .frame-c .rule { stroke-width: 4; }
+  </style>
+  <defs>
+    <marker id="head-lime" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#c7ff76"/></marker>
+    <marker id="head-orange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#ffb27b"/></marker>
+    <marker id="head-grey" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#8f8899"/></marker>
+  </defs>
+
+  <rect width="1920" height="1080" fill="#15151b"/>
+
+  <text x="80" y="92" class="eyebrow">HOW MINEFIELD WORKS</text>
+  <text x="80" y="140" class="lede">A viewer's secret word and the streamer's voice meet only inside the game server.</text>
+
+  <!-- Viewer path (left) -->
+  <g class="viewer">
+    <rect x="80" y="200" width="480" height="150" rx="16" class="box"/>
+    <text x="110" y="258" class="title">Viewer's phone</text>
+    <text x="110" y="306" class="sub">Picks 1 of 6 word cards,</text>
+    <text x="110" y="340" class="sub">gets a one-time code</text>
+
+    <rect x="80" y="470" width="480" height="150" rx="16" class="box"/>
+    <text x="110" y="528" class="title">Twitch chat</text>
+    <text x="110" y="576" class="sub">!mine K7QF</text>
+    <text x="110" y="610" class="sub">The code only, never the word</text>
+
+    <path d="M320 350 L320 458" class="wire" marker-end="url(#head-lime)"/>
+    <text x="335" y="415" class="label">code</text>
+    <path d="M560 268 L766 330" class="wire" marker-end="url(#head-lime)"/>
+    <text x="574" y="234" class="label">word, privately</text>
+    <path d="M560 545 L766 500" class="wire" marker-end="url(#head-lime)"/>
+    <text x="590" y="500" class="label">EventSub</text>
+  </g>
+
+  <!-- Voice path (right) -->
+  <g class="voice">
+    <rect x="1360" y="200" width="480" height="150" rx="16" class="box"/>
+    <text x="1390" y="258" class="title">Streamer's mic</text>
+    <text x="1390" y="306" class="sub">A Chrome tab streams</text>
+    <text x="1390" y="340" class="sub">the voice live</text>
+
+    <rect x="1360" y="470" width="480" height="150" rx="16" class="box"/>
+    <text x="1390" y="528" class="title">Speech recognition</text>
+    <text x="1390" y="576" class="sub">Deepgram Flux, streaming</text>
+    <text x="1390" y="610" class="sub">Never told the words</text>
+
+    <path d="M1600 350 L1600 458" class="wire" marker-end="url(#head-orange)"/>
+    <path d="M1360 545 L1154 500" class="wire" marker-end="url(#head-orange)"/>
+    <text x="1346" y="585" class="label" text-anchor="end">live transcript</text>
+  </g>
+
+  <!-- Game server (centre) -->
+  <rect x="780" y="250" width="360" height="330" rx="20" class="server"/>
+  <text x="960" y="318" class="title" text-anchor="middle">Game server</text>
+  <text x="960" y="370" class="sub" text-anchor="middle">Secret words live here,</text>
+  <text x="960" y="404" class="sub" text-anchor="middle">in memory only</text>
+  <text x="960" y="470" class="sub" text-anchor="middle">Heard once → SPARK</text>
+  <text x="960" y="508" class="sub" text-anchor="middle">Still there → BOOM</text>
+
+  <!-- Outputs -->
+  <g class="out">
+    <path d="M880 580 L700 698" class="wire" marker-end="url(#head-grey)"/>
+    <path d="M1040 580 L1220 698" class="wire" marker-end="url(#head-grey)"/>
+    <rect x="300" y="710" width="600" height="130" rx="16" class="box"/>
+    <text x="330" y="764" class="title">Overlay in OBS</text>
+    <text x="330" y="810" class="sub">Names only, until BOOM or round end</text>
+    <rect x="1020" y="710" width="600" height="130" rx="16" class="box"/>
+    <text x="1050" y="764" class="title">Bot in Twitch chat</text>
+    <text x="1050" y="810" class="sub">Plant link, boom alerts, round recap</text>
+  </g>
+
+  <!-- The two rules -->
+  <g class="rules">
+    <rect x="80" y="900" width="860" height="110" rx="55" class="rule"/>
+    <circle cx="145" cy="955" r="30" class="badge"/>
+    <text x="145" y="966" class="num" text-anchor="middle">1</text>
+    <text x="195" y="944" class="rule-text">No word on stream, in chat or in logs</text>
+    <text x="195" y="984" class="rule-text">until it explodes or the round ends</text>
+    <rect x="980" y="900" width="860" height="110" rx="55" class="rule"/>
+    <circle cx="1045" cy="955" r="30" class="badge"/>
+    <text x="1045" y="966" class="num" text-anchor="middle">2</text>
+    <text x="1095" y="944" class="rule-text">The recognizer is never told the words,</text>
+    <text x="1095" y="984" class="rule-text">so it can't be nudged into a false BOOM</text>
+    <!-- Rule badges on the parts each rule protects -->
+    <circle cx="872" cy="738" r="20" class="badge"/><text x="872" y="747" class="num" text-anchor="middle" style="font-size:24px">1</text>
+    <circle cx="1592" cy="738" r="20" class="badge"/><text x="1592" y="747" class="num" text-anchor="middle" style="font-size:24px">1</text>
+    <circle cx="1812" cy="498" r="20" class="badge"/><text x="1812" y="507" class="num" text-anchor="middle" style="font-size:24px">2</text>
+  </g>
+</svg>
