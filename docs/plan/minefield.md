@@ -381,7 +381,7 @@ Arkadaşlar sadece 1 Kasım 20:00 kaydında var (D14); T0 yapılmaz, T4 tek baş
   - Bildirimler ve Discord overlay'i kapalı.
 - **WSL:** Uykudan sonra localhost erişimi ya da saat bozulursa `wsl --shutdown` yap ve her şeyi yeniden başlat.
 - **Deepgram:** kayıttan önce status.deepgram.com'a bak. Dock'ta Deepgram ışığı kırmızıysa "konuşmayı yaz" moduna geç, kayda devam etme.
-- **OBS sesi:** Mic/Aux ve Desktop Audio açık (Codex kayıtlarında kapatılmıştı).
+- **OBS sesi:** Mic/Aux açık; Desktop Audio sessiz (açık kalırsa izlenen overlay sesi kayda iki kez girer); Overlay'de monitoring açık. Minefield sahnesi ve dock 30 Ekim'de kuruldu.
 - **Twitch:** Bot mod (link engelinden ve AutoMod'dan muaf); test hesaplarının chat'e yazabildiğini kontrol et.
 - **Başlatma:** WSL'de `scripts/run_all.sh`, Windows Chrome'da `http://localhost:8100/mic` (sekme kayıt boyunca açık kalır; OBS ile aynı mikrofon seçili). Dock'taki ışıklar yeşil olmadan kayda başlama.
 
@@ -431,6 +431,7 @@ Arkadaşlar sadece 1 Kasım 20:00 kaydında var (D14); T0 yapılmaz, T4 tek baş
 | D15 | Marker, otomatik klip ve klip linki çıktı (sadece canlı yayında test edilebiliyor, videoda ~10 sn). Yerine patlama makbuzu (afişte yayıncının son ~8 kelimesi, diğer deste kelimeleri maskeli) ve tur sonu chat özeti. Yayıncı token'ı gerekmiyor. | Verildi | 28 Ekim |
 | D16 | Otomasyon: Codex kendi işini doğrular (Playwright ekran görüntüleri, `pytest -m live` ile test hesabından Twitch testleri, harness'i kendisi koşar); sesler WebAudio ile sentezlenir; kilometre taşı içinde WP'ler zincirlenir; montajın mekanik kısmı `ffmpeg` betiğiyle. Sen sadece cihaz, giriş ve zevk işlerini yaparsın. | Verildi | 28 Ekim |
 | D17 | Ses kayıtları, T1 doğruluk testi ve WP6 harness iptal. Yanlış duyulan kelimeler videoya konmaz. Motorun `--save-hyps` kaydı kalır; 1 Kasım provasından sonra Codex log'u inceleyip ayarı düzeltir (yeni T1 ve Codex anı 3). Tanıma beğenilmezse Deepgram modeli değiştirilir. | Verildi | 29 Ekim |
+| D18 | Arkadaş kaydı yok: mayınları kör ekleme betiği test hesaplarıyla, gerçek chat yolundan (`!mine KOD`) ekler; kelimeler hiçbir yerde gösterilmez. Oyunda yayıncı sesi kendi sesin (TTS değil). Video anlatımı TTS (Deepgram Aura, mevcut anahtar). Kayıt 1 Kasım 20:00'a bağlı değil; teslim hedefi 1 Kasım, 2 Kasım tampon. | Verildi | 30 Ekim |
 
 ---
 
@@ -458,6 +459,7 @@ Arkadaşlar sadece 1 Kasım 20:00 kaydında var (D14); T0 yapılmaz, T4 tek baş
 - **28 Ekim, marker ve klip (D15):** marker, otomatik klip ve klip linki çıktı; yerine patlama makbuzu ve tur sonu chat özeti. Yayıncı token'ı ve `channel:manage:broadcast` / `clips:edit` scope'ları gitti. T5 bot token'ı ve erişim kontrolüne indi (20 dk). Video çekim listesinde klip sahnesi yerine tur özeti.
 - **29 Ekim, T5 ve kayıtlar (D17):** T5 tamam (bot mesajı `is_sent: true`; Windows → WSL `127.0.0.1:8100` erişimi PowerShell ile doğrulandı). Portlar 8100/8101 (8000'de başka bir projenin Docker container'ı var). Ses kayıtları, T1 testi ve WP6 harness iptal (D17); yerine prova log'u analizi. Codex: reasoning `high`, font 14. Kalan iş ~21 saat.
 - **28 Ekim, otomasyon (D16) ve D4 onayı:** AGENTS.md'ye "önce kendin doğrula", zincirleme ve Playwright kuralları; SPEC'te `scripts/shoot.py`, `?step=N`, WebAudio sesleri, WP9/WP10/WP11 canlı testleri; plana aktif emek/bekleme tablosu, zincir istemi, yarı otomatik montaj. D4 (chat kodu) onaylandı.
+- **30 Ekim, kör ekleme ve TTS (D18):** arkadaş kaydı iptal, yerine kör ekleme betiği (önce SPEC'e eklenir) ve 2–3 ek test hesabı. Oyunda kendi sesin; video anlatımı TTS. Dürüstlük cümlesi kör ekleme sürümüne döndü. Teslim hedefi 1 Kasım.
 - **28 Ekim, Codex kullanımı:** bölüm 8, [codex-usage.md](codex-usage.md) araştırmasına göre yeniden yazıldı: kurulum, ilk mesaj, WP döngüsü (önce testler, `/review`, `/compact`), 7 görünür an, ekran kaydı, dürüstlük cümlesi. Alt ajanlar varsayılan değil; PR incelemesi sadece M1 ve M3'te.
 
 ---

@@ -43,10 +43,11 @@ Default ports are `GAME_PORT=8100` and `PLANT_PORT=8101`, overridable by environ
 | Broadcaster (owns the channel and the developer app) | `izleyici0808` | none: no markers or clips (D15) |
 | Bot (moderator in the broadcaster's channel; sends chat, reads commands) | `minefield_bot` | `user:read:chat`, `user:write:chat` |
 | Test viewer (for testing commands alone) | `minefield_test` | `user:write:chat` |
+| Blind-plant viewers | `pixelmoth01`, `mossy_otter` | `user:write:chat` |
 
 The logins and the app's Client ID are configured in `.env` (`TWITCH_CLIENT_ID`, `TWITCH_BROADCASTER_LOGIN`, `TWITCH_BOT_LOGIN`, `TWITCH_TEST_LOGIN`); resolve user IDs at runtime via Get Users. Do not hard-code them.
 
-The test viewer is optional for normal play and required for WP9-WP11's automated live acceptance checks.
+The test viewer is optional for normal play and required for WP9-WP11's automated live acceptance checks. The blind-plant viewers, together with the test viewer, plant mines for the recording when no friends join: the words are picked at random and never shown to the streamer.
 
 ## Dependencies and tests
 - No ML or GPU dependencies (no torch, no faster-whisper, no onnxruntime).
