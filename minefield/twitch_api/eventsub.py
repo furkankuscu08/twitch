@@ -99,7 +99,13 @@ class EventSub:
             raise
 
     async def receive(self, timeout):
-        return json.loads(await asyncio.wait_for(self.socket.recv(), timeout))
+        # Twitch's 10 s keepalives arrived 10.01–10.31 s apart in the live
+        # check on 2026-10-30. Allow bounded delivery jitter before reconnecting.
+        return json.loads(
+            await asyncio.wait_for(
+                self.socket.recv(), timeout + self.config.TWITCH_KEEPALIVE_GRACE_S
+            )
+        )
 
     async def listen(self, timeout):
         receive = asyncio.create_task(self.receive(timeout))
@@ -135,10 +141,10 @@ class EventSub:
                     receive = asyncio.create_task(self.receive(timeout))
                 if handoff in done:
                     replacement, _, timeout = handoff.result()
-                    handoff = None
                     receive.cancel()
                     await asyncio.gather(receive, return_exceptions=True)
                     old, self.socket = self.socket, replacement
+                    handoff = None
                     await self.close(old)
                     receive = asyncio.create_task(self.receive(timeout))
         finally:

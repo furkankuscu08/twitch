@@ -37,6 +37,7 @@ class Config:
     TWITCH_DEDUP_SIZE: int = 1000
     TWITCH_IO_TIMEOUT_S: float = 5
     TWITCH_VALIDATE_S: float = 3600
+    TWITCH_KEEPALIVE_GRACE_S: float = 1
     TWITCH_RECONNECT_MIN_S: float = 0.5
     TWITCH_RECONNECT_MAX_S: float = 8
 

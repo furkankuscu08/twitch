@@ -190,3 +190,23 @@ def test_live_boom_false_alarm_and_single_round_recap():
             assert "pineapple" not in recaps[0]
 
     asyncio.run(scenario())
+
+
+def test_live_idle_connection_survives_two_keepalive_windows():
+    async def scenario():
+        async with live_game() as (
+            runtime,
+            _http,
+            _helix,
+            _outcomes,
+            _observed,
+            _logins,
+        ):
+            original = runtime.twitch.eventsub.socket
+            # Default Twitch welcome advertises 10 s. Include two full windows
+            # plus the small bounded network grace used by the client.
+            await asyncio.sleep(22)
+            assert runtime.twitch.eventsub.socket is original
+            assert runtime.status["eventsub"] == "connected"
+
+    asyncio.run(scenario())

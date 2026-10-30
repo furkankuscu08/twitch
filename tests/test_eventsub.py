@@ -95,7 +95,7 @@ def test_fresh_reconnect_timeout_dedup_and_bad_messages():
         helix = Helix()
         eventsub = EventSub(
             helix,
-            replace(Config(), TWITCH_RECONNECT_MIN_S=0.001),
+            replace(Config(), TWITCH_RECONNECT_MIN_S=0.001, TWITCH_KEEPALIVE_GRACE_S=0),
             seen.append,
             health.append,
             connect,
@@ -215,5 +215,39 @@ def test_network_failure_or_revocation_recovers(failure):
             task.cancel()
             await asyncio.gather(task, return_exceptions=True)
         assert sockets[1].closed
+
+    asyncio.run(scenario())
+
+
+def test_small_keepalive_delivery_jitter_does_not_force_reconnect():
+    async def scenario():
+        ready = asyncio.Event()
+
+        class DelayedSocket(Socket):
+            async def recv(self):
+                if self.messages:
+                    return self.messages.popleft()
+                await asyncio.sleep(0.025)
+                ready.set()
+                return packet("session_keepalive")
+
+        socket = DelayedSocket([welcome("a")])
+        attempts = []
+
+        async def connect(*args, **kwargs):
+            attempts.append(True)
+            return socket
+
+        config = replace(Config(), TWITCH_RECONNECT_MIN_S=0.001)
+        helix = Helix()
+        eventsub = EventSub(helix, config, lambda _: None, lambda _: None, connect)
+        task = asyncio.create_task(eventsub.run())
+        try:
+            await asyncio.wait_for(ready.wait(), 1)
+            assert len(attempts) == 1 and helix.subscriptions == ["a"]
+            assert not socket.closed
+        finally:
+            task.cancel()
+            await asyncio.gather(task, return_exceptions=True)
 
     asyncio.run(scenario())
