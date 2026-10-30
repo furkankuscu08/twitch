@@ -137,3 +137,56 @@ def test_live_commands_redemption_and_fresh_reconnect():
             assert len(runtime.game.mines) == 1
 
     asyncio.run(scenario())
+
+
+def test_live_boom_false_alarm_and_single_round_recap():
+    async def scenario():
+        async with live_game() as (runtime, http, helix, outcomes, observed, logins):
+            await http.post("/dock/round/start")
+            code = runtime.plants.issue("pineapple", runtime.clock())
+            await send_viewer(helix, "!mine " + code)
+            await until(lambda: bool(runtime.game.mines))
+            await runtime.tick()
+            await http.post("/dock/typed", json={"text": "I brought a pineapple"})
+            await bot_reply(
+                outcomes, observed, logins["bot"], "mine pineapple went off!"
+            )
+            await send_viewer(helix, "!defuse")
+            await bot_reply(
+                outcomes, observed, logins["bot"], "Only broadcaster or moderators"
+            )
+            assert next(iter(runtime.game.mines.values())).status == "exploded"
+            await http.post("/dock/false-alarm")
+            await bot_reply(outcomes, observed, logins["bot"], "False alarm,")
+            assert next(iter(runtime.game.mines.values())).status == "false_alarm"
+            code = runtime.plants.issue("volcano", runtime.clock())
+            await send_viewer(helix, "!mine " + code)
+            await until(
+                lambda: any(
+                    mine.word == "volcano" for mine in runtime.game.mines.values()
+                )
+            )
+            await runtime.tick()
+            await http.post("/dock/typed", json={"text": "We saw a volcano"})
+            await bot_reply(outcomes, observed, logins["bot"], "mine volcano went off!")
+            code = runtime.plants.issue("banana", runtime.clock())
+            await send_viewer(helix, "!mine " + code)
+            await until(
+                lambda: any(
+                    mine.word == "banana" for mine in runtime.game.mines.values()
+                )
+            )
+            assert "banana" not in str(runtime.snapshot())
+            await http.post("/dock/round/end")
+            await bot_reply(outcomes, observed, logins["bot"], "Round over: 1 booms.")
+            await http.post("/dock/round/end")
+            await runtime.twitch.queue.join()
+            recaps = [
+                text
+                for account, text, sent in outcomes
+                if account == "bot" and text.startswith("Round over:") and sent
+            ]
+            assert len(recaps) == 1 and "volcano" in recaps[0] and "banana" in recaps[0]
+            assert "pineapple" not in recaps[0]
+
+    asyncio.run(scenario())

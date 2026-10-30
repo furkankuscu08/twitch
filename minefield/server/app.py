@@ -98,6 +98,15 @@ class Runtime:
     def emit(self, events):
         for event in events:
             self.hub.broadcast(event)
+            if self.twitch is not None:
+                if event["type"] == "boom":
+                    self.twitch.enqueue(
+                        f"💥 @{event['owner']}'s mine {event['word']} went off!"
+                    )
+                elif event["type"] == "false_alarm":
+                    self.twitch.enqueue(
+                        f"🧯 False alarm, @{event['owner']} gets a free re-plant"
+                    )
         return {"ok": True}
 
     def snapshot(self):
@@ -171,8 +180,10 @@ def create_app(
     @app.post("/dock/round/end")
     async def end():
         runtime.emit(runtime.matcher.abort())
-        events, _recap = runtime.game.end(clock())
+        events, recap = runtime.game.end(clock())
         runtime.plants.clear()
+        if recap and runtime.twitch is not None:
+            runtime.twitch.enqueue(recap)
         return runtime.emit(events)
 
     @app.post("/dock/false-alarm")

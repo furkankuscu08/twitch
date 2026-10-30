@@ -83,6 +83,7 @@ def test_commands_parse_redemption_rejections_and_snapshot_secrecy():
         assert not drain(twitch)
         another = runtime.plants.issue("banana", 100)
         client.post("/dock/round/end")
+        assert drain(twitch)[0].startswith("Round over:")
         assert not runtime.plants.codes
         client.post("/dock/round/start")
         twitch.handle_chat(event("!mine " + another))
@@ -97,6 +98,7 @@ def test_defuse_permissions_and_latest_eligible_boom():
             client.post("/dock/debug/plant", json={"owner": owner, "word": word})
         client.portal.call(runtime.tick)
         client.post("/dock/typed", json={"text": "pineapple volcano"})
+        assert len(drain(twitch)) == 2
         twitch.handle_chat(event("!defuse"))
         assert all(mine.status == "exploded" for mine in runtime.game.mines.values())
         assert "moderators" in drain(twitch)[0]
