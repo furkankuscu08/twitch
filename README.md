@@ -20,6 +20,8 @@ TWITCH_CLIENT_ID=
 TWITCH_BROADCASTER_LOGIN=
 TWITCH_BOT_LOGIN=
 TWITCH_TEST_LOGIN=
+TWITCH_TEST2_LOGIN=
+TWITCH_TEST3_LOGIN=
 ```
 
 Create an API key in the [Deepgram console](https://console.deepgram.com/) using its [key setup guide](https://developers.deepgram.com/guides/fundamentals/make-your-first-api-request). The default backend is Flux, with Nova-3 as a backup using the same key. Speech goes to the EU endpoint by default. Deck words are never sent as recognition hints.
@@ -38,6 +40,18 @@ uv run python -m minefield.twitch_api.auth --account test
 For each command, open the printed activation URL, verify that the browser is signed into the account named by the matching `.env` variable, and approve the code. The CLI validates the identity and saves rotating token pairs in `data/tokens.json`. The bot requests `user:read:chat` and `user:write:chat`; the test viewer requests only `user:write:chat`. No broadcaster token is required. The test viewer is optional during play and required for automated live checks.
 
 The [Public client device-code flow](https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/#device-code-grant-flow) was verified on 30 October 2026. Never paste tokens into chat, screenshots or bug reports.
+
+For blind planting, set `TWITCH_TEST2_LOGIN` and `TWITCH_TEST3_LOGIN` to the two extra viewers and authorize them with `--account test2` and `--account test3`. Use your own incognito Chrome window for viewer activation, checking the account before approving each code; do not use a browser signed in as the broadcaster. All three viewers request only `user:write:chat` and have separate entries in the same token file.
+
+Before each rehearsal and recording, with the server stopped, refresh all three viewer tokens:
+
+```bash
+for account in test test2 test3; do
+  uv run python -m minefield.twitch_api.auth --account "$account" --refresh
+done
+```
+
+A failed refresh prints the exact device-login command needed to authorize that account again.
 
 ## Start a game
 

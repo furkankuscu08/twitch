@@ -21,6 +21,8 @@ VALIDATE_URL = "https://id.twitch.tv/oauth2/validate"
 SCOPES = {
     "bot": ("user:read:chat", "user:write:chat"),
     "test": ("user:write:chat",),
+    "test2": ("user:write:chat",),
+    "test3": ("user:write:chat",),
 }
 
 
@@ -84,7 +86,7 @@ class TwitchAuth:
 
     def login_name(self, account: str) -> str:
         if account not in SCOPES:
-            raise AuthError("Choose the bot or test account for login.")
+            raise AuthError("Choose a configured Twitch account for login.")
         login = self.logins.get(account, "").strip().lower()
         if not login:
             raise AuthError(f"Set TWITCH_{account.upper()}_LOGIN in .env first.")
@@ -274,7 +276,7 @@ class TwitchAuth:
             ):
                 checked = await self.checked_identity(account, record["access_token"])
                 return {**record, **checked}
-            # Verified 2026-10-29: Public-client refresh needs no client_secret;
+            # Verified 2026-10-30: Public-client refresh needs no client_secret;
             # form encoding escapes refresh tokens. Public DCF refresh tokens are
             # single-use, expire after 30 days, and must be replaced after refresh.
             # https://dev.twitch.tv/docs/authentication/refresh-tokens/
@@ -299,11 +301,15 @@ class TwitchAuth:
             return updated
 
 
-async def cli(account: str) -> None:
+async def cli(account: str, *, refresh: bool = False) -> None:
     client_id, logins = settings()
     async with httpx.AsyncClient() as client:
         manager = TwitchAuth(client, client_id, logins)
         expected = manager.login_name(account)
+        if refresh:
+            record = await manager.refresh(account)
+            print(f"Refreshed and validated {record['login']} ({account}).")
+            return
         print(f"Authorize as {expected} ({account}).", flush=True)
 
         def show_code(uri: str, code: str) -> None:
@@ -319,11 +325,18 @@ async def cli(account: str) -> None:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--account", choices=SCOPES, required=True)
+    parser.add_argument("--refresh", action="store_true", help="Refresh a saved login")
     args = parser.parse_args(argv)
     try:
-        run(cli(args.account))
+        run(cli(args.account, refresh=args.refresh))
     except AuthError as error:
         print(f"Authentication failed: {error}", file=sys.stderr)
+        if args.refresh:
+            print(
+                "Run device-code login: uv run python -m minefield.twitch_api.auth "
+                f"--account {args.account}",
+                file=sys.stderr,
+            )
         return 1
     except KeyboardInterrupt:
         print("Device login cancelled.", file=sys.stderr)

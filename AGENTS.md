@@ -45,9 +45,11 @@ Default ports are `GAME_PORT=8100` and `PLANT_PORT=8101`, overridable by environ
 | Test viewer (for testing commands alone) | `minefield_test` | `user:write:chat` |
 | Blind-plant viewers | `pixelmoth01`, `mossy_otter` | `user:write:chat` |
 
-The logins and the app's Client ID are configured in `.env` (`TWITCH_CLIENT_ID`, `TWITCH_BROADCASTER_LOGIN`, `TWITCH_BOT_LOGIN`, `TWITCH_TEST_LOGIN`); resolve user IDs at runtime via Get Users. Do not hard-code them.
+The logins and the app's Client ID are configured in `.env` (`TWITCH_CLIENT_ID`, `TWITCH_BROADCASTER_LOGIN`, `TWITCH_BOT_LOGIN`, `TWITCH_TEST_LOGIN`, `TWITCH_TEST2_LOGIN`, `TWITCH_TEST3_LOGIN`); resolve user IDs at runtime via Get Users. Do not hard-code them. The blind-plant viewers use auth aliases `test2` and `test3` respectively.
 
 The test viewer is optional for normal play and required for WP9-WP11's automated live acceptance checks. The blind-plant viewers, together with the test viewer, plant mines for the recording when no friends join: the words are picked at random and never shown to the streamer.
+
+Before each rehearsal and recording, refresh all three viewer tokens with `uv run python -m minefield.twitch_api.auth --account ACCOUNT --refresh` (`test`, `test2`, `test3`), before starting the server. Give device codes to the human for activation in their own incognito Chrome; never open activation in the agent's broadcaster browser. Blind planting is one-shot; never show its selected words in tool output or messages.
 
 ## Dependencies and tests
 - No ML or GPU dependencies (no torch, no faster-whisper, no onnxruntime).

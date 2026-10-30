@@ -9,7 +9,7 @@ from minefield.twitch_api.auth import TOKEN_PATH, TwitchAuth, settings
 
 
 @pytest.mark.live
-@pytest.mark.parametrize("account", ["bot", "test"])
+@pytest.mark.parametrize("account", ["bot", "test", "test2", "test3"])
 def test_saved_token_validates_and_refreshes(account):
     if not TOKEN_PATH.exists():
         pytest.skip("Run the bot and test device-code logins first")

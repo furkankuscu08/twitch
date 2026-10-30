@@ -375,3 +375,70 @@ def test_missing_client_id_fails_before_network(monkeypatch, capsys):
     monkeypatch.delenv("TWITCH_CLIENT_ID", raising=False)
     assert auth.main(["--account", "bot"]) == 1
     assert "TWITCH_CLIENT_ID" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("account", ["test2", "test3"])
+def test_extra_viewer_cli_keeps_other_tokens_and_requests_only_write(
+    account, monkeypatch, device_flow, respx_mock, tmp_path, capsys, make_auth
+):
+    original = seed_tokens(tmp_path)
+    login = f"viewer_{account}"
+    device_flow.respond(200, json=token_pair())
+    respx_mock.get(VALIDATE).respond(
+        200, json=identity(login=login, scopes=["user:write:chat"])
+    )
+    monkeypatch.setattr(auth, "load_dotenv", lambda *_: None)
+    monkeypatch.setenv("TWITCH_CLIENT_ID", "client-id")
+    monkeypatch.setenv(f"TWITCH_{account.upper()}_LOGIN", login)
+    monkeypatch.setattr(auth, "TOKEN_PATH", tmp_path / "tokens.json")
+    assert auth.main(["--account", account]) == 0
+    saved = json.loads((tmp_path / "tokens.json").read_text())
+    assert all(saved[key] == value for key, value in original.items())
+    assert saved[account]["login"] == login
+    assert multipart_fields(respx_mock.calls[0].request)["scopes"] == "user:write:chat"
+    output = capsys.readouterr().out
+    assert login in output
+    assert not any(secret in output for secret in ("access-secret", "refresh-secret"))
+
+
+@pytest.mark.parametrize("account", ["test", "test2", "test3"])
+def test_cli_explicit_refresh_does_not_start_device_login(
+    account, monkeypatch, respx_mock, tmp_path, capsys
+):
+    original = seed_tokens(tmp_path)
+    original[account] = {**token_pair(), "login": "viewer"}
+    (tmp_path / "tokens.json").write_text(json.dumps(original))
+    monkeypatch.setattr(auth, "load_dotenv", lambda *_: None)
+    monkeypatch.setenv("TWITCH_CLIENT_ID", "client-id")
+    monkeypatch.setenv(f"TWITCH_{account.upper()}_LOGIN", "viewer")
+    monkeypatch.setattr(auth, "TOKEN_PATH", tmp_path / "tokens.json")
+    refresh = respx_mock.post(TOKEN).respond(
+        200, json=token_pair("rotated-access", "rotated-refresh")
+    )
+    respx_mock.get(VALIDATE).respond(
+        200, json=identity(login="viewer", scopes=["user:write:chat"])
+    )
+    assert auth.main(["--account", account, "--refresh"]) == 0
+    assert refresh.call_count == 1
+    saved = json.loads((tmp_path / "tokens.json").read_text())
+    assert saved[account]["refresh_token"] == "rotated-refresh"
+    assert all(saved[key] == value for key, value in original.items() if key != account)
+    output = capsys.readouterr().out
+    assert "Refreshed and validated viewer" in output
+    assert not any(secret in output for secret in ("rotated-access", "rotated-refresh"))
+
+
+def test_failed_cli_refresh_prints_exact_device_login_command(
+    monkeypatch, respx_mock, tmp_path, capsys
+):
+    seed_tokens(tmp_path)
+    monkeypatch.setattr(auth, "load_dotenv", lambda *_: None)
+    monkeypatch.setenv("TWITCH_CLIENT_ID", "client-id")
+    monkeypatch.setenv("TWITCH_TEST_LOGIN", "test_viewer")
+    monkeypatch.setattr(auth, "TOKEN_PATH", tmp_path / "tokens.json")
+    respx_mock.post(TOKEN).respond(400, json={"message": "Invalid refresh token"})
+    assert auth.main(["--account", "test", "--refresh"]) == 1
+    assert (
+        "uv run python -m minefield.twitch_api.auth --account test"
+        in capsys.readouterr().err
+    )
