@@ -80,6 +80,7 @@ class Runtime:
         self.game = Game(deck, config)
         self.plants = Plants(self.game, random.SystemRandom())
         self.twitch = None
+        self.tunnel = None
         self.matcher = Matcher(self.game)
         self.hub = Hub(config.WS_CLIENT_QUEUE_SIZE)
         self.clock = clock
@@ -111,6 +112,12 @@ class Runtime:
 
     def snapshot(self):
         return self.game.snapshot(self.clock(), self.status["tunnel_url"])
+
+    def set_tunnel_url(self, url):
+        if self.status["tunnel_url"] != url:
+            self.status["tunnel_url"] = url
+            self.hub.broadcast(dict(self.status), "dock")
+            self.hub.broadcast(self.snapshot())
 
     async def tick(self):
         self.emit(self.game.arm(self.clock()))

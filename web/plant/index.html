@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Plant a mine · Minefield</title>
+  <style>
+    :root {color-scheme:dark;font-family:Arial,Helvetica,sans-serif;background:#101418;color:#f1f2ec}
+    * {box-sizing:border-box} [hidden] {display:none!important}
+    body {margin:0;padding:28px 20px 32px} main {max-width:480px;margin:auto}
+    header {display:flex;align-items:center;gap:9px;font-size:12px;font-weight:700;letter-spacing:2px;color:#dffa72}
+    .dot {width:11px;height:11px;border-radius:50%;background:#dffa72;box-shadow:0 0 18px #dffa7240}
+    h1 {font-size:38px;letter-spacing:-1.5px;margin:34px 0 12px;line-height:1.08}
+    p {color:#aeb7bf;font-size:15px;line-height:1.6;margin:0 0 24px}
+    .label {font-size:11px;letter-spacing:1.6px;color:#aeb7bf;font-weight:bold;margin-bottom:12px}
+    #cards {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    button {font:inherit;cursor:pointer;touch-action:manipulation;transition:border-color .15s,background .15s}
+    #cards button {min-height:98px;padding:16px 10px;border:1px solid #3e4850;border-radius:12px;background:#1a2127;color:#f1f2ec;font-size:16px;font-weight:700;overflow-wrap:anywhere}
+    #cards button:hover {border-color:#dffa72;background:#242d25}
+    button:focus-visible,input:focus-visible {outline:2px solid #dffa72;outline-offset:4px}
+    button:disabled {opacity:.45;cursor:default}
+    .action {width:100%;min-height:48px;border:0;border-radius:9px;background:#dffa72;color:#1b220e;font-weight:bold;padding:14px;margin-top:12px}
+    .secondary {background:transparent;border:1px solid #46515b;color:#dce2e6}
+    #result {background:#1a2127;border:1px solid #3e4850;border-radius:14px;padding:22px 18px}
+    #selected-word {display:block;font-size:28px;font-weight:bold;color:#dffa72;overflow-wrap:anywhere;margin:8px 0 22px}
+    label {display:block;font-size:13px;color:#c2cad0;margin-bottom:10px}
+    input {width:100%;min-width:0;font:700 27px monospace;text-align:center;color:#f1f2ec;background:#101418;border:1px solid #49555e;border-radius:8px;padding:17px 8px;letter-spacing:1px}
+    #expiry,#copy-help {font-size:13px;margin:12px 0 0} #copy-help {color:#dffa72}
+    #error {border:1px solid #8b5656;background:#2a1d21;border-radius:9px;padding:14px;color:#f0b4b4;line-height:1.5;margin-top:18px}
+    #loading {padding:32px 0} footer {border-top:1px solid #2b343b;margin-top:28px;padding-top:18px;color:#87949e;font-size:12px;line-height:1.6}
+  </style>
+</head>
+<body>
+<main>
+  <header><span class="dot" aria-hidden="true"></span>MINEFIELD</header>
+  <h1>Your word.<br>Their next mistake.</h1>
+  <p>Pick a secret word. Then steer the conversation until the streamer says it.</p>
+  <div id="loading" role="status">Dealing your hand…</div>
+  <section id="hand" hidden>
+    <div class="label">YOUR HAND · PICK ONE</div>
+    <div id="cards"></div>
+  </section>
+  <section id="result" hidden>
+    <div class="label">YOUR SECRET WORD</div>
+    <span id="selected-word"></span>
+    <label for="command">Send this command in the channel’s Twitch chat:</label>
+    <input id="command" readonly aria-label="Twitch command" spellcheck="false">
+    <button class="action" id="copy">Copy command</button>
+    <p id="copy-help" role="status"></p>
+    <p id="expiry"></p>
+  </section>
+  <div id="error" role="alert" hidden></div>
+  <button class="action secondary" id="retry" hidden>Try again</button>
+  <button class="action secondary" id="new-hand" hidden>Pick a new hand</button>
+  <footer>Keep your word secret. Your mine plants only after you send the command in Twitch chat. If it’s taken, pick another.</footer>
+</main>
+<script>
+  const byId = id => document.getElementById(id);
+  let handId, expiresAt, countdown;
+  async function request(path, body) {
+    const response = await fetch(path, {method:body ? 'POST' : 'GET', cache:'no-store',
+      headers:body ? {'Content-Type':'application/json'} : {},
+      body:body ? JSON.stringify(body) : undefined, signal:AbortSignal.timeout(10000)});
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.detail || 'Could not finish. Please try again.');
+    return data;
+  }
+  function error(message) {
+    byId('error').textContent = message; byId('error').hidden = false;
+    byId('retry').hidden = false;
+  }
+  function errorMessage(e) {
+    return ['TypeError','TimeoutError','SyntaxError'].includes(e.name) ? 'Connection lost. Please try again.' : e.message;
+  }
+  async function deal() {
+    clearInterval(countdown);
+    for (const id of ['hand','result','error','retry','new-hand']) byId(id).hidden = true;
+    byId('loading').hidden = false;
+    byId('cards').replaceChildren();
+    try {
+      const hand = await request('/api/hand');
+      handId = hand.hand_id;
+      for (const word of hand.cards) {
+        const button = document.createElement('button');
+        button.textContent = word; button.onclick = () => pick(word);
+        byId('cards').append(button);
+      }
+      byId('hand').hidden = false;
+    } catch (e) { error(errorMessage(e)); }
+    finally { byId('loading').hidden = true; }
+  }
+  async function pick(word) {
+    const buttons = [...byId('cards').children];
+    buttons.forEach(button => button.disabled = true);
+    byId('error').hidden = byId('retry').hidden = true;
+    try {
+      const selected = await request('/api/pick', {hand_id:handId, word});
+      byId('selected-word').textContent = word;
+      byId('command').value = selected.command;
+      expiresAt = selected.expires_at * 1000;
+      byId('copy').textContent = 'Copy command'; byId('copy').disabled = false;
+      byId('copy-help').textContent = '';
+      byId('hand').hidden = true; byId('result').hidden = byId('new-hand').hidden = false;
+      tick(); countdown = setInterval(tick, 1000);
+    } catch (e) { error(errorMessage(e)); }
+    finally { buttons.forEach(button => button.disabled = false); }
+  }
+  function tick() {
+    const remaining = Math.max(0, Math.ceil((expiresAt - Date.now()) / 1000));
+    byId('expiry').textContent = remaining ? `Code expires in ${Math.floor(remaining / 60)}:${String(remaining % 60).padStart(2,'0')}` : 'Code expired. Pick a new hand.';
+    if (!remaining) { clearInterval(countdown); byId('copy').disabled = true; byId('copy').textContent = 'Copy command'; }
+  }
+  byId('copy').onclick = async () => {
+    try { await navigator.clipboard.writeText(byId('command').value); byId('copy').textContent = 'Copied!'; }
+    catch { byId('command').focus(); byId('command').select(); byId('copy-help').textContent = 'Long-press or select the command above to copy it.'; }
+  };
+  byId('new-hand').onclick = byId('retry').onclick = deal;
+  deal();
+</script>
+</body>
+</html>

@@ -8,9 +8,9 @@ from dataclasses import replace
 
 import httpx
 import pytest
-import uvicorn
 
 from minefield.core.config import Config
+from minefield.server.__main__ import run_servers
 from minefield.server.app import create_app
 from minefield.twitch_api.auth import TOKEN_PATH, TwitchAuth, settings
 from minefield.twitch_api.chat import Twitch
@@ -26,7 +26,7 @@ async def until(predicate):
 
 
 @asynccontextmanager
-async def live_game():
+async def live_game(*, tunnel=False):
     if not TOKEN_PATH.exists():
         pytest.skip("Authorize bot and test accounts first")
     client_id, logins = settings()
@@ -42,7 +42,15 @@ async def live_game():
             outcomes.append((account, text, bool(result and result["is_sent"])))
             return result
 
-    config = replace(Config(), ARM_DELAY_S=0)
+    listeners = [socket.socket(), socket.socket()]
+    try:
+        for listener in listeners:
+            listener.bind(("127.0.0.1", 0))
+        ports = [listener.getsockname()[1] for listener in listeners]
+    finally:
+        for listener in listeners:
+            listener.close()
+    config = replace(Config(), ARM_DELAY_S=0, GAME_PORT=ports[0], PLANT_PORT=ports[1])
     async with httpx.AsyncClient(timeout=config.TWITCH_IO_TIMEOUT_S) as external:
         auth = TwitchAuth(external, client_id, logins)
         if not {"bot", "test"}.issubset(auth.read_tokens()):
@@ -63,22 +71,21 @@ async def live_game():
             yield twitch
 
         app = create_app(config=config, debug=True, twitch_factory=factory)
-        listener = socket.socket()
-        listener.bind(("127.0.0.1", 0))
-        port = listener.getsockname()[1]
-        server = uvicorn.Server(uvicorn.Config(app, log_level="error"))
-        serving = asyncio.create_task(server.serve(sockets=[listener]))
+        serving = asyncio.create_task(run_servers(app, config, tunnel=tunnel))
         try:
-            await until(lambda: server.started)
             runtime = app.state.runtime
             await until(lambda: runtime.status["eventsub"] == "connected")
-            # WP11 will supply the real tunnel URL; no plant endpoint exists yet.
-            runtime.status["tunnel_url"] = "https://plant.example"
-            async with httpx.AsyncClient(base_url=f"http://127.0.0.1:{port}") as http:
+            if tunnel:
+                await until(lambda: bool(runtime.status["tunnel_url"]))
+            else:
+                runtime.set_tunnel_url("https://plant.example")
+            async with httpx.AsyncClient(
+                base_url=f"http://127.0.0.1:{config.GAME_PORT}"
+            ) as http:
                 yield runtime, http, helix, outcomes, observed, logins
         finally:
-            server.should_exit = True
-            await serving
+            serving.cancel()
+            await asyncio.gather(serving, return_exceptions=True)
 
 
 async def send_viewer(helix, text):
@@ -208,5 +215,93 @@ def test_live_idle_connection_survives_two_keepalive_windows():
             await asyncio.sleep(22)
             assert runtime.twitch.eventsub.socket is original
             assert runtime.status["eventsub"] == "connected"
+
+    asyncio.run(scenario())
+
+
+async def public_ready(url):
+    last_result = "no response"
+    async with httpx.AsyncClient(timeout=5) as client:
+        try:
+            async with asyncio.timeout(60):
+                while True:
+                    try:
+                        response = await client.get(url)
+                        if response.is_success:
+                            return
+                        last_result = f"HTTP {response.status_code}"
+                    except httpx.HTTPError as exc:
+                        last_result = type(exc).__name__
+                    await asyncio.sleep(0.5)
+        except TimeoutError:
+            pytest.fail(f"Public tunnel did not become ready: {last_result}")
+
+
+def test_live_tunnel_hand_pick_mine_reply_and_restart():
+    async def scenario():
+        import websockets
+
+        async with live_game(tunnel=True) as (
+            runtime,
+            http,
+            helix,
+            outcomes,
+            observed,
+            logins,
+        ):
+            assert (await http.post("/dock/round/start")).is_success
+            url = runtime.status["tunnel_url"]
+            await public_ready(url)
+            await send_viewer(helix, "!mine")
+            await bot_reply(outcomes, observed, logins["bot"], f"pick your mine: {url}")
+            async with httpx.AsyncClient(base_url=url, timeout=10) as public:
+                assert (await public.get("/")).is_success
+                for path in ("/dock", "/mic", "/overlay", "/data/tokens.json"):
+                    assert (await public.get(path)).status_code == 404
+                hand = (await public.get("/api/hand")).json()
+                assert len(hand["cards"]) == 6
+                word = hand["cards"][0]
+                picked = await public.post(
+                    "/api/pick", json={"hand_id": hand["hand_id"], "word": word}
+                )
+                assert picked.is_success
+                picked = picked.json()
+                await send_viewer(helix, picked["command"])
+                await until(lambda: bool(runtime.game.mines))
+                mine = next(iter(runtime.game.mines.values()))
+                assert (mine.word, mine.owner) == (word, logins["test"])
+                assert picked["code"] not in runtime.plants.codes
+                assert word not in str(runtime.snapshot())
+                await bot_reply(outcomes, observed, logins["bot"], "mine planted")
+            ws_url = (
+                str(http.base_url).replace("http://", "ws://").rstrip("/")
+                + "/ws/overlay"
+            )
+            async with websockets.connect(ws_url) as overlay:
+                import json
+
+                assert json.loads(await overlay.recv())["plant_url"] == url
+                runtime.tunnel.process.kill()
+                await until(
+                    lambda: (
+                        bool(runtime.status["tunnel_url"])
+                        and runtime.status["tunnel_url"] != url
+                    )
+                )
+                replacement = runtime.status["tunnel_url"]
+                async with asyncio.timeout(5):
+                    while True:
+                        event = json.loads(await overlay.recv())
+                        if (
+                            event["type"] == "snapshot"
+                            and event["plant_url"] == replacement
+                        ):
+                            assert word not in str(event)
+                            break
+                await public_ready(replacement)
+                await send_viewer(helix, "!mine")
+                await bot_reply(
+                    outcomes, observed, logins["bot"], f"pick your mine: {replacement}"
+                )
 
     asyncio.run(scenario())

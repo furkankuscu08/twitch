@@ -40,6 +40,10 @@ class Config:
     TWITCH_KEEPALIVE_GRACE_S: float = 1
     TWITCH_RECONNECT_MIN_S: float = 0.5
     TWITCH_RECONNECT_MAX_S: float = 8
+    TUNNEL_RECONNECT_MIN_S: float = 0.5
+    TUNNEL_RECONNECT_MAX_S: float = 8
+    TUNNEL_STARTUP_TIMEOUT_S: float = 30
+    TUNNEL_SHUTDOWN_TIMEOUT_S: float = 5
 
     def __post_init__(self):
         for item in fields(self):
@@ -78,3 +82,14 @@ class Config:
             raise ValueError("Twitch intervals must be positive")
         if self.TWITCH_RECONNECT_MAX_S < self.TWITCH_RECONNECT_MIN_S:
             raise ValueError("Invalid Twitch reconnect bounds")
+        if (
+            min(
+                self.TUNNEL_RECONNECT_MIN_S,
+                self.TUNNEL_STARTUP_TIMEOUT_S,
+                self.TUNNEL_SHUTDOWN_TIMEOUT_S,
+            )
+            <= 0
+        ):
+            raise ValueError("Tunnel intervals must be positive")
+        if self.TUNNEL_RECONNECT_MAX_S < self.TUNNEL_RECONNECT_MIN_S:
+            raise ValueError("Invalid tunnel reconnect bounds")
