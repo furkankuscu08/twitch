@@ -79,7 +79,17 @@ class AudioInput:
             raise ValueError("Invalid PCM frame")
         if not self.connected or not self.accepting:
             return
-        if time.monotonic() - self.last_activity >= self.config.ENGINE_TIMEOUT_S:
+        # Short losses can accumulate without any single long inactivity gap.
+        # Compare received PCM duration with its wall clock before accepting it.
+        drift = (
+            wall - self.anchor - (self.samples + len(self.buffer) // 2) / SAMPLE_RATE
+            if self.anchor is not None
+            else 0
+        )
+        if (
+            max(time.monotonic() - self.last_activity, drift)
+            >= self.config.ENGINE_TIMEOUT_S
+        ):
             self.reset()
             return
         self.last_activity = time.monotonic()

@@ -510,6 +510,41 @@ def test_audio_gap_invalidates_session_without_buffering_backlog():
     assert not audio.accepting and not audio.buffer and audio.queue.empty()
 
 
+def test_short_audio_gaps_accumulate_and_abort_before_clock_drifts():
+    audio = AudioInput(Config())
+    audio.start(1000)
+    audio.activate()
+    generation = audio.generation
+    # Each gap is only 100 ms, so an inactivity-only check misses every one.
+    for index in range(240):
+        wall = 1000 + index * 0.02 + (index // 4) * 0.1
+        audio.feed(bytes(640), wall)
+        if audio.generation != generation:
+            break
+        if not audio.queue.empty():
+            audio.queue.get_nowait()
+    assert audio.generation > generation
+    assert not audio.accepting and not audio.buffer and audio.queue.empty()
+    audio.activate()
+    for index in range(4):
+        audio.feed(bytes(640), 2000 + index * 0.02)
+    assert audio.queue.get_nowait()[0] == 2000
+
+
+def test_continuous_audio_with_bounded_arrival_jitter_keeps_its_clock():
+    audio = AudioInput(Config())
+    audio.start(1000)
+    audio.activate()
+    generation = audio.generation
+    for index in range(400):
+        jitter = 0.1 if index % 8 < 4 else 0
+        audio.feed(bytes(640), 1000 + index * 0.02 + jitter)
+        if not audio.queue.empty():
+            audio.queue.get_nowait()
+    assert audio.generation == generation
+    assert audio.accepting
+
+
 @pytest.mark.parametrize("backend", ["flux", "nova3"])
 def test_utterance_storage_is_bounded_without_inventing_a_final(backend):
     config = replace(Config(), STT_MAX_UTTERANCE_WORDS=10)
