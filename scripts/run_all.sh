@@ -4,12 +4,25 @@ set -euo pipefail
 cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.."
 
 mode=live
-if [[ ${1:-} == --demo && $# == 1 ]]; then
-    mode=demo
-elif (( $# )); then
-    printf 'Usage: scripts/run_all.sh [--demo]\n' >&2
+hyps=()
+events=()
+usage() {
+    printf 'Usage: scripts/run_all.sh [--demo] [--save-hyps PATH] [--save-events PATH]\n' >&2
     exit 2
-fi
+}
+while (( $# )); do
+    case "$1" in
+        --demo) mode=demo; shift ;;
+        --save-hyps)
+            (( $# >= 2 )) && [[ -n $2 && $2 != --* ]] || usage
+            hyps=(--save-hyps "$2"); shift 2 ;;
+        --save-events)
+            (( $# >= 2 )) && [[ -n $2 && $2 != --* ]] || usage
+            events=(--output "$2"); shift 2 ;;
+        *) usage ;;
+    esac
+done
+[[ $mode != demo || ${#hyps[@]} == 0 ]] || usage
 command -v uv >/dev/null || { printf 'Install uv before starting Minefield.\n' >&2; exit 1; }
 uv sync --locked
 export MINEFIELD_RUN_MODE="$mode"
@@ -60,7 +73,11 @@ else
     printf 'Mic: http://localhost:%s/mic (engine WebSocket port %s)\n' "$game_port" "$mic_port"
     setsid .venv/bin/python -m minefield.server --tunnel &
     pids+=("$!")
-    .venv/bin/python -m minefield.stt --mic &
+    .venv/bin/python -m minefield.stt --mic "${hyps[@]}" &
+    pids+=("$!")
+fi
+if (( ${#events[@]} )); then
+    .venv/bin/python -m scripts.record_events "${events[@]}" &
     pids+=("$!")
 fi
 printf 'Press Ctrl+C to stop Minefield and its tunnel.\n'

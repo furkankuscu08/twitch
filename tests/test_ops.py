@@ -195,3 +195,49 @@ def test_tunnel_child_stops_after_server_crash_or_launcher_signal(launcher, shut
                 os.kill(child["pid"], signal.SIGTERM)
             except ProcessLookupError:
                 pass
+
+
+@pytest.mark.parametrize("shutdown", [signal.SIGINT, "recorder-crash"])
+def test_logging_arguments_and_recorder_cleanup(launcher, shutdown):
+    path, run = launcher
+    process = run(
+        "--save-hyps",
+        "data/rehearsal hyps.jsonl",
+        "--save-events",
+        "data/events/rehearsal events.jsonl",
+        DEEPGRAM_API_KEY="temporary-test-value",
+        TEST_EXIT_MODULE="record_events" if shutdown == "recorder-crash" else "",
+    )
+    try:
+        wait_for(path / "record_events.ready")
+        wait_for(path / "stt.ready")
+        wait_for(path / "server.ready")
+        if shutdown != "recorder-crash":
+            process.send_signal(shutdown)
+        output, _ = process.communicate(timeout=10)
+        records = children(path)
+        assert sorted(record["args"] for record in records) == [
+            ["-m", "minefield.server", "--tunnel"],
+            [
+                "-m",
+                "minefield.stt",
+                "--mic",
+                "--save-hyps",
+                "data/rehearsal hyps.jsonl",
+            ],
+            [
+                "-m",
+                "scripts.record_events",
+                "--output",
+                "data/events/rehearsal events.jsonl",
+            ],
+        ]
+        assert process.returncode == (7 if shutdown == "recorder-crash" else 130)
+        assert "temporary-test-value" not in output
+        assert (path / "server.stopped").exists()
+        assert (path / "stt.stopped").exists()
+        assert_reaped(records)
+    finally:
+        if process.poll() is None:
+            process.terminate()
+            process.communicate(timeout=10)

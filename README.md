@@ -129,14 +129,14 @@ uv run python scripts/shoot.py overlay # every scripted step, no running server 
 
 Screenshots go to ignored `data/shots/`. The same screenshot command accepts `dock`, `plant` or `mic` when the server is running; it honors `GAME_PORT` and `PLANT_PORT`.
 
-For the 1 November rehearsal, save hypotheses by running the two services separately:
+For rehearsal or recording, enable both private logs with a new timestamp:
 
 ```bash
-uv run python -m minefield.server --tunnel
-# In another terminal:
-uv run python -m minefield.stt --mic --save-hyps data/rehearsal-hyps.jsonl
+stamp=$(date -u +%Y%m%dT%H%M%SZ)
+./scripts/run_all.sh --save-hyps "data/rehearsal-${stamp}-hyps.jsonl" \
+  --save-events "data/events/rehearsal-${stamp}-events.jsonl"
 ```
 
-Add `--save-raw data/rehearsal-raw.jsonl` only when raw provider responses are needed. These private logs can contain speech; do not share them publicly. Review the saved hypotheses after rehearsal to diagnose misses/false booms, tune configuration and prune misheard deck words. WP13 rehearsal fixes come later.
+Use a `recording-` prefix for recording sessions. Hypotheses contain `emitted_wall`; event JSONL contains `received_wall`, `received_utc` and the original event, including the boom’s `at`. Round boundaries are observed transitions; connection-gap markers mean events may be missing. Event files must be new. For raw provider responses, run the engine separately with its `--save-raw` flag. These private logs can contain speech; do not share them publicly. Review the saved hypotheses after rehearsal to diagnose misses/false booms, tune configuration and prune misheard deck words.
 
 If Flux performs badly, stop the launcher and restart with `STT_BACKEND=nova3`. If Deepgram is unreachable, use the dock's typed mode deliberately; there is no automatic fallback. See the [demo-day checklist](docs/demo-day.md) for the final run.
