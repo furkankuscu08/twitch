@@ -6,3 +6,7 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 video/
+
+# Private planning notes (kept locally, not published)
+docs/brainstorm/
+docs/plan/
