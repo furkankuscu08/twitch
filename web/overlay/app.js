@@ -18,7 +18,10 @@
     if (frozen) return;
     try {
       context ||= new (window.AudioContext || window.webkitAudioContext)();
-      context.resume().catch(() => {});
+      if (context.state !== "running") {
+        context.resume().catch(() => {});
+        return;
+      }
       const now = context.currentTime;
       // One voice at a time: rapid booms and status cues never add their peaks.
       if (voice) {

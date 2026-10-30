@@ -357,10 +357,47 @@ def test_long_owner_word_and_receipt_fit_without_covering_correction(page):
     assert stamp["y"] + stamp["height"] <= owner["y"]
 
 
+def test_suspended_audio_schedules_nothing_and_does_not_replay_after_resume(page):
+    page.evaluate("""async () => {
+        const audio = new AudioContext();
+        await audio.suspend();
+        window.testAudio = audio;
+        window.resumeAudio = audio.resume.bind(audio);
+        audio.resume = () => new Promise(() => {});
+        window.createdSources = 0;
+        for (const name of ['createOscillator', 'createBufferSource']) {
+            const create = audio[name].bind(audio);
+            audio[name] = (...args) => {
+                window.createdSources++; return create(...args);
+            };
+        }
+        window.AudioContext = function() { return audio; };
+        for (let i = 0; i < 100; i++) {
+            window.deliver({type: 'boom', id: 'a', owner: 'mira', word: 'pineapple',
+                planted_ago_s: 100, latency_ms: 300, source: 'stt',
+                receipt: [{text: 'pineapple', hit: true}]});
+        }
+    }""")
+    assert page.locator("#boom-banner").is_visible()
+    assert page.evaluate("window.testAudio.state") == "suspended"
+    assert page.evaluate("window.createdSources") == 0
+    page.mouse.click(100, 100)
+    page.evaluate("window.resumeAudio()")
+    assert page.evaluate("window.testAudio.state") == "running"
+    assert page.evaluate("window.createdSources") == 0
+    boom(page)
+    assert page.evaluate("window.createdSources") == 3
+    page.evaluate("window.testAudio.close()")
+    boom(page)
+    assert page.evaluate("window.createdSources") == 3
+
+
 @pytest.mark.parametrize("repeat", [False, True])
 def test_rendered_boom_audio_peaks_near_minus_six_db_without_stacking(page, repeat):
     page.evaluate("""() => {
         window.testAudio = new OfflineAudioContext(1, 44100, 44100);
+        // Model an unlocked live context; offline audio starts after scheduling.
+        Object.defineProperty(window.testAudio, 'state', {value: 'running'});
         window.resumeRendering = window.testAudio.resume.bind(window.testAudio);
         window.testAudio.resume = () => Promise.resolve();
         window.AudioContext = function() { return window.testAudio; };
