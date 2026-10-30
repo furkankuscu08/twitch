@@ -215,6 +215,22 @@ def test_no_tunnel_url_hides_plant_panel(page):
     assert not page.locator("#plant").is_visible()
 
 
+def test_new_tunnel_snapshot_replaces_link_and_qr(page):
+    snapshot(page)
+    original = page.locator("#qr canvas").evaluate("canvas => canvas.toDataURL()")
+    send(
+        page,
+        type="snapshot",
+        round={"running": True},
+        plant_url="https://replacement.trycloudflare.com",
+        mines=[],
+    )
+    assert page.locator("#plant-url").inner_text() == "replacement.trycloudflare.com"
+    assert (
+        page.locator("#qr canvas").evaluate("canvas => canvas.toDataURL()") != original
+    )
+
+
 def test_snapshot_prioritizes_all_live_mines(page):
     mines = [
         {"id": str(index), "owner": f"viewer{index}", "status": "armed", "arms_in_s": 0}

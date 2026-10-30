@@ -111,6 +111,34 @@ def test_defuse_permissions_and_latest_eligible_boom():
         assert all(mine.status == "false_alarm" for mine in runtime.game.mines.values())
 
 
+def test_tunnel_url_updates_snapshots_and_mine_replies():
+    app, runtime, twitch, _ = make()
+    with (
+        TestClient(app) as client,
+        client.websocket_connect("/ws/overlay") as overlay,
+        client.websocket_connect("/ws/dock") as dock,
+    ):
+        overlay.receive_json()
+        dock.receive_json()
+        dock.receive_json()
+        client.post("/dock/round/start")
+        overlay.receive_json()
+        dock.receive_json()
+        for url in (
+            "https://first.trycloudflare.com",
+            None,
+            "https://second.trycloudflare.com",
+        ):
+            client.portal.call(runtime.set_tunnel_url, url)
+            assert dock.receive_json()["tunnel_url"] == url
+            snapshot = overlay.receive_json()
+            assert snapshot["plant_url"] == url
+            assert dock.receive_json() == snapshot
+            twitch.handle_chat(event("!mine"))
+            reply = drain(twitch)[0]
+            assert (url in reply) if url else ("unavailable" in reply)
+
+
 def test_slow_chat_queue_is_bounded_and_does_not_block_game():
     async def scenario():
         _, runtime, twitch, helix = make(TWITCH_CHAT_QUEUE_SIZE=2)
