@@ -430,17 +430,17 @@ Arkadaş kaydı yok (D18). Mayınları `scripts/blind_plant.py` üç test hesab�
 
 ### Teslim listesi
 - [ ] YouTube'a **public** video: 2:50'nin altında, altyazılı; telifli müzik ya da marka yok. Ses efektleri CC0 ya da kendi üretimin.
-- [ ] Repo private kalabilir, GitHub'da **testing@devpost.com** ile paylaşılır. Ya da public yapılır.
+- [ ] Repo private kalabilir, GitHub'da **testing@devpost.com** ile paylaşılır. Ya da public yapılır; ama o zaman eski commit'lerdeki kişisel e-posta görünür (72 commit), bu yüzden paylaşım öneriliyor.
 - [ ] İngilizce `README.md` (WP14):
   - ne yapar;
   - kurulum (Windows + WSL), Deepgram anahtarı ve Twitch uygulama kaydı;
   - anahtarsız demo yolu;
   - test talimatları.
   - Kurallara göre bütün teslim materyalleri İngilizce olmalı. `docs/brainstorm` Türkçe; teslimden önce silmek ya da bırakmak senin kararın.
-- [ ] Devpost açıklaması:
-  - dört kriterle eşleşen başlıklar (Innovation / Potential Impact / Technological Implementation + Codex / Design);
+- [ ] Devpost açıklaması: taslak Claude Docs'ta, [Minefield — Devpost submission draft](https://claude.ai/artifact/HuZUJaVRJ2R8jMzdjV81pX). 30 Ekim: iskelet kuruldu ve review'dan geçti. İsim, slogan, Built with ve dürüstlük satırları yazıldı; diğer bölümler yer tutucu. Rakamlar ve Codex hikâyesi provadan sonra, kalan metin 1 Kasım'da yazılacak.
+  - sıra: TL;DR ve video linki → What it does (Design) → What's new (Innovation) → Why streamers want it (Impact) → How it works (Tech) → How Codex built it → Demo transparency. Beraberlikte önce Innovation sayıldığı için o bölüm öne alındı;
   - Don't Get Got benzerliğini sahiplenen bir cümle;
-  - Impact için: kurulumu bir browser source ve bir Chrome sekmesi, GPU yok; 3 izleyicili küçük bir yayında bile her izleyicinin adı ekrana çıkıyor; makbuz ve tur özeti anı chat'e taşıyor; otomatik klip "future work" diye tek cümle (Twitch'in kendi Clip düğmesi zaten var);
+  - Impact için: yayında bir browser source ve bir dock, mikrofon bir Chrome sekmesinde; GPU ve Extension incelemesi yok, ama Deepgram anahtarı ve bot hesabı gerekiyor (abartmadan); 3 izleyicili küçük bir yayında bile her izleyicinin adı ekrana çıkıyor; makbuz ve tur özeti anı chat'e taşıyor; otomatik klip "future work" diye tek cümle (Twitch'in kendi Clip düğmesi zaten var);
   - dürüstlük cümleleri ([yukarıda](#kör-ekleme-ve-dürüstlük)).
 - [ ] Codex session ID.
 - [ ] Galeri görselleri: patlama anı, ekme sayfası, mimari şeması.
