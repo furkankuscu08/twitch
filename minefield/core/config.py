@@ -33,6 +33,13 @@ class Config:
     STT_HTTP_TIMEOUT_S: float = 2
     STT_RECONNECT_MIN_S: float = 0.5
     STT_RECONNECT_MAX_S: float = 8
+    TWITCH_CHAT_QUEUE_SIZE: int = 100
+    TWITCH_DEDUP_SIZE: int = 1000
+    TWITCH_IO_TIMEOUT_S: float = 5
+    TWITCH_VALIDATE_S: float = 3600
+    TWITCH_KEEPALIVE_GRACE_S: float = 1
+    TWITCH_RECONNECT_MIN_S: float = 0.5
+    TWITCH_RECONNECT_MAX_S: float = 8
 
     def __post_init__(self):
         for item in fields(self):
@@ -60,3 +67,14 @@ class Config:
             raise ValueError("STT intervals must be positive")
         if self.STT_RECONNECT_MAX_S < self.STT_RECONNECT_MIN_S:
             raise ValueError("Invalid STT reconnect bounds")
+        if (
+            min(
+                self.TWITCH_IO_TIMEOUT_S,
+                self.TWITCH_VALIDATE_S,
+                self.TWITCH_RECONNECT_MIN_S,
+            )
+            <= 0
+        ):
+            raise ValueError("Twitch intervals must be positive")
+        if self.TWITCH_RECONNECT_MAX_S < self.TWITCH_RECONNECT_MIN_S:
+            raise ValueError("Invalid Twitch reconnect bounds")

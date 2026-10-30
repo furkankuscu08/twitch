@@ -2,8 +2,9 @@
 
 import asyncio
 import json
+import random
 import time
-from contextlib import asynccontextmanager
+from contextlib import AsyncExitStack, asynccontextmanager
 from pathlib import Path
 from typing import Literal
 
@@ -17,6 +18,7 @@ from minefield.core.config import Config
 from minefield.core.deck import Deck
 from minefield.core.game import Game
 from minefield.core.matcher import Matcher
+from minefield.core.plants import Plants
 
 from .hub import Hub
 
@@ -76,6 +78,8 @@ class Runtime:
     def __init__(self, config, deck, clock, debug):
         self.config = config
         self.game = Game(deck, config)
+        self.plants = Plants(self.game, random.SystemRandom())
+        self.twitch = None
         self.matcher = Matcher(self.game)
         self.hub = Hub(config.WS_CLIENT_QUEUE_SIZE)
         self.clock = clock
@@ -94,6 +98,15 @@ class Runtime:
     def emit(self, events):
         for event in events:
             self.hub.broadcast(event)
+            if self.twitch is not None:
+                if event["type"] == "boom":
+                    self.twitch.enqueue(
+                        f"💥 @{event['owner']}'s mine {event['word']} went off!"
+                    )
+                elif event["type"] == "false_alarm":
+                    self.twitch.enqueue(
+                        f"🧯 False alarm, @{event['owner']} gets a free re-plant"
+                    )
         return {"ok": True}
 
     def snapshot(self):
@@ -118,7 +131,9 @@ class Runtime:
             await self.tick()
 
 
-def create_app(*, config=None, deck=None, clock=time.time, debug=False):
+def create_app(
+    *, config=None, deck=None, clock=time.time, debug=False, twitch_factory=None
+):
     config = config or Config()
     if deck is None:
         deck = Deck(json.loads((ROOT / "deck/en.json").read_text()))
@@ -126,13 +141,20 @@ def create_app(*, config=None, deck=None, clock=time.time, debug=False):
 
     @asynccontextmanager
     async def lifespan(app):
-        maintenance = asyncio.create_task(runtime.maintain())
-        try:
-            yield
-        finally:
-            maintenance.cancel()
-            await asyncio.gather(maintenance, return_exceptions=True)
-            await runtime.hub.close()
+        async with AsyncExitStack() as stack:
+            tasks = [asyncio.create_task(runtime.maintain())]
+            try:
+                if twitch_factory is not None:
+                    runtime.twitch = await stack.enter_async_context(
+                        twitch_factory(runtime)
+                    )
+                    tasks.append(asyncio.create_task(runtime.twitch.run()))
+                yield
+            finally:
+                for task in tasks:
+                    task.cancel()
+                await asyncio.gather(*tasks, return_exceptions=True)
+                await runtime.hub.close()
 
     app = FastAPI(lifespan=lifespan, docs_url=None, redoc_url=None, openapi_url=None)
     app.state.runtime = runtime
@@ -150,6 +172,7 @@ def create_app(*, config=None, deck=None, clock=time.time, debug=False):
     @app.post("/dock/round/start")
     async def start():
         events = runtime.game.start(clock())
+        runtime.plants.clear()
         runtime.matcher.abort()
         events[0]["plant_url"] = runtime.status["tunnel_url"]
         return runtime.emit(events)
@@ -157,7 +180,10 @@ def create_app(*, config=None, deck=None, clock=time.time, debug=False):
     @app.post("/dock/round/end")
     async def end():
         runtime.emit(runtime.matcher.abort())
-        events, _recap = runtime.game.end(clock())
+        events, recap = runtime.game.end(clock())
+        runtime.plants.clear()
+        if recap and runtime.twitch is not None:
+            runtime.twitch.enqueue(recap)
         return runtime.emit(events)
 
     @app.post("/dock/false-alarm")

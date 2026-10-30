@@ -27,6 +27,7 @@ class Game:
         self.config = config or Config()
         self.running = False
         self.started_at = 0
+        self.round_id = 0
         self.mines = {}
         self.next_id = 1
         self.boom_sequence = 0
@@ -38,6 +39,7 @@ class Game:
         if self.running:
             raise ValueError("Round already running")
         self.running = True
+        self.round_id += 1
         self.started_at = now
         self.boom_sequence = 0
         self.archived_booms = 0
