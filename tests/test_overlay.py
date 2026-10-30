@@ -291,3 +291,102 @@ def test_older_boom_correction_stamps_its_chip_without_relabeling_banner(page):
     )
     assert page.locator('[data-id="a"] .false-alarm-stamp').is_visible()
     assert not page.locator("#boom-banner").is_visible()
+
+
+def test_boom_burst_is_single_local_and_reused_then_cleans_up(page):
+    snapshot(page)
+    boom(page)
+    burst = page.locator("#explosion")
+    assert burst.is_visible()
+    flash = page.locator(".blast-flash")
+    style = flash.evaluate("""element => {
+        const style = getComputedStyle(element);
+        const box = element.getBoundingClientRect();
+        return {iterations: style.animationIterationCount,
+            duration: parseFloat(style.animationDuration),
+            width: box.width, height: box.height, x: box.x, y: box.y};
+    }""")
+    assert style["iterations"] == "1"
+    assert 0 < style["duration"] <= 0.2
+    assert style["width"] <= 900 and style["height"] <= 600
+    assert style["x"] > 300 and style["y"] > 200
+    fragments = page.locator(".fragment").count()
+    assert 4 <= fragments <= 16
+    boom(page, owner="alex", word="volcano")
+    assert page.locator(".fragment").count() == fragments
+    page.wait_for_timeout(1100)
+    assert not burst.is_visible()
+    assert "shaking" not in page.locator("#stage").get_attribute("class")
+    assert page.locator("#boom-word").inner_text() == "VOLCANO"
+    boom(page)
+    snapshot(page)
+    assert not burst.is_visible()
+
+
+def test_long_owner_word_and_receipt_fit_without_covering_correction(page):
+    snapshot(page)
+    send(
+        page,
+        type="boom",
+        id="a",
+        owner="a_very_long_viewer_name_25",
+        word="rollercoaster",
+        planted_ago_s=125,
+        latency_ms=370,
+        source="stt",
+        receipt=[
+            {"text": word, "hit": word == "rollercoaster"}
+            for word in (
+                "Honestly unexpectedly everybody enthusiastically recommended "
+                "another enormous rollercoaster"
+            ).split()
+        ],
+    )
+    send(page, type="false_alarm", id="a", owner="a_very_long_viewer_name_25")
+    page.wait_for_timeout(1100)
+    banner = page.locator("#boom-banner").bounding_box()
+    assert banner and banner["y"] + banner["height"] <= 1080
+    for selector in ("#boom-owner", "#boom-word", "#receipt", "#false-alarm"):
+        box = page.locator(selector).bounding_box()
+        assert box and banner["x"] <= box["x"]
+        assert box["x"] + box["width"] <= banner["x"] + banner["width"]
+        assert box["y"] + box["height"] <= banner["y"] + banner["height"]
+        assert page.locator(selector).evaluate("el => el.scrollWidth <= el.clientWidth")
+    stamp = page.locator("#false-alarm").bounding_box()
+    owner = page.locator("#boom-owner").bounding_box()
+    assert stamp["y"] + stamp["height"] <= owner["y"]
+
+
+@pytest.mark.parametrize("repeat", [False, True])
+def test_rendered_boom_audio_peaks_near_minus_six_db_without_stacking(page, repeat):
+    page.evaluate("""() => {
+        window.testAudio = new OfflineAudioContext(1, 44100, 44100);
+        window.resumeRendering = window.testAudio.resume.bind(window.testAudio);
+        window.testAudio.resume = () => Promise.resolve();
+        window.AudioContext = function() { return window.testAudio; };
+    }""")
+    boom(page)
+    result = page.evaluate(
+        """async repeat => {
+        const context = window.testAudio;
+        const paused = repeat ? context.suspend(.05) : null;
+        const rendering = context.startRendering();
+        if (repeat) {
+            await paused;
+            window.deliver({type: 'boom', id: 'b', owner: 'alex', word: 'volcano',
+                planted_ago_s: 100, latency_ms: 300, source: 'stt',
+                receipt: [{text: 'volcano', hit: true}]});
+            await window.resumeRendering();
+        }
+        const samples = (await rendering).getChannelData(0);
+        let peak = 0, energy = 0;
+        for (const sample of samples) {
+            peak = Math.max(peak, Math.abs(sample));
+            energy += sample * sample;
+        }
+        return {peak, rms: Math.sqrt(energy / samples.length)};
+    }""",
+        repeat,
+    )
+    assert 0.42 <= result["peak"] <= 0.502
+    assert result["rms"] < 0.18

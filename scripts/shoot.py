@@ -1,6 +1,7 @@
 """Save browser screenshots; overlay demo needs no running game server."""
 
 import argparse
+import base64
 import functools
 import http.server
 import os
@@ -35,14 +36,38 @@ def shoot_overlay(browser, output):
         page.goto(f"{base}/overlay/?demo=1&step=0&latency=1")
         page.wait_for_function("window.overlayReady === true")
         count = page.evaluate("window.overlayDemoSteps.length")
+        shots = []
         for step in range(count):
             page.goto(f"{base}/overlay/?demo=1&step={step}&latency=1")
             page.wait_for_function("window.overlayReady === true")
-            page.screenshot(
+            page.evaluate("document.fonts.ready")
+            image = page.screenshot(
                 path=str(output / f"overlay-{step:02}.png"), omit_background=True
             )
+            label = page.evaluate(
+                "[...new Set(window.overlayDemoSteps["
+                f"{step}].map(event => event.type))].join(' + ')"
+            )
+            encoded = base64.b64encode(image).decode("ascii")
+            shots.append(
+                f'<figure><img src="data:image/png;base64,{encoded}">'
+                f"<figcaption>{step:02} · {label}</figcaption></figure>"
+            )
+        page.set_viewport_size({"width": 1500, "height": 1200})
+        page.set_content(
+            "<style>body{margin:0;padding:24px;background:#11131a;color:#eee;"
+            "font:16px Arial}h1{font-size:24px;margin:0 0 20px}"
+            "main{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}"
+            "figure{margin:0;border:1px solid #42444e;background:"
+            "repeating-conic-gradient(#242731 0% 25%,#20232b 0% 50%) 0/24px 24px}"
+            "img{display:block;width:100%}figcaption{padding:12px;background:#191b23}"
+            "</style><h1>Minefield · all demo steps · "
+            "transparent background preview</h1>"
+            "<main>" + "".join(shots) + "</main>"
+        )
+        page.screenshot(path=str(output / "overlay-gallery.png"), full_page=True)
         page.close()
-        print(f"Saved {count} overlay steps to {output}")
+        print(f"Saved {count} overlay steps and overlay-gallery.png to {output}")
 
 
 def shoot_page(browser, name, output):

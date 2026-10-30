@@ -11,13 +11,15 @@
 </head>
 <body>
   <main id="stage" aria-label="Minefield game overlay">
+    <div id="field-label">MINEFIELD <span>LIVE MINES</span></div>
     <section id="mines" aria-label="Mines"></section>
     <aside id="plant" hidden>
       <div><strong>PLANT A MINE</strong><span>Steer the conversation.</span><span id="plant-url"></span></div>
       <div id="qr" aria-label="Scan to plant a mine"></div>
     </aside>
+    <div id="explosion" hidden aria-hidden="true"><i class="blast-flash"></i><i class="shockwave"></i></div>
     <section id="boom-banner" hidden aria-live="polite">
-      <div class="eyebrow">YOU SAID IT.</div>
+      <div class="eyebrow"><span class="impact-icon">✦</span> YOU SAID IT.</div>
       <div id="boom-owner"></div>
       <h1 id="boom-word"></h1>
       <div id="boom-age"></div>

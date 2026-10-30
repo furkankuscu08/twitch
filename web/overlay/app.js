@@ -7,6 +7,9 @@
   const byId = id => document.getElementById(id);
   const chips = new Map();
   let context;
+  let voice;
+  let noiseBuffer;
+  let burstTimer;
   let cachedPlantUrl;
   let currentBoomId;
   if (frozen) document.documentElement.dataset.frozen = "true";
@@ -16,38 +19,80 @@
     try {
       context ||= new (window.AudioContext || window.webkitAudioContext)();
       context.resume().catch(() => {});
-      const duration = kind === "boom" ? .7 : .16;
-      const gain = context.createGain();
-      gain.connect(context.destination);
       const now = context.currentTime;
-      gain.gain.setValueAtTime(kind === "boom" ? .3 : .055, now);
-      gain.gain.exponentialRampToValueAtTime(.001, now + duration);
+      // One voice at a time: rapid booms and status cues never add their peaks.
+      if (voice) {
+        for (const source of voice.sources) { source.stop(now); source.disconnect(); }
+        for (const gain of voice.gains) gain.disconnect();
+      }
+      const current = {sources: [], gains: []};
+      voice = current;
+      function play(source, volume, duration) {
+        const gain = context.createGain();
+        current.sources.push(source);
+        current.gains.push(gain);
+        gain.gain.setValueAtTime(volume, now);
+        gain.gain.exponentialRampToValueAtTime(.0001, now + duration);
+        source.connect(gain).connect(context.destination);
+        source.start(now);
+        source.stop(now + duration);
+        source.onended = () => {
+          source.disconnect();
+          gain.disconnect();
+          current.sources = current.sources.filter(item => item !== source);
+          if (!current.sources.length && voice === current) voice = undefined;
+        };
+      }
       const oscillator = context.createOscillator();
-      oscillator.type = kind === "spark" ? "sawtooth" : "sine";
-      const frequencies = {plant: 560, armed: 880, spark: 160, fizzle: 360, boom: 105};
+      const frequencies = {plant: 560, armed: 880, spark: 160, fizzle: 360, boom: 95};
+      const duration = kind === "boom" ? .7 : .16;
+      oscillator.type = kind === "spark" ? "triangle" : "sine";
       oscillator.frequency.setValueAtTime(frequencies[kind], now);
       oscillator.frequency.exponentialRampToValueAtTime(
-        kind === "fizzle" ? 80 : kind === "boom" ? 28 : frequencies[kind] * 1.2,
+        kind === "fizzle" ? 80 : kind === "boom" ? 30 : frequencies[kind] * 1.2,
         now + duration
       );
-      oscillator.connect(gain);
-      oscillator.start(now);
-      oscillator.stop(now + duration);
-      oscillator.onended = () => { oscillator.disconnect(); gain.disconnect(); };
+      // The three boom layers sum to at most .5 (~-6 dBFS), even at attack.
+      play(oscillator, kind === "boom" ? .32 : .045, duration);
       if (kind === "boom") {
-        const buffer = context.createBuffer(1, context.sampleRate * duration, context.sampleRate);
-        const samples = buffer.getChannelData(0);
-        for (let i = 0; i < samples.length; i++) samples[i] = Math.random() * 2 - 1;
+        if (!noiseBuffer) {
+          noiseBuffer = context.createBuffer(1, context.sampleRate * .7, context.sampleRate);
+          const samples = noiseBuffer.getChannelData(0);
+          for (let i = 0; i < samples.length; i++) samples[i] = Math.random() * 2 - 1;
+        }
         const noise = context.createBufferSource();
-        const noiseGain = context.createGain();
-        noise.buffer = buffer;
-        noiseGain.gain.setValueAtTime(.16, now);
-        noiseGain.gain.exponentialRampToValueAtTime(.001, now + duration);
-        noise.connect(noiseGain).connect(context.destination);
-        noise.start(now);
-        noise.onended = () => { noise.disconnect(); noiseGain.disconnect(); };
+        noise.buffer = noiseBuffer;
+        play(noise, .17, .45);
+        const crack = context.createOscillator();
+        crack.type = "triangle";
+        crack.frequency.setValueAtTime(1800, now);
+        crack.frequency.exponentialRampToValueAtTime(120, now + .05);
+        play(crack, .01, .05);
       }
     } catch (_) { /* Audio permissions must not interrupt the overlay. */ }
+  }
+
+  // Fixed reusable fragments; no per-frame work or accumulating particles.
+  for (let index = 0; index < 12; index++) {
+    const fragment = document.createElement("i");
+    fragment.className = "fragment";
+    fragment.style.setProperty("--angle", `${index * 30 + 12}deg`);
+    fragment.style.setProperty("--travel", `${260 + (index % 3) * 60}px`);
+    byId("explosion").append(fragment);
+  }
+  function stopBurst() {
+    clearTimeout(burstTimer);
+    byId("explosion").hidden = true;
+    byId("stage").classList.remove("shaking");
+    byId("boom-banner").classList.remove("impact");
+  }
+  function burst() {
+    if (frozen) return;
+    byId("explosion").hidden = false;
+    void byId("explosion").offsetWidth;
+    byId("stage").classList.add("shaking");
+    byId("boom-banner").classList.add("impact");
+    burstTimer = setTimeout(stopBurst, 900);
   }
 
   function plantLink(url, running) {
@@ -117,7 +162,7 @@
   function hideBanner() {
     byId("boom-banner").hidden = true;
     byId("false-alarm").hidden = true;
-    byId("stage").classList.remove("shaking");
+    stopBurst();
     currentBoomId = undefined;
   }
 
@@ -192,10 +237,7 @@
         byId("latency").hidden = !showLatency;
         byId("latency").textContent = `${Math.round(message.latency_ms)} ms · ${message.source}`;
         byId("boom-banner").hidden = false;
-        if (!frozen) {
-          void byId("stage").offsetWidth;
-          byId("stage").classList.add("shaking");
-        }
+        burst();
         sound("boom");
         break;
       }
