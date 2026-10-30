@@ -386,7 +386,7 @@ Arkadaşlar sadece 1 Kasım 20:00 kaydında var (D14); T0 yapılmaz, T4 tek baş
 - **Başlatma:** WSL'de `scripts/run_all.sh`, Windows Chrome'da `http://localhost:8100/mic` (sekme kayıt boyunca açık kalır; OBS ile aynı mikrofon seçili). Dock'taki ışıklar yeşil olmadan kayda başlama.
 
 ### Montaj (2 Kasım, yarı otomatik)
-- Sen ham kayıtları izleyip her sahne için başlangıç–bitiş zamanını ve altyazıyı bir listeye yazarsın (`video/cuts.json`, git'e girmez; ham görüntüler `C:\Users\furkan\Videos\minefield`'da kalır).
+- Claude patlama saatlerinden ve OBS dosya adından `video/cuts.json` taslağını ve kare önizlemelerini hazırlar; sen seçer ve düzeltirsin (git'e girmez; ham görüntüler `C:\Users\furkan\Videos\minefield`'da kalır). Altyazıyı Codex son videodan Deepgram ile üretir (D19).
 - Codex bu listeden `ffmpeg` ile kesen, hızlandıran, birleştiren ve altyazıyı yakan bir betik yazar ve çalıştırır.
 - Son kontrol ve zevk kararı sende. Devpost metninin taslağını da Codex repo'dan çıkarır; sen düzeltirsin.
 
@@ -432,6 +432,7 @@ Arkadaşlar sadece 1 Kasım 20:00 kaydında var (D14); T0 yapılmaz, T4 tek baş
 | D16 | Otomasyon: Codex kendi işini doğrular (Playwright ekran görüntüleri, `pytest -m live` ile test hesabından Twitch testleri, harness'i kendisi koşar); sesler WebAudio ile sentezlenir; kilometre taşı içinde WP'ler zincirlenir; montajın mekanik kısmı `ffmpeg` betiğiyle. Sen sadece cihaz, giriş ve zevk işlerini yaparsın. | Verildi | 28 Ekim |
 | D17 | Ses kayıtları, T1 doğruluk testi ve WP6 harness iptal. Yanlış duyulan kelimeler videoya konmaz. Motorun `--save-hyps` kaydı kalır; 1 Kasım provasından sonra Codex log'u inceleyip ayarı düzeltir (yeni T1 ve Codex anı 3). Tanıma beğenilmezse Deepgram modeli değiştirilir. | Verildi | 29 Ekim |
 | D18 | Arkadaş kaydı yok: mayınları kör ekleme betiği test hesaplarıyla, gerçek chat yolundan (`!mine KOD`) ekler; kelimeler hiçbir yerde gösterilmez. Oyunda yayıncı sesi kendi sesin (TTS değil). Video anlatımı TTS (Deepgram Aura, mevcut anahtar). Kayıt 1 Kasım 20:00'a bağlı değil; teslim hedefi 1 Kasım, 2 Kasım tampon. | Verildi | 30 Ekim |
+| D19 | İş bölümü (teslime kadar). **Codex** (kod ve repo işi, Codex kanıtı): kör ekleme betiği; provayı yönetir (`run_all.sh`, tur, kör ekleme, log analizi) ve built-in browser'da twitch.tv kanalında `!mine` mesajlarını ve tur özetini kontrol eder, galeri için görüntü alır; `ffmpeg` montaj betiği; altyazı (son videodan Deepgram ile SRT, videoya yakılır); teslim öncesi repo denetimi (sır, e-posta, Türkçe dosya, temiz klonda README). **Claude** (metin ve analiz): patlama saatleri ile OBS dosya adından `cuts.json` taslağı ve kare önizlemeleri; anlatım metni; Devpost taslağı; mimari şeması; Devpost kuralları ve sayaç kontrolü. **Sen:** konuşma, telefon, device-code girişleri (kendi Chrome'unda gizli pencere; Codex browser'ı yayıncı hesabıyla açık), zevk kararları, YouTube ve Submit. Codex computer use kullanmaz. | Verildi | 30 Ekim |
 
 ---
 
