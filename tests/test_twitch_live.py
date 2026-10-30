@@ -97,6 +97,30 @@ async def send_viewer(helix, text):
     assert bool(result and result["is_sent"]), "Test-account chat was not delivered"
 
 
+@pytest.mark.parametrize("account", ["test", "test2", "test3"])
+def test_live_blind_plant_account_without_disclosing_selection(account):
+    from scripts.blind_plant import run
+
+    async def scenario():
+        async with live_game() as (runtime, http, helix, outcomes, observed, logins):
+            if account not in helix.auth.read_tokens():
+                pytest.skip(f"Authorize {account} first")
+            assert (await http.post("/dock/round/start")).is_success
+            # Each account gets an isolated round, avoiding random collisions.
+            config = replace(runtime.config, BLIND_PLANT_WINDOW_S=0)
+            results = await run(
+                helix.auth, config, helix.broadcaster_login, accounts=(account,)
+            )
+            assert results.get(account) is True, "Blind planting was not confirmed"
+            snapshot = runtime.snapshot()
+            assert [mine["owner"] for mine in snapshot["mines"]] == [logins[account]]
+            assert all("word" not in mine for mine in snapshot["mines"])
+            await bot_reply(outcomes, observed, logins["bot"], "mine planted")
+            # Cancel the isolated server; never end this round or disclose duds.
+
+    asyncio.run(scenario())
+
+
 async def bot_reply(outcomes, observed, login, fragment):
     await until(
         lambda: any(

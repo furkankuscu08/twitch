@@ -53,6 +53,18 @@ done
 
 A failed refresh prints the exact device-login command needed to authorize that account again.
 
+### Blind-plant recording fallback
+
+After refreshing the three viewer tokens, start the normal server and a round. Then run:
+
+```bash
+uv run python -m scripts.blind_plant
+```
+
+The helper attempts one mine per viewer over an independently random 0–60 second delay, using the local plant API and real viewer chat messages. A single dock WebSocket confirms each owner. Output shows only owners and success/failure; a credential warning includes that account's exact refresh command. The helper never reveals choices, writes words or automatically replants. A failed account does not block the others. Existing one-live-mine-per-viewer and four-live-mine limits still apply.
+
+`BLIND_PLANT_WINDOW_S` overrides the delay window; `BLIND_PLANT_CONFIRM_TIMEOUT_S` overrides the 10-second confirmation timeout. Local URLs respect `GAME_PORT` and `PLANT_PORT`. Leave the round running during recording; ending it reveals survivors as usual.
+
 ## Start a game
 
 ```bash

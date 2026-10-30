@@ -25,6 +25,8 @@ class Config:
     CHAT_SEND_TIMEOUT_S: float = 5
     WS_CLIENT_QUEUE_SIZE: int = 100
     MAX_PENDING_PLANTS: int = 1000
+    BLIND_PLANT_WINDOW_S: float = 60
+    BLIND_PLANT_CONFIRM_TIMEOUT_S: float = 10
     STT_MIC_PORT: int = 8765
     STT_AUDIO_QUEUE_SIZE: int = 4
     STT_LAG_WINDOW: int = 100
@@ -64,6 +66,8 @@ class Config:
             raise ValueError("Invalid region")
         if min(self.ENGINE_TIMEOUT_S, self.CHAT_SEND_TIMEOUT_S) <= 0:
             raise ValueError("Timeouts must be positive")
+        if self.BLIND_PLANT_CONFIRM_TIMEOUT_S <= 0:
+            raise ValueError("Blind-plant confirmation timeout must be positive")
         if (
             min(self.STT_HEARTBEAT_S, self.STT_HTTP_TIMEOUT_S, self.STT_RECONNECT_MIN_S)
             <= 0
