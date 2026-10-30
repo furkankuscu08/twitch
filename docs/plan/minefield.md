@@ -148,10 +148,10 @@ Kabul kriterleri `SPEC.md` §7'de. Codex'e görevler bu kimliklerle verilir ("WP
 | --- | --- | --- |
 | **28 Ekim (bugün)** | — | Plan, `AGENTS.md`, `SPEC.md`, bağımsız inceleme, Twitch/Deepgram/OBS hazırlığı. 1–2 arkadaşla 1 Kasım 20:00 kaydını ayarla. |
 | **29 Ekim** | ~1,5 | **Kurulum günü** (aşağıda). Codex ana thread'i açılır: WP7 + WP8. |
-| **30 Ekim** | ~5 | M1 + M2 (WP5). |
-| **31 Ekim** | ~4,5 | M3 + M4. Kendi telefonunla **T4**. |
-| **1 Kasım** | ~4 + akşam 2 | M5. Öğlen prova (2 tur). **17:00 özellik dondurma.** 20:00 arkadaşlarla kayıt ([bölüm 9](#arkadaşlar-sadece-kayıt-gecesi)). |
-| **2 Kasım** | ~4 | Video montajı, Devpost metni, repo paylaşımı. **23:00 TSİ Submit.** |
+| **30 Ekim** | ~5 | ✅ M1–M5 bitti (planın bir gün önünde), T4, OBS kurulumu, kör ekleme (D18), video senaryosu v4 (D20). |
+| **31 Ekim** | ~4 | Prova (2 tur) ve Codex log döngüsü (an 3), **özellik dondurma**, kayıt turları ([çekim listesi](#çekim-listesi)). |
+| **1 Kasım** | ~4 | Montaj (`cuts.json` taslağı, canlı transkript altyazısı, TTS, `ffmpeg`), ham kurgu jüri testi, Devpost, YouTube, **Submit**. |
+| **2 Kasım** | — | Tampon. Son teslim **3 Kasım 01:00 TSİ** (2 Kasım 14:00 PST). |
 
 ### 29 Ekim ayrıntısı
 
@@ -173,7 +173,7 @@ T4 kod gerektirdiği için 31 Ekim'e kaydı. 29 Ekim'de bunlar yapılır:
 - Kanal ayarları: VOD saklama açık (kayıt gecesi yedeği); chat'te e-posta/telefon doğrulama şartı test hesaplarını engellemeyecek şekilde.
 
 ### İnsan saati
-28 Ekim'de yapılan hazırlık ~1,5 + 29 Ekim 1,5 + 30 Ekim–1 Kasım 13,5 (5 + 4,5 + 4) + kayıt 2 + montaj ve teslim 4 ≈ **22,5 saat**. 29 Ekim sabahından itibaren kalan ≈ **21 saat**; tampon (2,5) kullanılmazsa ~18,5. T0 çıkınca 15 dk, ses kayıtları ve T1 çıkınca ~1,25 saat (D17), marker ve klip çıkınca ~1 saat kazanıldı (T5 45 → 20 dk, 31 Ekim'de canlı yayın denemesi yok).
+(28–29 Ekim'deki tahmin; 30 Ekim sonrası için yukarıdaki takvim ve aşağıdaki tablo geçerli.) 28 Ekim'de yapılan hazırlık ~1,5 + 29 Ekim 1,5 + 30 Ekim–1 Kasım 13,5 (5 + 4,5 + 4) + kayıt 2 + montaj ve teslim 4 ≈ **22,5 saat**. 29 Ekim sabahından itibaren kalan ≈ **21 saat**; tampon (2,5) kullanılmazsa ~18,5. T0 çıkınca 15 dk, ses kayıtları ve T1 çıkınca ~1,25 saat (D17), marker ve klip çıkınca ~1 saat kazanıldı (T5 45 → 20 dk, 31 Ekim'de canlı yayın denemesi yok).
 
 **Aktif emek ve bekleme (D16).** Codex'in kendi doğrulayabildiği işler ona bırakılır; sende sadece onun yapamadıkları kalır. Bu açıdan kalan ~21 saatin ~14,25'i aktif emek, ~6,75'i Codex çalışırken bekleme. Bekleme, Codex'in hatalarının düzeltildiği yer (fiilî tampon); iş yolunda giderse kayıtlara, OBS'e ve montaj hazırlığına kayar.
 
@@ -181,9 +181,9 @@ T4 kod gerektirdiği için 31 Ekim'e kaydı. 29 Ekim'de bunlar yapılır:
 | --- | --- | --- | --- | --- |
 | 29 Ekim | 1,5 | ~1,5 | — | `/plan`, device code girişleri, T5, deste |
 | 30 Ekim | 5 | ~2,25 | ~2,75 | Mic sayfasında konuşmak, overlay'e ilk bakış |
-| 31 Ekim | 4,5 | ~1,75 | ~2,75 | OBS kaynakları ve dock, telefonla T4 |
-| 1 Kasım | 6 | ~5 | ~1 | Overlay cilası (zevk), prova ve log analizi (T1), kayıt gecesi |
-| 2 Kasım | 4 | ~3,75 | — | Montajda zaman damgalarını seçmek, Devpost'u düzeltmek, Submit |
+| 31 Ekim | ~4 | ~3,5 | ~0,5 | Prova, log döngüsü, kayıt turları, telefon demosu (30 Ekim'de güncellendi) |
+| 1 Kasım | ~4 | ~3 | ~1 | `cuts.json` seçimi, ham kurguya bakmak, Devpost'u düzeltmek, YouTube, Submit |
+| 2 Kasım | — | — | — | Tampon |
 
 **Codex'e tamamen bırakılanlar:** WP1, WP2, prova log'unun analizi ve ayar (T1), WP7, WP9 ve WP10'un canlı testleri (test hesabıyla komut gönderir), WP14; overlay, dock ve ekme sayfasının ekran görüntülerini Playwright ile kendisi alıp kontrol eder; sesleri WebAudio ile sentezler (ses dosyası ve lisans işi yok); montajın mekanik kısmı (`ffmpeg` betiği) ve Devpost taslağı.
 
@@ -199,9 +199,9 @@ Sıkışırsan kesilecekler, sırasıyla:
 | Test | Ne zaman | Hedef | Kötüyse |
 | --- | --- | --- | --- |
 | **T5** bot token'ı ve erişim | 29 Ekim | Bot'un chat mesajı kanalda görünüyor; OBS'ten ve Chrome'dan WSL'deki sunucuya erişiliyor | Scope'lar ve bot'un mod yetkisi kontrol edilir; erişim yoksa `wsl --shutdown` ve tekrar |
-| **T1** prova log'u | 1 Kasım öğlen, provadan sonra | Provada kaçan ya da yanlış patlayan kelimenin nedeni bulunmuş ve düzeltilmiş; gecikme rozeti medyan ≤1,5 sn, en kötü ≤3 sn; OBS açıkken kare düşmesi yok | Codex `--save-hyps` log'unu inceler: `CONFIRM_N` 2 → 3, `MIN_WORD_PROB`; tanıma kötüyse `--backend nova3`; sorunlu kelimeler desteden çıkar ya da videoya konmaz |
-| **T4** ekme sayfası | 31 Ekim | Kendi telefonundan, Wi-Fi kapalı (mobil veri), `minefield_test` hesabıyla uçtan uca bir mayın | Kayıt gecesine kadar düzelt; olmazsa kayıtta Discord + mod yolu: arkadaş kelimeyi mod rolündeki kişiye iletir, o da dock'a girer |
-| Prova | 1 Kasım öğlen | "Konuşmayı yaz" + debug ekleme: 2 tur kesintisiz. Kurallar (D8) burada kesinleşir. | Dondurmadan önce düzelt, yoksa kes. İlk patlama 5 dk'dan uzun sürecek gibiyse desteye yaygın kelimeler eklenir. |
+| **T1** prova log'u | 31 Ekim, provadan sonra | Provada kaçan ya da yanlış patlayan kelimenin nedeni bulunmuş ve düzeltilmiş; gecikme rozeti medyan ≤1,5 sn, en kötü ≤3 sn; OBS açıkken kare düşmesi yok | Codex `--save-hyps` log'unu inceler: `CONFIRM_N` 2 → 3, `MIN_WORD_PROB`; tanıma kötüyse `--backend nova3`; sorunlu kelimeler desteden çıkar ya da videoya konmaz |
+| **T4** ekme sayfası | 31 Ekim | Kendi telefonundan, Wi-Fi kapalı (mobil veri), `minefield_test` hesabıyla uçtan uca bir mayın | ✅ 30 Ekim'de geçti. (Eski yedek, D18 ile geçersiz: Discord + mod yolu: arkadaş kelimeyi mod rolündeki kişiye iletir, o da dock'a girer.) |
+| Prova | 31 Ekim sabah | Kör ekleme ve gerçek sesle 2 tur kesintisiz ([çekim listesi](#çekim-listesi)). Kurallar (D8) burada kesinleşir. | Dondurmadan önce düzelt, yoksa kes. İlk patlama 5 dk'dan uzun sürecek gibiyse desteye yaygın kelimeler eklenir. |
 
 Ölçüm için ayrı ses kaydı ve harness yok (D17). Yanlış duyulan kelimeler videoya konmaz; normal sohbetteki yanlış alarm provada izlenir.
 
@@ -272,11 +272,11 @@ Zincir bitince her WP için `/review` (2–3 dk) ve sonda bir `/compact`. Tek WP
 | --- | --- | --- | --- |
 | 1 | Spec eleştirisi ve "Do WP1" | 29–30 Ekim | Yukarıdaki ilk mesaj; WP1 istemi |
 | 2 | Testler kırmızı → yeşil | 30 Ekim (WP1) | Döngünün 2. adımı |
-| 3 | **Prova log'u döngüsü (asıl hikâye)** | 1 Kasım öğlen, provadan sonra (T1) | Aşağıdaki istem; Codex gerçek bir provadaki hatayı log'dan bulup düzeltir |
+| 3 | **Prova log'u döngüsü (asıl hikâye)** | 31 Ekim, provadan sonra (T1) | Aşağıdaki istem; Codex gerçek bir provadaki hatayı log'dan bulup düzeltir |
 | 4 | Codex'in dev.twitch.tv'yi kontrol etmesi | 31 Ekim (WP9/WP10) | Web araması açık; AGENTS.md zaten istiyor |
 | 5 | Codex'in overlay'i kendi ekran görüntüsüyle düzeltmesi | 30 Ekim–1 Kasım (WP3) | `scripts/shoot.py overlay` → Codex PNG'ye bakar → düzeltir; gerekirse OBS'teki görüntü de verilir |
 | 6 | PR'da `@codex review` | M1 ve M3 sonunda (2 PR) | Kilometre taşı dalı → PR → yorum |
-| 7 | Session ID | 2 Kasım | `/status` ya da status line |
+| 7 | Session ID | 1 Kasım | `/status` ya da status line |
 
 Prova log'u istemi (provada motor `--save-hyps data/hyps/rehearsal.jsonl` ile çalışır; kaçan ve yanlış patlayan anlar not edilir):
 ```
@@ -307,7 +307,7 @@ Kullanılmayacaklar: Codex'i ürünün içinde çalıştırmak (yapay görünür
 - Kayıt bitince dosya adını ve ne olduğunu aşağıdaki tabloya bir satırla yaz.
 - Beklenmedik iyi bir an olursa (ör. Codex ciddi bir hatayı yakaladı) kaydı yoksa saatini tabloya yaz; yedek yoldan alınır.
 
-**Yedek: thread geçmişi.** Codex uygulaması ana thread'in tüm geçmişini saklıyor. 2 Kasım'da thread'i baştan sona kaydırırken 1–2 dk'lık bir kayıt alınır. Kaçırılan anların görüntüsü buradan çıkar; bu da gerçek oturumun görüntüsü.
+**Yedek: thread geçmişi.** Codex uygulaması ana thread'in tüm geçmişini saklıyor. 1 Kasım'da thread'i baştan sona kaydırırken 1–2 dk'lık bir kayıt alınır. Kaçırılan anların görüntüsü buradan çıkar; bu da gerçek oturumun görüntüsü.
 
 **Gizlilik:**
 - `.env` ve `data/tokens.json` ekranda açılmaz; Codex'ten bunları göstermesini isteme.
@@ -338,33 +338,69 @@ Kullanılmayacaklar: Codex'i ürünün içinde çalıştırmak (yapay görünür
 
 ## 9. Video ve teslim
 
-### Çekim listesi (taslak; 1 Kasım akşamı)
-| Zaman | Sahne | Gerekenler |
-| --- | --- | --- |
-| 0:00 | Soğuk açılış: sohbet, "pineapple" BOOM, afiş ve makbuz (yayıncının cümlesi, kelime vurgulu), çipte isim. **Kelime → BOOM arası kesilmez**, köşede gecikme rozeti. | Arkadaşların gerçekten seçtiği kelimeler; birkaç tur çek, en iyisini koy |
-| 0:08 | Başlık kartı | — |
-| 0:12 | Telefonda QR → kart → kopyala → chat'te `!mine K7QF` → çipte isim | Arkadaşın telefonunun ekran kaydı |
-| 0:35 | İki tuzak: biri tutar, biri tutmaz | — |
-| 1:00 | "Fıss" ya da False alarm gag'i | — |
-| 1:20 | Tur sonu: overlay'de dud'lar, chat'te tur özeti mesajı (izleyici adlarıyla) | twitch.tv kaydı |
-| 1:45 | Kaputun altı: akan STT (Deepgram Flux), iki tahmin onayı, GPU gerekmez; köşedeki gecikme rozeti ve mimari şeması | Overlay kaydı, şema görseli |
-| 2:10 | Codex bölümü (20–30 sn), `/status`'ta session ID | Bölüm 8'deki kayıtlar |
-| 2:40 | Kapanış: repo linki. Video en fazla 2:50. | — |
+### Video senaryosu v4 (donduruldu, D20)
+TTS anlatım üçüncü şahıs konuşur ("the streamer"). Oyun sahnelerinde ses yayıncının gerçek sesi. Hedef süre ~2:30, en fazla 2:50.
 
-### Arkadaşlar (sadece kayıt gecesi)
-Arkadaşlar sadece 1 Kasım 20:00 kaydında var (D14); T0 yapılmaz, T4 tek başına yapılır.
-- 1–2 arkadaş, ~1 saat. Her biri kendi Twitch hesabıyla izler, telefondan ekme sayfasıyla mayın ekler, kelimeyi kendisi seçer. Sen kelimeleri bilmezsin.
-- Discord'dan konuşulur, sen kulaklıkla dinlersin (aşağıdaki kontrol listesi).
-- Biri 0:12 sahnesi için telefonunun ekran kaydını alır.
-- **Yedek, karar 1 Kasım öğlen:** arkadaş bulunamazsa ~0,5 saatlik bir **kör ekleme** betiği yazılır (önce `SPEC.md`'ye eklenir): desteden rastgele kelimeleri test hesaplarıyla ekler, kelimeleri ekrana yazmaz. Afişte farklı isimler için 2–3 test hesabı daha açılır (~10 dk/hesap). Bu durumda dürüstlük cümlesi değişir (aşağıda).
+| Zaman | Görüntü | Anlatım (TTS) | Ekran yazısı |
+| --- | --- | --- | --- |
+| 0:00–0:07 | twitch.tv çerçevesinde yayın, kurulu çipler | "Three test viewers have hidden secret words on this stream. A script picked them at random; the streamer doesn't know which ones." | "3 test accounts · real Twitch chat · words hidden from the streamer" |
+| 0:07–0:17 | **Kesintisiz:** kıvılcımdan ~2 sn önce başlar → BOOM → gerçek tepki | *(gerçek ses)* | Altyazıda kelime vurgulu · "Real voice (Turkish accent) · live recognition · uncut" |
+| 0:17–0:28 | Afişte dondurma, isim ve kelimeye ok | "That's Minefield. Say a hidden word, and it explodes, naming who planted it. Viewers win when their word goes off. The streamer can't dodge words they don't know." | **MINEFIELD** |
+| 0:28–0:45 | Telefon: kartlarda kısa bekleme → kod → chat'te `!mine` → çip kuruluyor | "How did that word get there? A viewer scans the QR code, picks one of six cards, and types a one-time code in chat. Chat is public, so the word stays on the phone." | — |
+| 0:45–1:05 | Başka bir izleyicinin patlaması, altında hipotez log'undan canlı transkript; varsa gerçek fizzle | "How does it know? It listens live. Heard once, a mine sparks. Still there a moment later, it explodes." (Fizzle cümlesi sadece görüntüsü varsa: "If the recognizer changes its mind, it fizzles.") | "SPARK → BOOM" · transkript üzerinde: "Recognizer log (post-production, not shown on stream)" |
+| 1:05–1:20 | twitch.tv: chat'te `!mine` mesajları, tur sonu açıklaması, bot özeti | "At round end, surviving mines are revealed and the bot posts a recap. Even with three viewers, every plant puts a name on screen and gives chat a reason to listen." | "Built for small streams · one browser source + one Chrome tab" |
+| 1:20–1:30 | Mimari şeması: A (tamamı) → B (izleyici yolu) → C (ses yolu ve iki kural), ~3'er sn | "Two rules keep it fair. Nothing on screen, in chat or in logs sees a word until it explodes or the round ends. And the recognizer is never told the words." | "No word hints to speech recognition" |
+| 1:30–1:58 | **Codex**, etiketli 3 kare: etiketin öncesi/sonrası → prova log satırı ve config değişikliği → kırmızıdan yeşile test | "Built solo in four days with Codex. The spec was the contract; every feature started with a failing test. Codex screenshotted its own overlay and fixed a label it couldn't read. After a rehearsal, it read the speech log, found what went wrong, and tuned the game." | Kısa etiketler (sorun → Codex → sonuç) · session ID köşede küçük |
+| 1:58–2:25 | **Final:** son turun mayınlarını Codex ekledi (kör ekleme betiğini o çalıştırdı); yayıncı Codex'i anlatırken bir mayın patlar ya da gerçek tur sonunda "survived" + twitch.tv özeti | "For the last round, Codex planted the mines." … "Your chat chooses the trap. Your voice pulls the pin." | "Codex ran the planting script" |
+| 2:25–2:30 | Başlık ve repo | — | **MINEFIELD** · repo linki |
 
-**Twitch'te geçtiğinin kanıtı:** Kural "footage that shows the Project functioning on Twitch" istiyor. Kayıt gecesi OBS kaydına ek olarak ikinci bir cihazdan ya da tarayıcı penceresinden **twitch.tv/kanalın + chat** de kaydedilir. Soğuk açılış ve en az bir patlama bu görüntüden de gösterilir.
+**Kurallar:**
+- Hiçbir tanıma anı sahnelenmez ya da uydurulmaz. Fizzle ve false alarm sadece doğal olarak yaşandıysa gösterilir; yoksa anlatımdan da çıkar.
+- "Konuşmayı yaz" modu videoda yok.
+- Prova log'unda aksan kaynaklı bir hata çıkarsa Codex cümlesi "...found the words it misheard in the streamer's accent, and tuned the game." olur; sadece gerçekten öyleyse.
+- Final turunda mayın patlamazsa bu kayıp değil, oyunun geçerli sonucu: gerçek tur sonu gösterilir.
+- Ham kurgu çıkınca bir tur daha bağımsız jüri değerlendirmesi yapılır (kareler ve transkriptle).
+
+### Çekim listesi
+**Hazırlık (her oturumdan önce):**
+- [ ] [Demo günü kontrol listesi](#demo-günü-kontrol-listesi) tamam: kulaklık, Deepgram durumu, `/mic` sekmesi, bildirimler kapalı.
+- [ ] Twitch kanal ayarında "Store past broadcasts" açık (yedek).
+- [ ] Telefonda Twitch uygulamasında `minefield_test` ile oturum açık.
+
+**Prova (31 Ekim sabah):**
+- [ ] Codex üç test hesabının token'ını yeniler, `scripts/run_all.sh`'ı başlatır. Dock'taki ışıklar yeşil.
+- [ ] OBS'te Minefield sahnesi, Mic/Aux açık: **Start Streaming** ve **Start Recording**.
+- [ ] İki ayrı Chrome penceresi: biri `/mic` (arka planda açık kalır), diğeri twitch.tv kanal sayfası (sessiz, küçültülmez) ve Game Bar (`Win+Alt+R`) ile kayıtta.
+- [ ] 2 tur. Her tur: dock'ta turu başlat, sonra Codex `scripts/blind_plant.py`'ı çalıştırır. Motor `--save-hyps` ile. Kaçan ya da yanlış patlayan anların saatini not et.
+- [ ] Provadan sonra: OBS'te Stop Streaming ve Stop Recording, Game Bar kaydını durdur.
+
+**Log döngüsü (Codex anı 3):**
+- [ ] OBS'te "Codex" sahnesine geç, Mic/Aux ve Desktop Audio'yu sessize al, Start Recording; bölüm 8'deki prova log'u istemi. Bitince Stop Recording.
+- [ ] Net bir öncesi ve sonrası: hangi kelime kaçtı ya da yanlış patladı, ne değişti, sonra çalıştı mı. Ardından **özellik dondurma**.
+
+**Kayıt turları:**
+- [ ] OBS'te Minefield sahnesine dön, **Mic/Aux'u yeniden aç** (Desktop Audio sessiz kalır), Codex token'ları yeniler; Start Streaming, Start Recording, Game Bar kaydı.
+- [ ] **Telefon demosu, ayrı turda:** `minefield_test` ile QR → kartlar (2–3 sn bekle) → kod → `!mine`. Telefon ekran kaydı, OBS ve twitch.tv kaydı aynı anda açık. Bu turda kör ekleme çalıştırılmaz; tur bitmeden sonraki tur başlamaz (bir izleyiciye bir canlı mayın kuralı). Bu turun patlaması videoya girmez (kelimeyi biliyorsun).
+- [ ] **En az 3 doğal konuşma turu,** her biri 5–10 dk, konuşma kartıyla. Her tur: dock'ta başlat, Codex kör eklemeyi çalıştırır. Hedef: farklı izleyicilerle en az 2 temiz patlama, en az biri 10 sn kesintisiz kullanılabilir ve tepki gerçek.
+- [ ] Fizzle ya da false alarm: sadece doğal olursa.
+- [ ] Her tur sonunda overlay açıklaması ve twitch.tv'deki bot özeti kayıtta.
+- [ ] **Final turu:** turu başlat; kör ekleme betiğini **Codex** çalıştırır (betik hesap seçemez, üç hesap da birer mayın ekler). Yaklaşık 10 dk doğaçlama Codex anlatımı; yanında 3–4 maddelik hatırlatma.
+
+**Saklanacaklar:**
+- OBS ve Game Bar dosyaları, telefon kaydı. Yayın gecikmesi 3–8 sn olduğu için twitch.tv kaydı OBS'e dosya adındaki saatle kabaca, BOOM sesiyle tam hizalanır.
+- Her turun `data/hyps/*.jsonl` log'u (canlı transkript altyazısı bundan üretilir), turların başlangıç ve bitiş saatleri.
+
+**Gizlilik:** `.env`, token'lar ve stream key ekranda açılmaz. Tur sonu açıklaması ve chat özeti o turun kelimelerini gösterir; sonraki turun kelimeleri yine rastgele olduğu için sorun değil.
+
+### Kör ekleme ve dürüstlük
+Arkadaş kaydı yok (D18). Mayınları `scripts/blind_plant.py` üç test hesabıyla (`minefield_test`, `pixelmoth01`, `mossy_otter`) gerçek chat yolundan ekler; kelimeler hiçbir yerde gösterilmez.
+
+**Twitch'te geçtiğinin kanıtı:** Kural "footage that shows the Project functioning on Twitch" istiyor. OBS kaydına ek olarak twitch.tv kanal sayfası ve chat de kaydedilir. Açılış ve en az bir patlama bu görüntüden de gösterilir.
 
 **Dürüstlük:**
-- "Konuşmayı yaz" modu videoda gerçek STT gibi gösterilmez; gösterilirse "typed fallback" diye etiketlenir.
-- Devpost metninde şu cümleler olur: "Friends picked the words; I did not know them." ve "Typed fallback was not used in the video."
-- Kör ekleme kullanılırsa ilk cümle şu olur: "Words were planted at random by a script that hid them from me; the viewer names are test accounts."
-- Kayıtta yayıncı konuşması İngilizce. Model sadece İngilizce (`flux-general-en`); Türkçe konuşma uydurma bir İngilizce kelimeye "çevrilip" yanlış alarm üretebilir. Arkadaşların Türkçe konuşması Discord'da kalır, mikrofona girmez.
+- Devpost'ta: "Words were planted at random by a script that hid them from me; the viewer names are test accounts." ve "Typed fallback was not used in the video."
+- Anlatım TTS; oyun sahnelerindeki ses gerçek.
+- Kayıtta yayıncı konuşması İngilizce. Model sadece İngilizce (`flux-general-en`); Türkçe konuşma uydurma bir İngilizce kelimeye "çevrilip" yanlış alarm üretebilir.
 
 ### Demo günü kontrol listesi
 - **OBS:**
@@ -373,7 +409,7 @@ Arkadaşlar sadece 1 Kasım 20:00 kaydında var (D14); T0 yapılmaz, T4 tek baş
   - Dock: Docks → Custom Browser Docks.
   - Kayıt kodlayıcısı "Same as stream".
 - **Ses:**
-  - Kulaklık şart. Arkadaşların sesi ve BOOM efekti mikrofona sızmamalı; yoksa arkadaşın söylediği kelime de patlatır.
+  - Kulaklık şart. BOOM efekti ve bilgisayardan gelen sesler mikrofona sızmamalı; yoksa sızan ses de kelime patlatabilir.
   - Mikrofonu hiçbir uygulama "exclusive mode"da tutmasın.
 - **Laptop:**
   - Prize takılı, "En iyi performans" modunda.
@@ -383,12 +419,14 @@ Arkadaşlar sadece 1 Kasım 20:00 kaydında var (D14); T0 yapılmaz, T4 tek baş
 - **Deepgram:** kayıttan önce status.deepgram.com'a bak. Dock'ta Deepgram ışığı kırmızıysa "konuşmayı yaz" moduna geç, kayda devam etme.
 - **OBS sesi:** Mic/Aux açık; Desktop Audio sessiz (açık kalırsa izlenen overlay sesi kayda iki kez girer); Overlay'de monitoring açık. Minefield sahnesi ve dock 30 Ekim'de kuruldu.
 - **Twitch:** Bot mod (link engelinden ve AutoMod'dan muaf); test hesaplarının chat'e yazabildiğini kontrol et.
+- **Yayın ve kayıt:** OBS'te Start Streaming ve Start Recording; twitch.tv sekmesi sessiz ve Game Bar ile kayıtta. Codex kayıttan hemen önce test hesaplarının token'larını yeniler.
 - **Başlatma:** WSL'de `scripts/run_all.sh`, Windows Chrome'da `http://localhost:8100/mic` (sekme kayıt boyunca açık kalır; OBS ile aynı mikrofon seçili). Dock'taki ışıklar yeşil olmadan kayda başlama.
 
-### Montaj (2 Kasım, yarı otomatik)
-- Claude patlama saatlerinden ve OBS dosya adından `video/cuts.json` taslağını ve kare önizlemelerini hazırlar; sen seçer ve düzeltirsin (git'e girmez; ham görüntüler `C:\Users\furkan\Videos\minefield`'da kalır). Altyazıyı Codex son videodan Deepgram ile üretir (D19).
+### Montaj (1 Kasım, yarı otomatik)
+- Claude patlama saatlerinden ve OBS dosya adından `video/cuts.json` taslağını ve kare önizlemelerini hazırlar; sen seçer ve düzeltirsin (git'e girmez; ham görüntüler `C:\Users\furkan\Videos\minefield`'da kalır). Altyazıyı Codex son videodan Deepgram ile üretir; 0:45 sahnesinin canlı transkriptini `--save-hyps` log'undan üretir (D19, D20).
 - Codex bu listeden `ffmpeg` ile kesen, hızlandıran, birleştiren ve altyazıyı yakan bir betik yazar ve çalıştırır.
-- Son kontrol ve zevk kararı sende. Devpost metninin taslağını da Codex repo'dan çıkarır; sen düzeltirsin.
+- Anlatım TTS ile seslendirilir: Codex Deepgram Aura ile üretir; istersen Gemini TTS'i AI Studio'dan alıp karşılaştırırsın.
+- Son kontrol ve zevk kararı sende. Devpost metninin taslağını Claude yazar (D19); sen düzeltirsin.
 
 ### Teslim listesi
 - [ ] YouTube'a **public** video: 2:50'nin altında, altyazılı; telifli müzik ya da marka yok. Ses efektleri CC0 ya da kendi üretimin.
@@ -403,10 +441,10 @@ Arkadaşlar sadece 1 Kasım 20:00 kaydında var (D14); T0 yapılmaz, T4 tek baş
   - dört kriterle eşleşen başlıklar (Innovation / Potential Impact / Technological Implementation + Codex / Design);
   - Don't Get Got benzerliğini sahiplenen bir cümle;
   - Impact için: kurulumu bir browser source ve bir Chrome sekmesi, GPU yok; 3 izleyicili küçük bir yayında bile her izleyicinin adı ekrana çıkıyor; makbuz ve tur özeti anı chat'e taşıyor; otomatik klip "future work" diye tek cümle (Twitch'in kendi Clip düğmesi zaten var);
-  - dürüstlük cümleleri (yukarıda).
+  - dürüstlük cümleleri ([yukarıda](#kör-ekleme-ve-dürüstlük)).
 - [ ] Codex session ID.
 - [ ] Galeri görselleri: patlama anı, ekme sayfası, mimari şeması.
-- [ ] 2 Kasım 23:00 TSİ'den önce **Submit**. Taslak olarak kaydetmek teslim sayılmıyor. Devpost sayacına bir kez bak: SSS'deki saatler kendi içinde çelişiyor.
+- [ ] **Submit**, hedef 1 Kasım akşamı. Son teslim 2 Kasım 14:00 PST = **3 Kasım 01:00 TSİ** (kurallar ve overview aynı ana denk geliyor). Taslak olarak kaydetmek teslim sayılmıyor.
 
 ---
 
@@ -427,12 +465,13 @@ Arkadaşlar sadece 1 Kasım 20:00 kaydında var (D14); T0 yapılmaz, T4 tek baş
 | D11 | Sadeleştirmeler ([bölüm 13](#13-sadeleştirmeler-28-ekim)) | Verildi | 28 Ekim |
 | D12 | Eşleştiricide onay sayısı ayarlanabilir (`CONFIRM_N`, varsayılan 2); Deepgram'ın ham mesajları ve tahminler kaydedilir; rapordaki tahmin dosyaları commit'lenir ki `replay` anahtarsız çalışsın | Verildi; replay ve rapor D17'de çıktı | 28 Ekim |
 | D13 | Codex: masaüstü uygulamasında (ajan WSL'de) tek ana thread; her WP'de önce testler, `/review`, commit, `/compact`; harness döngüsü ana hikâye (D17'de prova log'u döngüsüne döndü); M1 ve M3'te `@codex review`; sadece 7 hedef an kaydedilir, yedek olarak 2 Kasım'da thread geçmişi | Verildi | 28 Ekim |
-| D14 | Arkadaşlar sadece 1 Kasım kayıt gecesinde; T0 yok, T4 tek başına (kendi telefonun, mobil veri); arkadaş yoksa kör ekleme betiği (~0,5 sa), karar 1 Kasım öğlen | Verildi | 28 Ekim |
+| D14 | Arkadaşlar sadece 1 Kasım kayıt gecesinde; T0 yok, T4 tek başına (kendi telefonun, mobil veri); arkadaş yoksa kör ekleme betiği (~0,5 sa), karar 1 Kasım öğlen | D18 ile değişti | 28 Ekim |
 | D15 | Marker, otomatik klip ve klip linki çıktı (sadece canlı yayında test edilebiliyor, videoda ~10 sn). Yerine patlama makbuzu (afişte yayıncının son ~8 kelimesi, diğer deste kelimeleri maskeli) ve tur sonu chat özeti. Yayıncı token'ı gerekmiyor. | Verildi | 28 Ekim |
 | D16 | Otomasyon: Codex kendi işini doğrular (Playwright ekran görüntüleri, `pytest -m live` ile test hesabından Twitch testleri, harness'i kendisi koşar); sesler WebAudio ile sentezlenir; kilometre taşı içinde WP'ler zincirlenir; montajın mekanik kısmı `ffmpeg` betiğiyle. Sen sadece cihaz, giriş ve zevk işlerini yaparsın. | Verildi | 28 Ekim |
 | D17 | Ses kayıtları, T1 doğruluk testi ve WP6 harness iptal. Yanlış duyulan kelimeler videoya konmaz. Motorun `--save-hyps` kaydı kalır; 1 Kasım provasından sonra Codex log'u inceleyip ayarı düzeltir (yeni T1 ve Codex anı 3). Tanıma beğenilmezse Deepgram modeli değiştirilir. | Verildi | 29 Ekim |
 | D18 | Arkadaş kaydı yok: mayınları kör ekleme betiği test hesaplarıyla, gerçek chat yolundan (`!mine KOD`) ekler; kelimeler hiçbir yerde gösterilmez. Oyunda yayıncı sesi kendi sesin (TTS değil). Video anlatımı TTS (Deepgram Aura, mevcut anahtar). Kayıt 1 Kasım 20:00'a bağlı değil; teslim hedefi 1 Kasım, 2 Kasım tampon. | Verildi | 30 Ekim |
 | D19 | İş bölümü (teslime kadar). **Codex** (kod ve repo işi, Codex kanıtı): kör ekleme betiği; provayı yönetir (`run_all.sh`, tur, kör ekleme, log analizi) ve built-in browser'da twitch.tv kanalında `!mine` mesajlarını ve tur özetini kontrol eder, galeri için görüntü alır; `ffmpeg` montaj betiği; altyazı (son videodan Deepgram ile SRT, videoya yakılır); teslim öncesi repo denetimi (sır, e-posta, Türkçe dosya, temiz klonda README). **Claude** (metin ve analiz): patlama saatleri ile OBS dosya adından `cuts.json` taslağı ve kare önizlemeleri; anlatım metni; Devpost taslağı; mimari şeması; Devpost kuralları ve sayaç kontrolü. **Sen:** konuşma, telefon, device-code girişleri (kendi Chrome'unda gizli pencere; Codex browser'ı yayıncı hesabıyla açık), zevk kararları, YouTube ve Submit. Codex computer use kullanmaz. | Verildi | 30 Ekim |
+| D20 | Video senaryosu v4 donduruldu ([bölüm 9](#video-senaryosu-v4-donduruldu-d20)). Opus, Astra ve Grok önce bağımsız senaryo yazdı; birleşik senaryo 3 tur soğuk okuma jüri testinden geçti (ortalama 7,5–8/10, Codex mühendisi gözüyle ilk 5'e yakın). Sonuçlar: kesintisiz gerçek patlamayla açılış en güçlü an, olduğu gibi kalır; kural ilk saniyede söylenir; her bölüm bir soruya cevap verir; kör ekleme açıklaması başta ve "tepki bu yüzden gerçek" diye sunulur; aksan güç olarak gösterilir; patlama montajı yerine canlı transkriptli tek patlama; şema ve OBS ekranı kısalır; Codex bölümü tek bir "sorun → Codex → sonuç" hikâyesi; final "Codex'in mayını". Sonraki değerlendirme ham kurgu üzerinde. | Verildi | 30 Ekim |
 
 ---
 
@@ -460,6 +499,7 @@ Arkadaşlar sadece 1 Kasım 20:00 kaydında var (D14); T0 yapılmaz, T4 tek baş
 - **28 Ekim, marker ve klip (D15):** marker, otomatik klip ve klip linki çıktı; yerine patlama makbuzu ve tur sonu chat özeti. Yayıncı token'ı ve `channel:manage:broadcast` / `clips:edit` scope'ları gitti. T5 bot token'ı ve erişim kontrolüne indi (20 dk). Video çekim listesinde klip sahnesi yerine tur özeti.
 - **29 Ekim, T5 ve kayıtlar (D17):** T5 tamam (bot mesajı `is_sent: true`; Windows → WSL `127.0.0.1:8100` erişimi PowerShell ile doğrulandı). Portlar 8100/8101 (8000'de başka bir projenin Docker container'ı var). Ses kayıtları, T1 testi ve WP6 harness iptal (D17); yerine prova log'u analizi. Codex: reasoning `high`, font 14. Kalan iş ~21 saat.
 - **28 Ekim, otomasyon (D16) ve D4 onayı:** AGENTS.md'ye "önce kendin doğrula", zincirleme ve Playwright kuralları; SPEC'te `scripts/shoot.py`, `?step=N`, WebAudio sesleri, WP9/WP10/WP11 canlı testleri; plana aktif emek/bekleme tablosu, zincir istemi, yarı otomatik montaj. D4 (chat kodu) onaylandı.
+- **30 Ekim, video senaryosu (D20):** bölüm 9'daki eski (arkadaşlı) çekim listesi yerine v4 senaryosu ve yeni çekim listesi; takvim gerçekleşene göre güncellendi (M5 30 Ekim'de bitti; prova ve kayıt 31 Ekim; teslim hedefi 1 Kasım); son teslim saati düzeltildi (3 Kasım 01:00 TSİ).
 - **30 Ekim, kör ekleme ve TTS (D18):** arkadaş kaydı iptal, yerine kör ekleme betiği (önce SPEC'e eklenir) ve 2–3 ek test hesabı. Oyunda kendi sesin; video anlatımı TTS. Dürüstlük cümlesi kör ekleme sürümüne döndü. Teslim hedefi 1 Kasım.
 - **28 Ekim, Codex kullanımı:** bölüm 8, [codex-usage.md](codex-usage.md) araştırmasına göre yeniden yazıldı: kurulum, ilk mesaj, WP döngüsü (önce testler, `/review`, `/compact`), 7 görünür an, ekran kaydı, dürüstlük cümlesi. Alt ajanlar varsayılan değil; PR incelemesi sadece M1 ve M3'te.
 
@@ -502,7 +542,7 @@ Rapor: [review-opus.md](review-opus.md). İncelemeci 9 nesnel hatayı doğrudan 
 
 | Ne | Önce | Şimdi | Neden |
 | --- | --- | --- | --- |
-| Chat simülatörü (WP12) | 3 test hesabıyla senaryolu chat | Çıkarıldı; 1 test hesabı | Videoda gerçek arkadaşlar var; test için "konuşmayı yaz" + debug ekleme yetiyor. 3 hesabın kurulumu ve token'ları gitti. |
+| Chat simülatörü (WP12) | 3 test hesabıyla senaryolu chat | Çıkarıldı; 1 test hesabı | (D18 ile geçersiz: arkadaş yok, kör ekleme 3 test hesabı kullanıyor.) Videoda gerçek arkadaşlar var; test için "konuşmayı yaz" + debug ekleme yetiyor. 3 hesabın kurulumu ve token'ları gitti. |
 | `!mines` komutu | Mayın sayısı ve sahipleri | Çıkarıldı | Çipler aynı bilgiyi gösteriyor. |
 | Ekme sayfasında hız sınırı | `CF-Connecting-IP` ile IP başına | Yok | Demoda saldırı riski yok. |
 | İstatistik | Patlama sayısı + en hızlı patlama | Sadece patlama sayısı | Videoda fark yaratmıyor. |
