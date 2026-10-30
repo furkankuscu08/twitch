@@ -4,6 +4,7 @@ import asyncio
 import json
 import logging
 from collections import OrderedDict
+from urllib.parse import urlsplit
 
 import httpx
 import websockets
@@ -118,8 +119,10 @@ class EventSub:
                             # welcome. Carried subscriptions must not be recreated.
                             # https://dev.twitch.tv/docs/eventsub/handling-websocket-events/#reconnect-message
                             url = data["payload"]["session"]["reconnect_url"]
-                            if not isinstance(url, str) or not url.startswith(
-                                "wss://eventsub.wss.twitch.tv/"
+                            parsed = urlsplit(url) if isinstance(url, str) else None
+                            if parsed is None or (
+                                parsed.scheme != "wss"
+                                or parsed.netloc != "eventsub.wss.twitch.tv"
                             ):
                                 raise AuthError("Invalid EventSub reconnect URL")
                             handoff = asyncio.create_task(self.open(url))

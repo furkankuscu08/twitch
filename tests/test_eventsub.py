@@ -114,9 +114,10 @@ def test_fresh_reconnect_timeout_dedup_and_bad_messages():
     asyncio.run(scenario())
 
 
-def test_handoff_keeps_old_reader_until_new_welcome_without_resubscribe():
+@pytest.mark.parametrize("path", ["/ws", ""])
+def test_handoff_keeps_old_reader_until_new_welcome_without_resubscribe(path):
     async def scenario():
-        reconnect_url = "wss://eventsub.wss.twitch.tv/ws?handoff=example"
+        reconnect_url = f"wss://eventsub.wss.twitch.tv{path}?handoff=example"
         old = Socket(
             [
                 welcome("a"),
