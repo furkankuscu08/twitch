@@ -22,10 +22,13 @@ class Tunnel:
                 await asyncio.wait_for(
                     process.wait(), self.config.TUNNEL_SHUTDOWN_TIMEOUT_S
                 )
-            except TimeoutError:
-                process.kill()
-                await process.wait()
-            except ProcessLookupError:
+            except (TimeoutError, ProcessLookupError):
+                pass
+            finally:
+                # Cancellation can interrupt the graceful wait. Kill before
+                # yielding again, then reap even when that wait was cancelled.
+                if process.returncode is None:
+                    process.kill()
                 await process.wait()
 
     async def read(self, process):

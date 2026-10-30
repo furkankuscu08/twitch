@@ -138,3 +138,53 @@ def test_shutdown_kills_child_if_termination_stalls():
         assert process.killed
 
     asyncio.run(scenario())
+
+
+def test_cancellation_during_slow_termination_kills_and_reaps_child():
+    async def scenario():
+        runtime = create_app(
+            config=replace(
+                Config(),
+                TUNNEL_STARTUP_TIMEOUT_S=0.001,
+                TUNNEL_SHUTDOWN_TIMEOUT_S=1,
+            )
+        ).state.runtime
+
+        class SlowProcess(Process):
+            def __init__(self):
+                super().__init__()
+                self.waiting = asyncio.Event()
+                self.reaped = False
+
+            def terminate(self):
+                self.terminated = True
+
+            async def wait(self):
+                self.waiting.set()
+                result = await super().wait()
+                await asyncio.sleep(0)
+                self.reaped = True
+                return result
+
+        process = SlowProcess()
+
+        async def spawn(*args, **kwargs):
+            return process
+
+        task = asyncio.create_task(Tunnel(runtime, spawn=spawn).run())
+        try:
+            await asyncio.wait_for(process.waiting.wait(), 2)
+            assert process.terminated and not process.killed
+            task.cancel()
+            result = await asyncio.wait_for(
+                asyncio.gather(task, return_exceptions=True), 2
+            )
+            assert isinstance(result[0], asyncio.CancelledError)
+            assert process.killed
+            assert process.reaped
+            assert process.returncode is not None
+        finally:
+            task.cancel()
+            await asyncio.gather(task, return_exceptions=True)
+
+    asyncio.run(scenario())
