@@ -39,6 +39,7 @@ module = sys.argv[2]
 role = module.rsplit('.', 1)[-1]
 with open('children.jsonl', 'a') as log:
     log.write(json.dumps({'args': sys.argv[1:], 'pid': os.getpid(),
+        'pgid': os.getpgrp(),
         'debug': os.environ.get('MINEFIELD_DEBUG'),
         'client_id': os.environ.get('TWITCH_CLIENT_ID')}) + '\n')
 Path(role + '.ready').touch()
@@ -47,10 +48,15 @@ def stop(*_):
     raise SystemExit(0)
 signal.signal(signal.SIGTERM, stop)
 signal.signal(signal.SIGINT, stop)
+if role == 'server' and os.environ.get('TEST_TUNNEL_CHILD'):
+    subprocess.Popen([__file__, '-m', 'minefield.tunnel'],
+        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    while not Path('tunnel.ready').exists():
+        time.sleep(.01)
 if os.environ.get('TEST_EXIT_MODULE') == role:
     while not Path(('stt' if role == 'server' else 'server') + '.ready').exists():
         time.sleep(.01)
-    raise SystemExit(7)
+    os._exit(7)
 while True:
     time.sleep(.05)
 """
@@ -156,3 +162,36 @@ def test_normal_mode_passes_tunnel_once_and_stops_other_child(launcher, exiting)
     other = "stt" if exiting == "server" else "server"
     assert (path / f"{other}.stopped").exists()
     assert_reaped(records)
+
+
+@pytest.mark.parametrize("shutdown", ["crash", signal.SIGINT, signal.SIGTERM])
+def test_tunnel_child_stops_after_server_crash_or_launcher_signal(launcher, shutdown):
+    path, run = launcher
+    process = run(
+        DEEPGRAM_API_KEY="temporary-test-value",
+        TEST_TUNNEL_CHILD="1",
+        TEST_EXIT_MODULE="server" if shutdown == "crash" else "",
+    )
+    records = []
+    try:
+        wait_for(path / "tunnel.ready")
+        wait_for(path / "stt.ready")
+        if shutdown != "crash":
+            process.send_signal(shutdown)
+        process.communicate(timeout=10)
+        wait_for(path / "tunnel.stopped")
+        records = children(path)
+        server = next(r for r in records if r["args"][1] == "minefield.server")
+        tunnel = next(r for r in records if r["args"][1] == "minefield.tunnel")
+        assert server["pgid"] == server["pid"] == tunnel["pgid"]
+        assert (path / "stt.stopped").exists()
+        assert process.returncode == (7 if shutdown == "crash" else 128 + shutdown)
+    finally:
+        if process.poll() is None:
+            process.terminate()
+            process.communicate(timeout=10)
+        for child in records or children(path):
+            try:
+                os.kill(child["pid"], signal.SIGTERM)
+            except ProcessLookupError:
+                pass

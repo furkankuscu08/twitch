@@ -40,7 +40,8 @@ pids=()
 cleanup() {
     trap - EXIT INT TERM
     if (( ${#pids[@]} )); then
-        kill "${pids[@]}" 2>/dev/null || true
+        # Include the tunnel even if its owning server has already crashed.
+        kill -- "-${pids[0]}" "${pids[@]:1}" 2>/dev/null || true
         wait "${pids[@]}" 2>/dev/null || true
     fi
 }
@@ -53,11 +54,11 @@ printf 'Local plant page: http://localhost:%s/\n' "$plant_port"
 if [[ $mode == demo ]]; then
     export MINEFIELD_DEBUG=1 TWITCH_CLIENT_ID=''
     printf 'No-key demo: http://localhost:%s/overlay?demo=1\nUse the dock typed box and debug planting; no engine or tunnel is started.\n' "$game_port"
-    .venv/bin/python -m minefield.server &
+    setsid .venv/bin/python -m minefield.server &
     pids+=("$!")
 else
     printf 'Mic: http://localhost:%s/mic (engine WebSocket port %s)\n' "$game_port" "$mic_port"
-    .venv/bin/python -m minefield.server --tunnel &
+    setsid .venv/bin/python -m minefield.server --tunnel &
     pids+=("$!")
     .venv/bin/python -m minefield.stt --mic &
     pids+=("$!")
