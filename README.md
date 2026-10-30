@@ -2,6 +2,14 @@
 
 Viewers plant secret words. When the streamer says one, the overlay explodes and names its owner. Game state stays in memory; ending a round reveals the surviving mines. [SPEC.md](SPEC.md) defines the rules and messages.
 
+[Watch the Twitch highlight](https://www.twitch.tv/videos/2915157687) to see Minefield running on Twitch.
+
+![Minefield architecture: microphone audio, speech recognition, game server, Twitch chat and viewer planting](docs/media/architecture.png)
+
+## How it was built with Codex
+
+[SPEC.md](SPEC.md) served as the contract for game rules, messages and work packages. Codex wrote failing acceptance tests first, then implemented each package. It took its own overlay screenshots and inspected them to fix layout and readability. Saved rehearsal logs guided fixes for missed words, false booms and audio timing.
+
 ## Setup
 
 Run the Python services in WSL/Linux. Open the microphone page in **Chrome on Windows**, where microphone access works reliably. You need Bash 4.3+, Python 3.12, [uv](https://docs.astral.sh/uv/getting-started/installation/), and [cloudflared](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/downloads/) on `PATH` for normal play. No GPU, local speech model, Node.js or frontend build is required.
