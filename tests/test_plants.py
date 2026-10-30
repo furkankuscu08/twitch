@@ -89,3 +89,77 @@ def test_invalid_word_is_rejected_before_allocation():
     with pytest.raises(ValueError, match="Unknown deck selection"):
         plants.issue("unknown", 0)
     assert not plants.codes
+
+
+def test_hands_include_taken_words_and_pick_replaces_hand_at_capacity():
+    game, plants = setup(HAND_SIZE=3, MAX_PENDING_PLANTS=1)
+    game.plant("other", "pineapple", 0)
+    hand = plants.hand(1)
+    assert set(hand) == {"hand_id", "cards"}
+    assert set(hand["cards"]) == set(game.deck.words)
+    with pytest.raises(ValueError, match="capacity"):
+        plants.hand(2)
+    with pytest.raises(ValueError, match="capacity"):
+        plants.issue("volcano", 2)
+    selected = plants.pick(hand["hand_id"], "pineapple", 2)
+    assert set(selected) == {"code", "command", "expires_at"}
+    assert selected["command"] == "!mine " + selected["code"]
+    assert selected["expires_at"] == 302
+    assert not plants.hands and len(plants.codes) == 1
+    with pytest.raises(ValueError, match="taken"):
+        plants.redeem(selected["code"], "viewer", 3)
+    assert selected["code"] in plants.codes
+    with pytest.raises(ValueError, match="Unknown or expired hand"):
+        plants.pick(hand["hand_id"], "pineapple", 3)
+
+
+def test_pick_validates_membership_without_consuming_hand_or_allocating_code():
+    game, plants = setup(HAND_SIZE=1)
+    hand = plants.hand(1)
+    outside = next(word for word in game.deck.words if word not in hand["cards"])
+    for word in (outside, "not a deck word"):
+        with pytest.raises(ValueError, match="not in this hand"):
+            plants.pick(hand["hand_id"], word, 2)
+        assert hand["hand_id"] in plants.hands
+        assert not plants.codes
+    selected = plants.pick(hand["hand_id"], hand["cards"][0], 2)
+    plants.redeem(selected["code"], "viewer", 3)
+    with pytest.raises(ValueError, match="Unknown or expired code"):
+        plants.redeem(selected["code"], "another", 3)
+
+
+def test_hand_and_code_ttl_pruning_and_round_invalidation():
+    game, plants = setup(HAND_SIZE=3, CODE_TTL_S=5, MAX_PENDING_PLANTS=2)
+    old = plants.hand(0)
+    kept = plants.hand(1)
+    with pytest.raises(ValueError, match="Unknown or expired hand"):
+        plants.pick(old["hand_id"], old["cards"][0], 5)
+    selected = plants.pick(kept["hand_id"], kept["cards"][0], 5)
+    assert selected["expires_at"] == 10
+    replacement = plants.hand(5)
+    with pytest.raises(ValueError, match="capacity"):
+        plants.hand(6)
+    plants.hand(10)
+    assert len(plants.hands) == 1 and not plants.codes
+    game.end(11)
+    plants.clear()
+    assert not plants.hands and not plants.codes
+    with pytest.raises(ValueError, match="No active round"):
+        plants.hand(12)
+    game.start(13)
+    with pytest.raises(ValueError, match="Unknown or expired hand"):
+        plants.pick(replacement["hand_id"], replacement["cards"][0], 14)
+    hand = plants.hand(14)
+    game.end(15)
+    game.start(16)
+    with pytest.raises(ValueError, match="Unknown or expired hand"):
+        plants.pick(hand["hand_id"], hand["cards"][0], 17)
+    assert not plants.hands
+
+
+def test_hand_id_collisions_do_not_overwrite_previous_hands():
+    _, plants = setup(HAND_SIZE=3)
+    plants.rng.randrange = lambda _: 0
+    first, second = plants.hand(0), plants.hand(0)
+    assert first["hand_id"] != second["hand_id"]
+    assert len(plants.hands) == 2
