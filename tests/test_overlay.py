@@ -422,22 +422,28 @@ def test_suspended_audio_schedules_nothing_and_does_not_replay_after_resume(page
     assert page.evaluate("window.testAudio.state") == "running"
     assert page.evaluate("window.createdSources") == 0
     boom(page)
-    assert page.evaluate("window.createdSources") == 3
+    assert page.evaluate("window.createdSources") == 1
     page.evaluate("window.testAudio.close()")
     boom(page)
-    assert page.evaluate("window.createdSources") == 3
+    assert page.evaluate("window.createdSources") == 1
 
 
 @pytest.mark.parametrize("repeat", [False, True])
-def test_rendered_boom_audio_peaks_near_minus_six_db_without_stacking(page, repeat):
-    page.evaluate("""() => {
-        window.testAudio = new OfflineAudioContext(1, 44100, 44100);
+@pytest.mark.parametrize("sample_rate", [44100, 48000])
+def test_soft_airy_boom_has_loud_peak_and_rumble_without_stacking(
+    page, repeat, sample_rate
+):
+    page.evaluate(
+        """sampleRate => {
+        window.testAudio = new OfflineAudioContext(1, sampleRate * 2, sampleRate);
         // Model an unlocked live context; offline audio starts after scheduling.
         Object.defineProperty(window.testAudio, 'state', {value: 'running'});
         window.resumeRendering = window.testAudio.resume.bind(window.testAudio);
         window.testAudio.resume = () => Promise.resolve();
         window.AudioContext = function() { return window.testAudio; };
-    }""")
+    }""",
+        sample_rate,
+    )
     boom(page)
     result = page.evaluate(
         """async repeat => {
@@ -452,14 +458,46 @@ def test_rendered_boom_audio_peaks_near_minus_six_db_without_stacking(page, repe
             await window.resumeRendering();
         }
         const samples = (await rendering).getChannelData(0);
-        let peak = 0, energy = 0;
-        for (const sample of samples) {
+        let peak = 0, energy = 0, tail = 0, tailCount = 0;
+        for (let i = 0; i < samples.length; i++) {
+            const sample = samples[i];
             peak = Math.max(peak, Math.abs(sample));
             energy += sample * sample;
+            if (i >= .5 * context.sampleRate && i < context.sampleRate) {
+                tail += sample * sample; tailCount++;
+            }
         }
-        return {peak, rms: Math.sqrt(energy / samples.length)};
+        return {peak, rms: Math.sqrt(energy / samples.length),
+            tailRms: Math.sqrt(tail / tailCount)};
     }""",
         repeat,
     )
-    assert 0.42 <= result["peak"] <= 0.502
+    assert 0.86 <= result["peak"] <= 0.92  # Around -1 dBFS, including resampling.
     assert result["rms"] < 0.18
+    assert result["tailRms"] > 0.01  # A sustained rumble, not a short noise burst.
+
+
+@pytest.mark.parametrize("kind", ["mine_planted", "mine_armed", "spark", "fizzle"])
+def test_small_cues_are_about_four_times_louder_with_a_soft_attack(page, kind):
+    page.evaluate("""() => {
+        window.testAudio = new OfflineAudioContext(1, 24000, 48000);
+        Object.defineProperty(window.testAudio, 'state', {value: 'running'});
+        window.AudioContext = function() { return window.testAudio; };
+    }""")
+    send(page, type=kind, id="a", owner="mira", arms_in_s=30)
+    result = page.evaluate("""async () => {
+        const context = window.testAudio;
+        const samples = (await context.startRendering()).getChannelData(0);
+        let peak = 0, first = -1;
+        for (let i = 0; i < samples.length; i++) {
+            peak = Math.max(peak, Math.abs(samples[i]));
+            if (first === -1 && Math.abs(samples[i]) > .00001) first = i;
+        }
+        let attackPeak = 0;
+        for (let i = first; i < first + 48; i++) {
+            attackPeak = Math.max(attackPeak, Math.abs(samples[i]));
+        }
+        return {peak, attackPeak};
+    }""")
+    assert 0.17 <= result["peak"] <= 0.19
+    assert result["attackPeak"] < result["peak"] * 0.6

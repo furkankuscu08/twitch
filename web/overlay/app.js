@@ -1,4 +1,4 @@
-(() => {
+(async () => {
   "use strict";
   const query = new URLSearchParams(location.search);
   const demo = query.get("demo") === "1";
@@ -6,13 +6,117 @@
   const showLatency = query.get("latency") === "1";
   const byId = id => document.getElementById(id);
   const chips = new Map();
+  const sounds = {};
   let context;
+  let master;
   let voice;
-  let noiseBuffer;
   let burstTimer;
   let cachedPlantUrl;
   let currentBoomId;
   if (frozen) document.documentElement.dataset.frozen = "true";
+
+  async function renderSound(kind) {
+    const boom = kind === "boom";
+    const duration = boom ? 1.15 : .18;
+    const ctx = new OfflineAudioContext(1, Math.ceil((duration + .2) * 48000), 48000);
+    const compressor = ctx.createDynamicsCompressor();
+    compressor.threshold.value = -14;
+    compressor.knee.value = 10;
+    compressor.ratio.value = 4;
+    compressor.attack.value = .004;
+    compressor.release.value = .18;
+    compressor.connect(ctx.destination);
+    const start = .015;
+
+    function envelope(level, attack, length, points = []) {
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0, start);
+      gain.gain.linearRampToValueAtTime(level, start + attack);
+      for (const [time, value] of points) {
+        gain.gain.exponentialRampToValueAtTime(value, start + time);
+      }
+      gain.gain.exponentialRampToValueAtTime(.0001, start + length - .008);
+      gain.gain.linearRampToValueAtTime(0, start + length);
+      gain.connect(compressor);
+      return gain;
+    }
+
+    if (boom) {
+      // Soft & Airy: a filtered rumble, warm 155 Hz thump and softened crack.
+      const buffer = ctx.createBuffer(1, Math.ceil(duration * 48000), 48000);
+      const samples = buffer.getChannelData(0);
+      let seed = 739391;
+      for (let i = 0; i < samples.length; i++) {
+        seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+        samples[i] = seed / 2147483648 - 1;
+      }
+      const body = ctx.createBufferSource();
+      body.buffer = buffer;
+      const highpass = ctx.createBiquadFilter();
+      highpass.type = "highpass";
+      highpass.frequency.value = 35;
+      highpass.Q.value = .5;
+      const lowpass = ctx.createBiquadFilter();
+      lowpass.type = "lowpass";
+      lowpass.Q.value = .65;
+      lowpass.frequency.setValueAtTime(1200, start);
+      lowpass.frequency.exponentialRampToValueAtTime(180, start + duration);
+      body.connect(highpass).connect(lowpass).connect(
+        envelope(.8, .025, duration, [[.2, .55], [.6, .14]])
+      );
+      body.start(start);
+      body.stop(start + duration);
+
+      const thump = ctx.createOscillator();
+      thump.type = "sine";
+      thump.frequency.setValueAtTime(155, start);
+      thump.frequency.exponentialRampToValueAtTime(72, start + .26);
+      const warmth = ctx.createWaveShaper();
+      const curve = new Float32Array(2049);
+      for (let i = 0; i < curve.length; i++) {
+        const x = i * 2 / (curve.length - 1) - 1;
+        curve[i] = Math.tanh(1.2 * x) / Math.tanh(1.2);
+      }
+      warmth.curve = curve;
+      warmth.oversample = "4x";
+      thump.connect(warmth).connect(envelope(.95, .014, .26, [[.055, .6]]));
+      thump.start(start);
+      thump.stop(start + .26);
+
+      const crack = ctx.createBufferSource();
+      crack.buffer = buffer;
+      const bright = ctx.createBiquadFilter();
+      bright.type = "highpass";
+      bright.frequency.value = 1000;
+      bright.Q.value = .5;
+      const air = ctx.createBiquadFilter();
+      air.type = "lowpass";
+      air.frequency.value = 3000;
+      crack.connect(bright).connect(air).connect(envelope(.06, .012, .065));
+      crack.start(start);
+      crack.stop(start + .065);
+    } else {
+      const oscillator = ctx.createOscillator();
+      const frequencies = {plant: [560, 672], armed: [880, 1056], spark: [160, 220], fizzle: [360, 80]};
+      const [from, to] = frequencies[kind];
+      oscillator.type = kind === "spark" ? "triangle" : "sine";
+      oscillator.frequency.setValueAtTime(from, start);
+      oscillator.frequency.exponentialRampToValueAtTime(to, start + duration);
+      oscillator.connect(envelope(.18, .005, duration));
+      oscillator.start(start);
+      oscillator.stop(start + duration);
+    }
+
+    const buffer = await ctx.startRendering();
+    const samples = buffer.getChannelData(0);
+    let peak = 0;
+    for (const value of samples) peak = Math.max(peak, Math.abs(value));
+    // Measure after compression; the live master sets boom peaks to -1 dBFS.
+    // Cues finish at -15 dBFS, about 4x the old .045 peak. No stacked voices.
+    const scale = (boom ? 1 : Math.pow(10, -14 / 20)) / peak;
+    for (let i = 0; i < samples.length; i++) samples[i] *= scale;
+    return buffer;
+  }
 
   function sound(kind) {
     if (frozen) return;
@@ -22,56 +126,32 @@
         context.resume().catch(() => {});
         return;
       }
+      if (!sounds[kind]) return;
+      if (!master) {
+        master = context.createGain();
+        master.gain.value = Math.pow(10, -1 / 20);
+        master.connect(context.destination);
+      }
       const now = context.currentTime;
-      // One voice at a time: rapid booms and status cues never add their peaks.
+      // Fade the old voice out before the next starts, avoiding clicks or overlap.
       if (voice) {
-        for (const source of voice.sources) { source.stop(now); source.disconnect(); }
-        for (const gain of voice.gains) gain.disconnect();
+        voice.gain.gain.cancelScheduledValues(now);
+        voice.gain.gain.setValueAtTime(voice.gain.gain.value, now);
+        voice.gain.gain.linearRampToValueAtTime(0, now + .006);
+        voice.source.stop(now + .008);
       }
-      const current = {sources: [], gains: []};
+      const source = context.createBufferSource();
+      const gain = context.createGain();
+      source.buffer = sounds[kind];
+      source.connect(gain).connect(master);
+      const current = {source, gain};
       voice = current;
-      function play(source, volume, duration) {
-        const gain = context.createGain();
-        current.sources.push(source);
-        current.gains.push(gain);
-        gain.gain.setValueAtTime(volume, now);
-        gain.gain.exponentialRampToValueAtTime(.0001, now + duration);
-        source.connect(gain).connect(context.destination);
-        source.start(now);
-        source.stop(now + duration);
-        source.onended = () => {
-          source.disconnect();
-          gain.disconnect();
-          current.sources = current.sources.filter(item => item !== source);
-          if (!current.sources.length && voice === current) voice = undefined;
-        };
-      }
-      const oscillator = context.createOscillator();
-      const frequencies = {plant: 560, armed: 880, spark: 160, fizzle: 360, boom: 95};
-      const duration = kind === "boom" ? .7 : .16;
-      oscillator.type = kind === "spark" ? "triangle" : "sine";
-      oscillator.frequency.setValueAtTime(frequencies[kind], now);
-      oscillator.frequency.exponentialRampToValueAtTime(
-        kind === "fizzle" ? 80 : kind === "boom" ? 30 : frequencies[kind] * 1.2,
-        now + duration
-      );
-      // The three boom layers sum to at most .5 (~-6 dBFS), even at attack.
-      play(oscillator, kind === "boom" ? .32 : .045, duration);
-      if (kind === "boom") {
-        if (!noiseBuffer) {
-          noiseBuffer = context.createBuffer(1, context.sampleRate * .7, context.sampleRate);
-          const samples = noiseBuffer.getChannelData(0);
-          for (let i = 0; i < samples.length; i++) samples[i] = Math.random() * 2 - 1;
-        }
-        const noise = context.createBufferSource();
-        noise.buffer = noiseBuffer;
-        play(noise, .17, .45);
-        const crack = context.createOscillator();
-        crack.type = "triangle";
-        crack.frequency.setValueAtTime(1800, now);
-        crack.frequency.exponentialRampToValueAtTime(120, now + .05);
-        play(crack, .01, .05);
-      }
+      source.onended = () => {
+        source.disconnect();
+        gain.disconnect();
+        if (voice === current) voice = undefined;
+      };
+      source.start(now + .01);
     } catch (_) { /* Audio permissions must not interrupt the overlay. */ }
   }
 
@@ -259,6 +339,16 @@
         byId("reveal").hidden = false;
         break;
     }
+  }
+
+  // Five fixed synthesized buffers, prepared once before handling game events.
+  // Frozen screenshot steps need no audio work; synthesis failure stays silent.
+  if (!frozen) {
+    try {
+      const kinds = ["boom", "plant", "armed", "spark", "fizzle"];
+      const buffers = await Promise.all(kinds.map(renderSound));
+      kinds.forEach((kind, index) => { sounds[kind] = buffers[index]; });
+    } catch (_) { /* Audio support must not interrupt the overlay. */ }
   }
 
   if (demo) {

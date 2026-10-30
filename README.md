@@ -56,7 +56,7 @@ Open these URLs using the configured game port:
 | Overlay | `http://localhost:8100/overlay` | OBS browser source, 1920×1080 with transparent background |
 | Local plant | `http://localhost:8101/` | Local inspection only; viewers use the public tunnel URL |
 
-In OBS, enable **Control audio via OBS** for the overlay source and route/monitor it as needed. The synthesized boom targets a peak near −6 dBFS; balance the source against speech in the OBS mixer. If a normal browser blocks sound, interact with the page to allow audio. Add `?latency=1` to the overlay URL for the small debug latency badge.
+In OBS, enable **Control audio via OBS** for the overlay source and route/monitor it as needed. The synthesized boom targets a peak near −1 dBFS; balance the source against speech in the OBS mixer. If a normal browser blocks sound, interact with the page to allow audio. Add `?latency=1` to the overlay URL for the small debug latency badge.
 
 Wait for the dock's connection lights, start a round and share the current plant URL/QR. A viewer sends `!mine`, opens the link, picks a card and sends the displayed `!mine CODE` in Twitch chat. Mines arm after 30 seconds. A moderator can use `!defuse`, or the streamer can use the dock's False alarm button, within 10 seconds of a mistaken boom.
 
