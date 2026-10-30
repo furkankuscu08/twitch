@@ -251,7 +251,7 @@ Verify every endpoint, scope and payload against https://dev.twitch.tv/docs befo
   - Serialize refreshes per account so simultaneous 401 responses cannot reuse a refresh token. Store the replacement token pair atomically; never log either token.
   - Scopes:
     - Bot (a mod in the channel): `user:read:chat`, `user:write:chat`.
-    - One test account: `user:write:chat`. Optional for normal play, required for the automated live acceptance checks in WP9-WP11.
+    - Test account and two optional blind-plant viewers: `user:write:chat`. The original test account remains required for WP9-WP11's live checks; all three can plant for the recording.
     - The broadcaster needs no token: there are no markers or clips (decision D15), and the bot reads and sends chat with its own user access token. Checked on 29 Oct: `channel.chat.message` with a user access token "requires `user:read:chat` scope from the chatting user"; Send Chat Message requires "a user access token that includes the `user:write:chat` scope"; `channel:bot` from the broadcaster is needed only with an app access token. Messages are limited to 500 characters.
 - **EventSub WebSocket:** `channel.chat.message` v1, condition `{broadcaster_user_id, user_id: bot}`.
   - Subscribe within 10 s of `session_welcome`.
@@ -261,6 +261,7 @@ Verify every endpoint, scope and payload against https://dev.twitch.tv/docs befo
   - `!mine`, `!mine CODE`;
   - `!defuse` (badges: broadcaster or moderator).
 - **Send Chat Message:** `POST /helix/chat/messages` as the bot. Each outgoing chat message gets one attempt with a total `CHAT_SEND_TIMEOUT_S` (5 s) timeout, including any authentication recovery; never retry that message after a failure or timeout. Log `is_sent` / `drop_reason` when returned. Token refresh still recovers authentication for subsequent messages.
+- **Blind-plant recording fallback:** `scripts/blind_plant.py` makes one attempt per configured test account in an existing round. Each independently waits a random delay within `BLIND_PLANT_WINDOW_S` (60 s), fetches a hand from the plant API, picks a random card and sends `!mine CODE` through Send Chat Message using that viewer's token. One shared dock WebSocket confirms all accounts by owner within `BLIND_PLANT_CONFIRM_TIMEOUT_S` (10 s) after sending. Existing planting limits apply; failures skip only that account, with no retries or automatic replants. Words stay in memory and never enter output or files; output contains only owners and success/failure, except credential warnings include the exact per-account refresh command. The helper only reads tokens; refresh all three test tokens before each rehearsal and recording. Device-code activation is done by the human in their own incognito browser, never the agent's broadcaster browser.
 - **Not used:** stream markers and clips (cut in D15: they only work on a live stream and added little to the demo). The streamer's native Clip button still works.
 - Chat sends and EventSub recovery run outside game-state mutations with finite I/O timeouts. Pending external work must not grow without bound or let a stalled service block the game. Chat send failures are logged without private words or credentials and never block the game; sends are best effort with the one-attempt policy above. WebSocket client overflow disconnects only that client, as specified in §4.
 
