@@ -66,6 +66,7 @@ def test_round_controls_typed_and_false_alarm(page, server_url):
     assert response.ok
     expect(page.locator("#mines")).to_contain_text("alice")
     assert "pineapple" not in page.locator("#mines").inner_text()
+    expect(page.locator("#mines .mine-status")).to_have_text("armed")
     page.get_by_label("Typed speech").fill("I would like pineapple")
     page.get_by_role("button", name="Send typed speech", exact=True).click()
     button = page.get_by_role("button", name="False alarm", exact=True)
@@ -86,6 +87,7 @@ def test_false_alarm_expires_after_ten_seconds(page, server_url):
     page.request.post(
         server_url + "/dock/debug/plant", data={"owner": "bob", "word": "volcano"}
     )
+    expect(page.locator("#mines .mine-status")).to_have_text("armed")
     page.get_by_label("Typed speech").fill("volcano")
     page.get_by_role("button", name="Send typed speech", exact=True).click()
     button = page.get_by_role("button", name="False alarm", exact=True)
@@ -172,6 +174,7 @@ def test_reconnect_preserves_pending_correction_and_original_deadline(page, serv
         server_url + "/dock/debug/plant",
         data={"owner": "correction_viewer", "word": "pineapple"},
     )
+    expect(page.locator("#mines .mine-status")).to_have_text("armed")
     page.locator("#typed").fill("pineapple")
     page.locator("#send").click()
     button = page.locator("#false-alarm")
@@ -214,6 +217,7 @@ def test_snapshot_drops_pending_corrections_for_nonexploded_mines(
         server_url + "/dock/debug/plant",
         data={"owner": "correction_viewer", "word": "pineapple"},
     )
+    expect(page.locator("#mines .mine-status")).to_have_text("armed")
     page.locator("#typed").fill("pineapple")
     page.locator("#send").click()
     expect(page.locator("#false-alarm")).to_be_enabled()
