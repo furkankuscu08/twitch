@@ -8,7 +8,7 @@ Viewers plant secret words. When the streamer says one, the overlay explodes and
 
 ## How it was built with Codex
 
-[SPEC.md](SPEC.md) served as the contract for game rules, messages and work packages. Codex wrote failing acceptance tests first, then implemented each package. It took its own overlay screenshots and inspected them to fix layout and readability. Saved rehearsal logs guided fixes for missed words, false booms and audio timing.
+[SPEC.md](SPEC.md) served as the contract for game rules, messages and work packages. Codex wrote failing acceptance tests first, then implemented each package. It took its own overlay screenshots and inspected them to fix layout and readability. A saved rehearsal log exposed lost audio; Codex traced the cause and fixed it.
 
 ## Setup
 
