@@ -726,3 +726,15 @@ def test_wp15_long_compact_receipt_and_tied_reveal_stay_in_their_boxes(page):
         "el => el.scrollHeight > el.clientHeight"
     )
     assert page.locator("#reveal").bounding_box()["height"] == 304
+
+
+def test_wp15_shoot_exports_webcam_previews_and_shrink_midpoint(page, tmp_path):
+    from scripts.shoot import shoot_overlay
+
+    shoot_overlay(page.context.browser, tmp_path)
+    for step in [6, 7, 8, 12]:
+        assert (tmp_path / f"overlay-{step:02}.png").exists()
+        assert (tmp_path / f"overlay-webcam-{step:02}.png").exists()
+    midpoint = tmp_path / "overlay-shrink-midpoint.png"
+    assert midpoint.exists()
+    assert midpoint.read_bytes()[:8] == b"\x89PNG\r\n\x1a\n"

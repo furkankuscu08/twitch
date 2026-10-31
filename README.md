@@ -92,9 +92,9 @@ Open these URLs using the configured game port:
 
 In OBS, enable **Control audio via OBS** for the overlay source and route/monitor it as needed. The synthesized boom targets a peak near −1 dBFS; balance the source against speech in the OBS mixer. If a normal browser blocks sound, interact with the page to allow audio. Add `?latency=1` to the overlay URL for the small debug latency badge.
 
-Wait for the dock's connection lights, start a round and share the current plant URL/QR. A viewer sends `!mine`, opens the link, picks a card and sends the displayed `!mine CODE` in Twitch chat. Mines arm after 30 seconds. A moderator can use `!defuse`, or the streamer can use the dock's False alarm button, within 10 seconds of a mistaken boom.
+Wait for the dock's connection lights, start a round and share the current plant URL/QR. A viewer sends `!mine`, opens the link, picks a card and sends the displayed `!mine CODE` in Twitch chat. Mines arm after 30 seconds. Each boom earns its viewer one session point; a false alarm retracts that point and duds earn nothing. TOP TRAPPERS shows the top three viewers. Scores survive round changes and reset when the server stops. The streamer does not score. A moderator can use `!defuse`, or the streamer can use the dock's False alarm button, within 10 seconds of a mistaken boom.
 
-The public [quick tunnel](https://developers.cloudflare.com/tunnel/get-started/quick-tunnels/) exposes only the plant app. Its URL changes after a tunnel restart; the overlay QR and `!mine` reply update automatically. Stop the script with **Ctrl+C** to shut down the engine, both listeners and the tunnel. A service exiting also stops the other service. Restarting loses the current round.
+The public [quick tunnel](https://developers.cloudflare.com/tunnel/get-started/quick-tunnels/) exposes only the plant app. Its URL changes after a tunnel restart; the overlay QR and `!mine` reply update automatically. Stop the script with **Ctrl+C** to shut down the engine, both listeners and the tunnel. A service exiting also stops the other service. Restarting loses the current round and session scores.
 
 Override ports in `.env` or exported environment variables; exported values take precedence:
 
@@ -121,7 +121,7 @@ curl -fsS -X POST http://localhost:8100/dock/debug/plant \
 
 Wait 30 seconds for arming, then enter `I could go for some pineapple` in the dock's typed box. The live overlay booms. End the round from the dock to see its reveal. With different ports, replace `8100` in the commands.
 
-For the scripted visual demo, open `http://localhost:8100/overlay?demo=1`. It needs no game state, WebSocket, API key or engine; `&step=N` freezes a numbered step silently. The live overlay and scripted demo are separate browser views. Demo mode's red engine status is expected because no speech engine runs.
+For the scripted visual demo, open `http://localhost:8100/overlay?demo=1`. It needs no game state, WebSocket, API key or engine; `&step=N` freezes a numbered step silently. The live overlay and scripted demo are separate browser views. The demo includes leaderboard changes, a full boom banner that shrinks after three seconds into a lower-left card, a corrected compact card, and the round leader reveal. Use steps 6 (full banner), 7 (compact), 8 (false alarm), and 12 (reveal) for frozen views. Demo mode's red engine status is expected because no speech engine runs.
 
 ## Checks and rehearsal
 
@@ -135,7 +135,7 @@ uv run pytest -m live --tb=short       # real Twitch/Deepgram; bot + test tokens
 uv run python scripts/shoot.py overlay # every scripted step, no running server needed
 ```
 
-Screenshots go to ignored `data/shots/`. The same screenshot command accepts `dock`, `plant` or `mic` when the server is running; it honors `GAME_PORT` and `PLANT_PORT`.
+Screenshots go to ignored `data/shots/`. Overlay shots include transparent PNGs, synthetic webcam previews, both galleries and a shrink midpoint. The webcam scene is generated only by the screenshot script; the actual overlay remains transparent. The same screenshot command accepts `dock`, `plant` or `mic` when the server is running; it honors `GAME_PORT` and `PLANT_PORT`.
 
 For rehearsal or recording, enable both private logs with a new timestamp:
 
