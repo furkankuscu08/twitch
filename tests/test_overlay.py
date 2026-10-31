@@ -52,6 +52,10 @@ def page(static_url):
 
 
 def send(page, **message):
+    if message.get("type") in {"snapshot", "boom", "false_alarm", "reveal"}:
+        message.setdefault("scores", [])
+    if message.get("type") == "reveal":
+        message.setdefault("round_top", [])
     page.evaluate("message => window.deliver(message)", message)
 
 
@@ -284,6 +288,7 @@ def test_snapshot_prioritizes_all_live_mines(page):
 
 def test_false_alarm_stamp_appears_late_within_legal_window(page):
     page.clock.install()
+    page.clock.pause_at(page.evaluate("Date.now() + 1000"))
     snapshot(page)
     boom(page)
     page.clock.fast_forward(8000)
@@ -411,7 +416,7 @@ def test_suspended_audio_schedules_nothing_and_does_not_replay_after_resume(page
         for (let i = 0; i < 100; i++) {
             window.deliver({type: 'boom', id: 'a', owner: 'mira', word: 'pineapple',
                 planted_ago_s: 100, latency_ms: 300, source: 'stt',
-                receipt: [{text: 'pineapple', hit: true}]});
+                receipt: [{text: 'pineapple', hit: true}], scores: []});
         }
     }""")
     assert page.locator("#boom-banner").is_visible()
@@ -454,7 +459,7 @@ def test_soft_airy_boom_has_loud_peak_and_rumble_without_stacking(
             await paused;
             window.deliver({type: 'boom', id: 'b', owner: 'alex', word: 'volcano',
                 planted_ago_s: 100, latency_ms: 300, source: 'stt',
-                receipt: [{text: 'volcano', hit: true}]});
+                receipt: [{text: 'volcano', hit: true}], scores: []});
             await window.resumeRendering();
         }
         const samples = (await rendering).getChannelData(0);
@@ -501,3 +506,223 @@ def test_small_cues_are_about_four_times_louder_with_a_soft_attack(page, kind):
     }""")
     assert 0.17 <= result["peak"] <= 0.19
     assert result["attackPeak"] < result["peak"] * 0.6
+
+
+def test_wp15_shrink_keeps_full_banner_then_moves_smoothly_to_compact(page):
+    page.clock.install()
+    page.clock.pause_at(page.evaluate("Date.now() + 1000"))
+    snapshot(page)
+    boom(page)
+    page.clock.run_for(2990)
+    box = page.locator("#boom-banner").bounding_box()
+    assert box["x"] == 300 and box["width"] == 1320
+    page.clock.run_for(20)
+    page.locator("#boom-banner").evaluate(
+        "el => el.getAnimations({subtree: true}).forEach(a => { "
+        "a.pause(); a.currentTime = 150; })"
+    )
+    middle = page.locator("#boom-banner").bounding_box()
+    assert 560 < middle["width"] < 1320
+    page.locator("#boom-banner").evaluate(
+        "el => el.getAnimations({subtree: true}).forEach(a => a.finish())"
+    )
+    box = page.locator("#boom-banner").bounding_box()
+    assert box == pytest.approx({"x": 48, "y": 772, "width": 560, "height": 260})
+    assert page.locator("#receipt mark").inner_text() == "pineapple"
+    assert (
+        page.locator("#receipt").evaluate(
+            "el => parseFloat(getComputedStyle(el).fontSize)"
+        )
+        >= 22
+    )
+    send(page, type="false_alarm", id="a", owner="mira", scores=[])
+    assert page.locator("#false-alarm").is_visible()
+    assert page.locator("#boom-banner").bounding_box() == box
+
+
+def test_wp15_leaderboard_updates_restores_and_clears_feedback(page):
+    scores = [{"owner": "mira", "points": 2}, {"owner": "alex", "points": 1}]
+    send(
+        page,
+        type="snapshot",
+        round={"running": True},
+        plant_url="https://example.org",
+        mines=[],
+        scores=scores,
+    )
+    assert page.locator("#scoreboard").is_visible()
+    assert page.locator(".score-row").count() == 2
+    assert page.locator(".score-owner").all_text_contents() == ["mira", "alex"]
+    boom(page)
+    # An authoritative empty score list replaces the previous one.
+    assert page.locator(".score-row").count() == 0
+    send(
+        page,
+        type="boom",
+        id="b",
+        owner="alex",
+        word="volcano",
+        planted_ago_s=30,
+        latency_ms=10,
+        source="typed",
+        receipt=[{"text": "volcano", "hit": True}],
+        scores=[{"owner": "alex", "points": 3}, {"owner": "mira", "points": 2}],
+    )
+    assert page.locator(".score-owner").all_text_contents() == ["alex", "mira"]
+    assert page.locator(".score-gain").inner_text() == "+1"
+    page.wait_for_timeout(1100)
+    assert page.locator(".score-gain").count() == 0
+    send(
+        page,
+        type="snapshot",
+        round={"running": False},
+        plant_url=None,
+        mines=[],
+        scores=scores,
+    )
+    assert not page.locator("#boom-banner").is_visible()
+    assert page.locator(".score-owner").all_text_contents() == ["mira", "alex"]
+    assert page.locator(".score-gain").count() == 0
+
+
+def test_wp15_new_boom_resets_shrink_and_snapshot_cancels_it(page):
+    page.clock.install()
+    page.clock.pause_at(page.evaluate("Date.now() + 1000"))
+    snapshot(page)
+    boom(page)
+    page.clock.run_for(2500)
+    boom(page, owner="alex", word="volcano")
+    page.clock.run_for(1000)
+    assert page.locator("#boom-banner").bounding_box()["width"] == 1320
+    snapshot(page)
+    page.clock.run_for(4000)
+    assert not page.locator("#boom-banner").is_visible()
+    assert "compact" not in page.locator("#boom-banner").get_attribute("class")
+
+
+@pytest.mark.parametrize(
+    "leaders,count,headline",
+    [
+        ([{"owner": "mira", "booms": 2}], 3, "TOP TRAPPER: mira · 2 booms"),
+        (
+            [{"owner": "alex", "booms": 1}, {"owner": "mira", "booms": 1}],
+            2,
+            "TOP TRAPPERS: alex, mira · 1 boom",
+        ),
+        ([], 2, "2 booms"),
+        ([], 0, "No booms this round"),
+    ],
+)
+def test_wp15_reveal_headline_and_lower_band(page, leaders, count, headline):
+    snapshot(page)
+    send(
+        page,
+        type="reveal",
+        duds=[{"owner": "sam", "word": "telescope"}],
+        stats={"booms": count},
+        round_top=leaders,
+        scores=[{"owner": "mira", "points": 4}],
+    )
+    assert page.locator("#round-top").inner_text() == headline
+    assert page.locator("#reveal").bounding_box() == pytest.approx(
+        {"x": 48, "y": 728, "width": 1240, "height": 304}
+    )
+    assert page.locator("#scoreboard").is_visible()
+    send(
+        page,
+        type="snapshot",
+        round={"running": False},
+        plant_url=None,
+        mines=[],
+        scores=[{"owner": "mira", "points": 4}],
+    )
+    assert page.locator("#round-top").inner_text() == headline
+
+
+def test_wp15_frozen_demo_covers_compact_correction_and_session_panel(page, static_url):
+    page.goto(f"{static_url}/overlay/?demo=1&step=0")
+    page.wait_for_function("window.overlayReady === true")
+    compact_steps = page.evaluate("window.overlayDemoCompactSteps")
+    assert len(compact_steps) == 2
+    for step in compact_steps:
+        page.goto(f"{static_url}/overlay/?demo=1&step={step}")
+        page.wait_for_function("window.overlayReady === true")
+        assert page.locator("#boom-banner").bounding_box()["width"] == 560
+        assert page.locator("#receipt mark").inner_text()
+        assert page.locator(".score-row").count() > 0
+    steps = page.evaluate("window.overlayDemoSteps")
+    correction_step = next(
+        i
+        for i, events in enumerate(steps)
+        if any(e["type"] == "false_alarm" for e in events)
+    )
+    page.goto(f"{static_url}/overlay/?demo=1&step={correction_step}")
+    page.wait_for_function("window.overlayReady === true")
+    assert page.locator("#false-alarm").is_visible()
+    assert page.locator("#boom-banner").bounding_box()["width"] == 560
+
+
+def test_wp15_reveal_cancels_shrink_and_malformed_scores_are_ignored(page):
+    page.clock.install()
+    page.clock.pause_at(page.evaluate("Date.now() + 1000"))
+    snapshot(page)
+    boom(page)
+    send(
+        page,
+        type="false_alarm",
+        id="a",
+        owner="mira",
+        scores=[{"owner": "mira", "points": "invalid"}],
+    )
+    assert not page.locator("#false-alarm").is_visible()
+    send(
+        page,
+        type="reveal",
+        stats={"booms": 1},
+        round_top=[{"owner": "mira", "booms": 1}],
+        duds=[],
+        scores=[{"owner": "mira", "points": 1}],
+    )
+    page.clock.run_for(4000)
+    assert not page.locator("#boom-banner").is_visible()
+    assert "compact" not in page.locator("#boom-banner").get_attribute("class")
+    assert page.locator("#reveal").is_visible()
+
+
+def test_wp15_long_compact_receipt_and_tied_reveal_stay_in_their_boxes(page):
+    snapshot(page)
+    send(
+        page,
+        type="boom",
+        id="a",
+        owner="a_very_long_viewer_name_25",
+        word="rollercoaster",
+        planted_ago_s=120,
+        latency_ms=12,
+        source="stt",
+        receipt=[
+            {"text": word, "hit": word == "rollercoaster"}
+            for word in (
+                "Honestly unexpectedly everybody enthusiastically recommended "
+                "another enormous rollercoaster"
+            ).split()
+        ],
+    )
+    page.wait_for_timeout(3400)
+    box = page.locator("#boom-banner").bounding_box()
+    for selector in ["#boom-owner", "#boom-word", "#receipt"]:
+        child = page.locator(selector).bounding_box()
+        assert child["x"] >= box["x"]
+        assert child["x"] + child["width"] <= box["x"] + box["width"]
+        assert child["y"] + child["height"] <= box["y"] + box["height"]
+    leaders = [{"owner": f"viewer_{i:03}", "booms": 1} for i in range(200)]
+    send(
+        page, type="reveal", stats={"booms": 200}, round_top=leaders, duds=[], scores=[]
+    )
+    assert all(
+        row["owner"] in page.locator("#round-top").inner_text() for row in leaders
+    )
+    assert page.locator("#round-top").evaluate(
+        "el => el.scrollHeight > el.clientHeight"
+    )
+    assert page.locator("#reveal").bounding_box()["height"] == 304

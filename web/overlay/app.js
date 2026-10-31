@@ -3,6 +3,7 @@
   const query = new URLSearchParams(location.search);
   const demo = query.get("demo") === "1";
   const frozen = demo && query.has("step");
+  const BANNER_FULL_S = 3;
   const showLatency = query.get("latency") === "1";
   const byId = id => document.getElementById(id);
   const chips = new Map();
@@ -13,6 +14,8 @@
   let burstTimer;
   let cachedPlantUrl;
   let currentBoomId;
+  let shrinkTimer;
+  let scoreTimer;
   if (frozen) document.documentElement.dataset.frozen = "true";
 
   async function renderSound(kind) {
@@ -242,7 +245,46 @@
     updateChip(chip);
   }
 
+  function compactBanner() {
+    if (currentBoomId === undefined) return;
+    const banner = byId("boom-banner");
+    // Give the natural full height a numeric start so height also shrinks smoothly.
+    banner.style.height = `${banner.getBoundingClientRect().height}px`;
+    void banner.offsetHeight;
+    banner.classList.add("compact");
+    banner.style.height = "260px";
+  }
+
+  function renderScores(scores, awardedOwner) {
+    clearTimeout(scoreTimer);
+    byId("score-rows").replaceChildren();
+    byId("score-empty").hidden = scores.length > 0;
+    for (const score of scores) {
+      const row = document.createElement("div");
+      row.className = "score-row";
+      const owner = document.createElement("span");
+      owner.className = "score-owner";
+      owner.textContent = score.owner;
+      const points = document.createElement("strong");
+      points.textContent = `${score.points} ${score.points === 1 ? "pt" : "pts"}`;
+      row.append(owner, points);
+      if (score.owner === awardedOwner) {
+        const gain = document.createElement("span");
+        gain.className = "score-gain";
+        gain.textContent = "+1";
+        row.append(gain);
+      }
+      byId("score-rows").append(row);
+    }
+    if (awardedOwner && !frozen) scoreTimer = setTimeout(() => {
+      byId("score-rows").querySelector(".score-gain")?.remove();
+    }, 1000);
+  }
+
   function hideBanner() {
+    clearTimeout(shrinkTimer);
+    byId("boom-banner").classList.remove("compact");
+    byId("boom-banner").style.height = "";
     byId("boom-banner").hidden = true;
     byId("false-alarm").hidden = true;
     stopBurst();
@@ -252,6 +294,9 @@
   function valid(message) {
     if (!message || typeof message !== "object") return false;
     const text = field => typeof message[field] === "string";
+    const scoresValid = () => Array.isArray(message.scores) && message.scores.every(row =>
+      row && typeof row.owner === "string" && Number.isInteger(row.points) && row.points > 0);
+    if (["snapshot", "boom", "false_alarm", "reveal"].includes(message.type) && !scoresValid()) return false;
     switch (message.type) {
       case "snapshot": return typeof message.round?.running === "boolean"
         && (message.plant_url === null || typeof message.plant_url === "string")
@@ -266,7 +311,9 @@
         && Number.isFinite(message.planted_ago_s) && Number.isFinite(message.latency_ms)
         && Array.isArray(message.receipt) && message.receipt.every(item => item
           && typeof item.text === "string" && typeof item.hit === "boolean");
-      case "reveal": return Number.isFinite(message.stats?.booms) && Array.isArray(message.duds)
+      case "reveal": return Array.isArray(message.round_top) && message.round_top.every(row =>
+          row && typeof row.owner === "string" && Number.isInteger(row.booms) && row.booms > 0)
+        && Number.isFinite(message.stats?.booms) && Array.isArray(message.duds)
         && message.duds.every(dud => dud && typeof dud.owner === "string" && typeof dud.word === "string");
       default: return false;
     }
@@ -277,6 +324,7 @@
     const chip = chips.get(message.id);
     switch (message.type) {
       case "snapshot":
+        renderScores(message.scores);
         hideBanner();
         chips.clear();
         byId("mines").replaceChildren();
@@ -299,10 +347,12 @@
           }
         }
         if (message.type === "false_alarm") {
+          renderScores(message.scores);
           if (currentBoomId === message.id) byId("false-alarm").hidden = false;
         } else sound({mine_armed: "armed", spark: "spark", fizzle: "fizzle"}[message.type]);
         break;
       case "boom": {
+        renderScores(message.scores, message.owner);
         hideBanner();
         currentBoomId = message.id;
         if (chip) { chip.status = "exploded"; updateChip(chip); }
@@ -322,10 +372,19 @@
         byId("boom-banner").hidden = false;
         burst();
         sound("boom");
+        if (!frozen) shrinkTimer = setTimeout(compactBanner, BANNER_FULL_S * 1000);
         break;
       }
       case "reveal":
+        renderScores(message.scores);
         hideBanner();
+        {
+          const count = message.stats.booms;
+          const leaders = message.round_top;
+          byId("round-top").textContent = leaders.length
+            ? `TOP TRAPPER${leaders.length === 1 ? "" : "S"}: ${leaders.map(row => row.owner).join(", ")} · ${leaders[0].booms} boom${leaders[0].booms === 1 ? "" : "s"}`
+            : count ? `${count} boom${count === 1 ? "" : "s"}` : "No booms this round";
+        }
         byId("plant").hidden = true;
         byId("round-stats").textContent = `${message.stats.booms} boom${message.stats.booms === 1 ? "" : "s"}`;
         byId("duds").replaceChildren();
@@ -356,13 +415,21 @@
     const selected = Math.max(0, Math.min(steps.length - 1, Number.parseInt(query.get("step"), 10) || 0));
     function runStep(index) {
       steps[index].forEach(receive);
+      if (window.overlayDemoCompactSteps.includes(index)) compactBanner();
       document.documentElement.dataset.demoStep = String(index);
     }
     if (frozen) for (let index = 0; index <= selected; index++) runStep(index);
     else {
       let index = 0;
       runStep(index);
-      setInterval(() => { index = (index + 1) % steps.length; runStep(index); }, 1700);
+      function next() {
+        setTimeout(() => {
+          index = (index + 1) % steps.length;
+          runStep(index);
+          next();
+        }, window.overlayDemoHolds[index] || 1700);
+      }
+      next();
     }
   } else {
     function connect() {

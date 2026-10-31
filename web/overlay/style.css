@@ -61,3 +61,32 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background:
 @keyframes shake { 0% { transform: translate(0); } 12% { transform: translate(-10px, 5px) rotate(-.2deg); } 27% { transform: translate(8px, -4px) rotate(.15deg); } 43% { transform: translate(-6px, 3px); } 60% { transform: translate(4px, -2px); } 78% { transform: translate(-2px, 1px); } 100% { transform: translate(0); } }
 @keyframes impact { from { transform: scale(.94); filter: brightness(1.15); } to { transform: scale(1); filter: brightness(1); } }
 html[data-frozen] *, html[data-frozen] *::after { animation: none !important; transition: none !important; }
+
+/* Session scores stay in the right rail, below the plant URL and QR. */
+#plant { width: 544px; height: 176px; justify-content: space-between; }
+#scoreboard { position: absolute; top: 230px; right: 48px; width: 544px; height: 224px; padding: 20px 24px; border: 1px solid #635e6c; border-radius: 14px; background: #19191ff7; box-shadow: 0 6px 24px #0005; }
+#scoreboard h2 { margin: 0 0 14px; color: #c7ff76; font-size: 21px; letter-spacing: 2px; }
+.score-row { position: relative; display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 44px; border-top: 1px solid #ffffff18; font-size: 23px; }
+.score-owner { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.score-row strong { flex-shrink: 0; color: #c7ff76; font-variant-numeric: tabular-nums; }
+.score-gain { position: absolute; right: 90px; padding: 2px 6px; border-radius: 4px; background: #c7ff76; color: #19191f; font-size: 18px; font-weight: 850; }
+#score-empty { margin: 28px 0 0; color: #d0cdd6; font-size: 22px; }
+
+/* One card changes layout; its full-size starting box is unchanged. */
+#boom-banner { transition: top .3s ease-out, left .3s ease-out, width .3s ease-out, height .3s ease-out, padding .3s ease-out; }
+#boom-banner .eyebrow, #boom-owner, #boom-word, #boom-age, #receipt, #false-alarm { transition: font-size .3s ease-out, margin .3s ease-out, padding .3s ease-out, line-height .3s ease-out; }
+#boom-banner.compact { top: 772px; left: 48px; width: 560px; height: 260px; padding: 16px 22px; border-radius: 14px; text-align: left; }
+.compact .eyebrow { justify-content: flex-start; min-height: 18px; gap: 6px; font-size: 12px; letter-spacing: 2px; }
+.compact .impact-icon { font-size: 18px; }
+.compact #boom-owner { margin-top: 8px; font-size: 19px; line-height: 1.2; letter-spacing: .5px; }
+.compact #boom-word { margin: 2px 0; font-size: 40px; line-height: 1.12; letter-spacing: 1px; }
+.compact #boom-age { font-size: 13px; }
+.compact #receipt { margin-top: 10px; padding: 10px 0 0; max-height: 88px; overflow-y: auto; font-size: 24px; line-height: 1.3; }
+.compact #false-alarm { top: 10px; right: 12px; padding: 4px 6px; font-size: 13px; letter-spacing: 1px; }
+.compact #latency { right: 16px; bottom: 6px; font-size: 11px; }
+#reveal { top: 728px; left: 48px; width: 1240px; height: 304px; padding: 20px 30px; text-align: left; }
+#reveal .eyebrow { min-height: 24px; justify-content: flex-start; font-size: 16px; }
+#round-top { max-height: 80px; overflow-y: auto; margin: 8px 0 4px; font-size: 34px; line-height: 1.15; overflow-wrap: anywhere; }
+#round-stats { margin: 0 0 8px; font-size: 18px; font-weight: 650; letter-spacing: 0; color: #d0cdd6; }
+#duds { max-height: 140px; overflow-y: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+#duds p { margin: 0; padding: 9px 12px; font-size: 21px; }

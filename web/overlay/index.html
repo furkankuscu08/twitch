@@ -17,6 +17,11 @@
       <div><strong>PLANT A MINE</strong><span>Steer the conversation.</span><span id="plant-url"></span></div>
       <div id="qr" aria-label="Scan to plant a mine"></div>
     </aside>
+    <aside id="scoreboard" aria-label="Top trappers">
+      <h2>TOP TRAPPERS</h2>
+      <div id="score-rows"></div>
+      <p id="score-empty">No points yet</p>
+    </aside>
     <div id="explosion" hidden aria-hidden="true"><i class="blast-flash"></i><i class="shockwave"></i></div>
     <section id="boom-banner" hidden aria-live="polite">
       <div class="eyebrow"><span class="impact-icon">✦</span> YOU SAID IT.</div>
@@ -29,7 +34,8 @@
     </section>
     <section id="reveal" hidden aria-live="polite">
       <div class="eyebrow">ROUND OVER</div>
-      <h2 id="round-stats"></h2>
+      <h2 id="round-top"></h2>
+      <div id="round-stats"></div>
       <div id="duds"></div>
     </section>
   </main>
