@@ -238,7 +238,7 @@ def test_demo_keeps_second_boom_and_reveals_only_the_remaining_duds(page, static
     )
     page.goto(f"{static_url}/overlay/?demo=1&step={reveal_step}")
     page.wait_for_function("window.overlayReady === true")
-    assert page.locator("#round-stats").inner_text() == "1 boom"
+    assert page.locator("#round-stats").inner_text() == "1 boom this round"
     assert second["word"] not in page.locator("#duds").inner_text()
     assert page.locator("#duds p").count() == 2
 
@@ -527,7 +527,9 @@ def test_wp15_shrink_keeps_full_banner_then_moves_smoothly_to_compact(page):
         "el => el.getAnimations({subtree: true}).forEach(a => a.finish())"
     )
     box = page.locator("#boom-banner").bounding_box()
-    assert box == pytest.approx({"x": 48, "y": 772, "width": 560, "height": 260})
+    assert box["x"] == 48 and box["width"] == 560
+    assert box["y"] + box["height"] == pytest.approx(1032)
+    assert box["height"] < 260
     assert page.locator("#receipt mark").inner_text() == "pineapple"
     assert (
         page.locator("#receipt").evaluate(
@@ -541,6 +543,8 @@ def test_wp15_shrink_keeps_full_banner_then_moves_smoothly_to_compact(page):
 
 
 def test_wp15_leaderboard_updates_restores_and_clears_feedback(page):
+    page.clock.install()
+    page.clock.pause_at(page.evaluate("Date.now() + 1000"))
     scores = [{"owner": "mira", "points": 2}, {"owner": "alex", "points": 1}]
     send(
         page,
@@ -554,7 +558,9 @@ def test_wp15_leaderboard_updates_restores_and_clears_feedback(page):
     assert page.locator(".score-row").count() == 2
     assert page.locator(".score-owner").all_text_contents() == ["mira", "alex"]
     boom(page)
-    # An authoritative empty score list replaces the previous one.
+    # A boom waits for shrinking; an authoritative snapshot updates immediately.
+    assert page.locator(".score-row").count() == 2
+    snapshot(page)
     assert page.locator(".score-row").count() == 0
     send(
         page,
@@ -568,9 +574,15 @@ def test_wp15_leaderboard_updates_restores_and_clears_feedback(page):
         receipt=[{"text": "volcano", "hit": True}],
         scores=[{"owner": "alex", "points": 3}, {"owner": "mira", "points": 2}],
     )
+    page.clock.run_for(3010)
+    assert page.locator("#boom-banner").bounding_box()["width"] >= 560
+    page.locator("#boom-banner").evaluate(
+        "el => el.getAnimations({subtree: true}).forEach(a => a.finish())"
+    )
+    page.clock.run_for(350)
     assert page.locator(".score-owner").all_text_contents() == ["alex", "mira"]
     assert page.locator(".score-gain").inner_text() == "+1"
-    page.wait_for_timeout(1100)
+    page.clock.run_for(1100)
     assert page.locator(".score-gain").count() == 0
     send(
         page,
@@ -624,8 +636,13 @@ def test_wp15_reveal_headline_and_lower_band(page, leaders, count, headline):
         scores=[{"owner": "mira", "points": 4}],
     )
     assert page.locator("#round-top").inner_text() == headline
-    assert page.locator("#reveal").bounding_box() == pytest.approx(
-        {"x": 48, "y": 728, "width": 1240, "height": 304}
+    box = page.locator("#reveal").bounding_box()
+    assert box["x"] == 48 and box["width"] == 1240
+    assert box["y"] + box["height"] == pytest.approx(1032)
+    assert box["height"] < 304
+    assert (
+        page.locator("#round-stats").inner_text()
+        == f"{count} boom{'s' if count != 1 else ''} this round"
     )
     assert page.locator("#scoreboard").is_visible()
     send(
@@ -730,7 +747,7 @@ def test_wp15_long_compact_receipt_and_tied_reveal_stay_in_their_boxes(page):
     assert page.locator("#round-top").evaluate(
         "el => el.scrollHeight > el.clientHeight"
     )
-    assert page.locator("#reveal").bounding_box()["height"] == 304
+    assert page.locator("#reveal").bounding_box()["height"] <= 304
 
 
 def test_wp15_shoot_exports_webcam_previews_and_shrink_midpoint(page, tmp_path):
@@ -751,6 +768,7 @@ def test_wp15_replacement_after_compact_starts_centred_without_reverse_transitio
     snapshot(page)
     boom(page)
     page.clock.run_for(3010)
+    assert page.locator("#boom-banner").bounding_box()["width"] >= 560
     page.locator("#boom-banner").evaluate(
         "el => el.getAnimations({subtree: true}).forEach(a => a.finish())"
     )
@@ -766,3 +784,116 @@ def test_wp15_replacement_after_compact_starts_centred_without_reverse_transitio
     assert page.locator("#boom-banner").bounding_box()["width"] == 1320
     page.clock.run_for(20)
     assert "compact" in page.locator("#boom-banner").get_attribute("class")
+
+
+def test_wp15_score_panel_stays_above_banner_and_award_waits_until_shrink(page):
+    page.clock.install()
+    page.clock.pause_at(page.evaluate("Date.now() + 1000"))
+    before = [{"owner": "mira", "points": 1}, {"owner": "alex", "points": 1}]
+    after = [{"owner": "alex", "points": 2}, {"owner": "mira", "points": 1}]
+    send(
+        page,
+        type="snapshot",
+        round={"running": True},
+        plant_url="https://example.org",
+        mines=[],
+        scores=before,
+    )
+    send(
+        page,
+        type="boom",
+        id="a",
+        owner="alex",
+        word="volcano",
+        planted_ago_s=30,
+        latency_ms=10,
+        source="typed",
+        receipt=[{"text": "volcano", "hit": True}],
+        scores=after,
+    )
+    assert page.locator(".score-owner").all_text_contents() == ["mira", "alex"]
+    assert page.locator(".score-gain").count() == 0
+    assert page.evaluate(
+        "document.elementFromPoint(1400, 350).closest('#scoreboard') !== null"
+    )
+    page.clock.run_for(2990)
+    assert page.locator(".score-owner").all_text_contents() == ["mira", "alex"]
+    page.clock.run_for(20)
+    assert page.locator(".score-gain").count() == 0
+    page.locator("#boom-banner").evaluate(
+        "el => el.getAnimations({subtree: true}).forEach(a => a.finish())"
+    )
+    page.clock.run_for(350)
+    assert page.locator(".score-owner").all_text_contents() == ["alex", "mira"]
+    assert page.locator(".score-gain").inner_text() == "+1"
+    page.clock.run_for(1100)
+    assert page.locator(".score-gain").count() == 0
+
+
+@pytest.mark.parametrize("delay", [0, 3100])
+@pytest.mark.parametrize("interrupt", ["snapshot", "false_alarm", "reveal"])
+def test_wp15_pending_award_does_not_replay_after_interruption(page, interrupt, delay):
+    page.clock.install()
+    page.clock.pause_at(page.evaluate("Date.now() + 1000"))
+    snapshot(page)
+    send(
+        page,
+        type="boom",
+        id="a",
+        owner="mira",
+        word="pineapple",
+        planted_ago_s=30,
+        latency_ms=10,
+        source="typed",
+        receipt=[{"text": "pineapple", "hit": True}],
+        scores=[{"owner": "mira", "points": 1}],
+    )
+    page.clock.run_for(delay)
+    if interrupt == "snapshot":
+        snapshot(page)
+    elif interrupt == "false_alarm":
+        send(page, type="false_alarm", id="a", owner="mira", scores=[])
+    else:
+        send(
+            page,
+            type="reveal",
+            duds=[],
+            stats={"booms": 1},
+            round_top=[{"owner": "mira", "booms": 1}],
+            scores=[{"owner": "mira", "points": 1}],
+        )
+    assert page.locator(".score-gain").count() == 0
+    page.clock.run_for(4000)
+    page.locator("#boom-banner").evaluate(
+        "el => el.getAnimations({subtree: true}).forEach(a => a.finish())"
+    )
+    page.clock.run_for(20)
+    assert page.locator(".score-gain").count() == 0
+    assert page.locator(".score-row").count() == (1 if interrupt == "reveal" else 0)
+
+
+def test_wp15_real_round_end_clears_live_chips_on_reveal(page):
+    from fastapi.testclient import TestClient
+
+    from minefield.core.config import Config
+    from minefield.server.app import create_app
+
+    now = [100.0]
+    app = create_app(config=Config(), clock=lambda: now[0], debug=True)
+    with TestClient(app) as client:
+        client.post("/dock/round/start")
+        client.post("/dock/debug/plant", json={"owner": "alice", "word": "pineapple"})
+        now[0] += 30
+        client.portal.call(app.state.runtime.tick)
+        client.post("/dock/debug/plant", json={"owner": "bob", "word": "volcano"})
+        with client.websocket_connect("/ws/overlay") as socket:
+            send(page, **socket.receive_json())
+            assert page.locator('.mine-chip[data-status="armed"]').count() == 1
+            assert page.locator('.mine-chip[data-status="arming"]').count() == 1
+            client.post("/dock/round/end")
+            event = socket.receive_json()
+            assert event["type"] == "reveal"
+            assert app.state.runtime.game.mines == {}
+            send(page, **event)
+            assert page.locator(".mine-chip").count() == 0
+            assert page.locator("#reveal").is_visible()

@@ -4,6 +4,7 @@
   const demo = query.get("demo") === "1";
   const frozen = demo && query.has("step");
   const BANNER_FULL_S = 3;
+  const BANNER_SHRINK_MS = 300;
   const showLatency = query.get("latency") === "1";
   const byId = id => document.getElementById(id);
   const chips = new Map();
@@ -16,6 +17,7 @@
   let currentBoomId;
   let shrinkTimer;
   let scoreTimer;
+  let pendingScores;
   if (frozen) document.documentElement.dataset.frozen = "true";
 
   async function renderSound(kind) {
@@ -245,14 +247,36 @@
     updateChip(chip);
   }
 
-  function compactBanner() {
-    if (currentBoomId === undefined) return;
+  function finishCompact() {
     const banner = byId("boom-banner");
-    // Give the natural full height a numeric start so height also shrinks smoothly.
-    banner.style.height = `${banner.getBoundingClientRect().height}px`;
+    banner.style.top = "";
+    banner.style.height = "";
+    if (pendingScores) {
+      renderScores(pendingScores.scores, pendingScores.owner);
+      pendingScores = undefined;
+    }
+  }
+
+  function compactBanner() {
+    const banner = byId("boom-banner");
+    if (currentBoomId === undefined || banner.classList.contains("compact")) return;
+    const full = banner.getBoundingClientRect();
+    // Measure the natural compact layout once, then animate between numeric boxes.
+    banner.classList.add("measuring", "compact");
+    banner.style.height = "";
+    banner.style.top = "";
+    const compact = banner.getBoundingClientRect();
+    banner.classList.remove("compact");
+    banner.style.top = `${full.top}px`;
+    banner.style.height = `${full.height}px`;
+    void banner.offsetHeight;
+    banner.classList.remove("measuring");
     void banner.offsetHeight;
     banner.classList.add("compact");
-    banner.style.height = "260px";
+    banner.style.top = `${compact.top}px`;
+    banner.style.height = `${compact.height}px`;
+    if (frozen) finishCompact();
+    else shrinkTimer = setTimeout(finishCompact, BANNER_SHRINK_MS);
   }
 
   function renderScores(scores, awardedOwner) {
@@ -283,8 +307,12 @@
 
   function hideBanner() {
     clearTimeout(shrinkTimer);
+    clearTimeout(scoreTimer);
+    pendingScores = undefined;
+    byId("score-rows").querySelector(".score-gain")?.remove();
     byId("boom-banner").classList.remove("compact");
     byId("boom-banner").style.height = "";
+    byId("boom-banner").style.top = "";
     byId("boom-banner").hidden = true;
     byId("false-alarm").hidden = true;
     stopBurst();
@@ -347,13 +375,14 @@
           }
         }
         if (message.type === "false_alarm") {
+          pendingScores = undefined;
           renderScores(message.scores);
           if (currentBoomId === message.id) byId("false-alarm").hidden = false;
         } else sound({mine_armed: "armed", spark: "spark", fizzle: "fizzle"}[message.type]);
         break;
       case "boom": {
-        renderScores(message.scores, message.owner);
         hideBanner();
+        pendingScores = {scores: message.scores, owner: message.owner};
         currentBoomId = message.id;
         if (chip) { chip.status = "exploded"; updateChip(chip); }
         byId("reveal").hidden = true;
@@ -380,6 +409,8 @@
       case "reveal":
         renderScores(message.scores);
         hideBanner();
+        chips.clear();
+        byId("mines").replaceChildren();
         {
           const count = message.stats.booms;
           const leaders = message.round_top;
@@ -388,7 +419,7 @@
             : count ? `${count} boom${count === 1 ? "" : "s"}` : "No booms this round";
         }
         byId("plant").hidden = true;
-        byId("round-stats").textContent = `${message.stats.booms} boom${message.stats.booms === 1 ? "" : "s"}`;
+        byId("round-stats").textContent = `${message.stats.booms} boom${message.stats.booms === 1 ? "" : "s"} this round`;
         byId("duds").replaceChildren();
         for (const dud of message.duds) {
           const line = document.createElement("p");

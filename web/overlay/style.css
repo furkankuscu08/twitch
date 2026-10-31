@@ -64,7 +64,7 @@ html[data-frozen] *, html[data-frozen] *::after { animation: none !important; tr
 
 /* Session scores stay in the right rail, below the plant URL and QR. */
 #plant { width: 544px; height: 176px; justify-content: space-between; }
-#scoreboard { position: absolute; top: 230px; right: 48px; width: 544px; height: 224px; padding: 20px 24px; border: 1px solid #635e6c; border-radius: 14px; background: #19191ff7; box-shadow: 0 6px 24px #0005; }
+#scoreboard { position: absolute; z-index: 4; top: 230px; right: 48px; width: 544px; height: 224px; padding: 20px 24px; border: 1px solid #635e6c; border-radius: 14px; background: #19191ff7; box-shadow: 0 6px 24px #0005; }
 #scoreboard h2 { margin: 0 0 14px; color: #c7ff76; font-size: 21px; letter-spacing: 2px; }
 .score-row { position: relative; display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 44px; border-top: 1px solid #ffffff18; font-size: 23px; }
 .score-owner { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -75,7 +75,7 @@ html[data-frozen] *, html[data-frozen] *::after { animation: none !important; tr
 /* One card changes layout; its full-size starting box is unchanged. */
 #boom-banner { transition: top .3s ease-out, left .3s ease-out, width .3s ease-out, height .3s ease-out, padding .3s ease-out; }
 #boom-banner .eyebrow, #boom-owner, #boom-word, #boom-age, #receipt, #false-alarm { transition: font-size .3s ease-out, margin .3s ease-out, padding .3s ease-out, line-height .3s ease-out; }
-#boom-banner.compact { top: 772px; left: 48px; width: 560px; height: 260px; padding: 12px 22px 16px; border-radius: 14px; text-align: left; }
+#boom-banner.compact { top: auto; bottom: 48px; left: 48px; width: 560px; height: auto; padding: 12px 22px 16px; border-radius: 14px; text-align: left; }
 .compact .eyebrow { justify-content: flex-start; min-height: 18px; gap: 6px; font-size: 12px; letter-spacing: 2px; }
 .compact .impact-icon { font-size: 18px; }
 .compact #boom-owner { margin-top: 4px; font-size: 19px; line-height: 1.2; letter-spacing: .5px; }
@@ -84,9 +84,11 @@ html[data-frozen] *, html[data-frozen] *::after { animation: none !important; tr
 .compact #receipt { margin-top: 6px; padding: 6px 0 4px; max-height: 122px; overflow-y: auto; font-size: 22px; line-height: 1.2; }
 .compact #false-alarm { top: 10px; right: 12px; padding: 4px 6px; font-size: 13px; letter-spacing: 1px; }
 .compact #latency { right: 16px; bottom: 6px; font-size: 11px; }
-#reveal { top: 728px; left: 48px; width: 1240px; height: 304px; padding: 20px 30px; text-align: left; }
+#reveal { top: auto; bottom: 48px; left: 48px; width: 1240px; height: auto; max-height: 304px; overflow-y: auto; padding: 20px 30px; text-align: left; }
 #reveal .eyebrow { min-height: 24px; justify-content: flex-start; font-size: 16px; }
 #round-top { max-height: 80px; overflow-y: auto; margin: 8px 0 4px; font-size: 34px; line-height: 1.15; overflow-wrap: anywhere; }
 #round-stats { margin: 0 0 8px; font-size: 18px; font-weight: 650; letter-spacing: 0; color: #d0cdd6; }
 #duds { max-height: 140px; overflow-y: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 #duds p { margin: 0; padding: 9px 12px; font-size: 21px; }
+
+#boom-banner.measuring, #boom-banner.measuring * { transition: none !important; animation: none !important; }
