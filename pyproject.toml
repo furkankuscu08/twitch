@@ -28,6 +28,8 @@ markers = [
     "live: requires network access and local credentials",
     "browser: requires Playwright and Chromium",
 ]
+# FastAPI's own TestClient import triggers this Starlette deprecation; not our code.
+filterwarnings = ["ignore:Using `httpx` with `starlette.testclient` is deprecated"]
 
 [tool.ruff]
 target-version = "py312"
