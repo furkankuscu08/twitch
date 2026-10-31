@@ -2,7 +2,10 @@
 
 Minefield: a Twitch game for the Codex x TwitchCon Hackathon. Viewers plant secret words; when the streamer says one on stream, the overlay explodes and names the viewer who planted it.
 
-**Read `SPEC.md` first.** It is the source of truth for architecture, messages, game rules and the work packages (WP1–WP15, without WP6 and WP12). When asked to "do WPn", implement exactly that package and meet its acceptance criteria. If the spec is wrong or unclear, say so and propose a spec change; don't silently diverge. `docs/plan/` contains Turkish planning notes, not implementation requirements; do not modify it for spec work.
+**Read `SPEC.md` first.** It is the source of truth for architecture, messages, game rules and the work packages (WP1–WP15, without WP6 and WP12). When asked to "do WPn", implement exactly that package and meet its acceptance criteria. If the spec is wrong or unclear, say so and propose a spec change; don't silently diverge.
+
+## Status
+Submitted to the hackathon. `README.md` is the public entry point for judges; keep its no-key demo steps working and its links in line with the submission.
 
 ## Stack
 - Python 3.12, managed with `uv`; the package is `minefield/`.
@@ -10,11 +13,14 @@ Minefield: a Twitch game for the Codex x TwitchCon Hackathon. Viewers plant secr
 - STT: Deepgram streaming over plain `websockets` (no Deepgram SDK). Default model Flux (`flux-general-en`), backup Nova-3; EU endpoint. No local model, no GPU.
 - Web: plain HTML/CSS/JS in `web/`. No framework, no bundler, no build step; these pages run as OBS browser sources.
 - Sound effects are synthesized at runtime with the WebAudio API; there are no audio files.
+- Public access: a Cloudflare quick tunnel (`cloudflared`, managed by the server) exposes only the plant app.
 - Dev only: Playwright (Chromium) for headless screenshots of the web pages (`scripts/shoot.py`).
 
 ## Commands
 ```
-uv sync                                   # install
+./scripts/run_all.sh                      # full game: server, engine and quick tunnel (needs .env)
+./scripts/run_all.sh --demo               # no-key demo: no Twitch, engine or tunnel
+uv sync --locked                          # install
 uv run pytest                             # tests
 uv run ruff check . && uv run ruff format .
 uv run python -m minefield.server         # game server (127.0.0.1:8100, mic page at /mic) + plant app (:8101)
@@ -35,7 +41,7 @@ Default ports are `GAME_PORT=8100` and `PLANT_PORT=8101`, overridable by environ
 - Twitch and Deepgram: verify endpoints, scopes, parameters and payloads against https://dev.twitch.tv/docs and https://developers.deepgram.com before coding them. Dated claims in SPEC are verification inputs, not proof of current API behavior. Record the official source URL and verification date in implementation comments. Twitch failures (chat send, EventSub) are logged without private words or credentials and must never crash or block the game.
 - All code, comments, UI text, commit messages and docs you write are in English.
 - Assets (images, fonts) must be your own or CC0; record the source in `web/assets/CREDITS.md`. No third-party trademarks. Sounds are synthesized (see Stack), so they need no credits.
-- Don't modify `docs/brainstorm/`, `docs/competition/`, or the local `twitch/` folder.
+- Don't modify `docs/competition/` or the local `twitch/` folder.
 
 ## Twitch accounts
 | Role | Login | Token scopes (SPEC §6) |

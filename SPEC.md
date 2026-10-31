@@ -4,7 +4,7 @@
 
 Viewers secretly pick a word from a deck and plant it as a "mine". The streamer talks as usual. Streaming speech recognition (Deepgram) listens to the streamer's mic; when the streamer says a live mine word, the overlay explodes and names the viewer who planted it.
 
-This file is the source of truth for the build. Work packages (WP1–WP15, without WP6 and WP12) and their acceptance criteria are in §7. The project plan (schedule, decisions; Turkish) is in `docs/plan/minefield.md`.
+This file is the source of truth for the build. Work packages (WP1–WP15, without WP6 and WP12) and their acceptance criteria are in §7.
 
 ---
 
