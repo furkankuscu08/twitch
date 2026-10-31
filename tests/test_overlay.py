@@ -715,6 +715,11 @@ def test_wp15_long_compact_receipt_and_tied_reveal_stay_in_their_boxes(page):
         assert child["x"] >= box["x"]
         assert child["x"] + child["width"] <= box["x"] + box["width"]
         assert child["y"] + child["height"] <= box["y"] + box["height"]
+    assert page.locator("#receipt").evaluate("el => el.scrollHeight <= el.clientHeight")
+    receipt = page.locator("#receipt").bounding_box()
+    hit = page.locator("#receipt mark").bounding_box()
+    assert hit["y"] >= receipt["y"]
+    assert hit["y"] + hit["height"] <= receipt["y"] + receipt["height"]
     leaders = [{"owner": f"viewer_{i:03}", "booms": 1} for i in range(200)]
     send(
         page, type="reveal", stats={"booms": 200}, round_top=leaders, duds=[], scores=[]
@@ -738,3 +743,26 @@ def test_wp15_shoot_exports_webcam_previews_and_shrink_midpoint(page, tmp_path):
     midpoint = tmp_path / "overlay-shrink-midpoint.png"
     assert midpoint.exists()
     assert midpoint.read_bytes()[:8] == b"\x89PNG\r\n\x1a\n"
+
+
+def test_wp15_replacement_after_compact_starts_centred_without_reverse_transition(page):
+    page.clock.install()
+    page.clock.pause_at(page.evaluate("Date.now() + 1000"))
+    snapshot(page)
+    boom(page)
+    page.clock.run_for(3010)
+    page.locator("#boom-banner").evaluate(
+        "el => el.getAnimations({subtree: true}).forEach(a => a.finish())"
+    )
+    assert page.locator("#boom-banner").bounding_box()["width"] == 560
+    boom(page, owner="alex", word="volcano")
+    # Ignore the existing impact transform; the underlying layout must be full size.
+    layout = page.locator("#boom-banner").evaluate("""el => {
+        const style = getComputedStyle(el);
+        return [style.left, style.top, style.width];
+    }""")
+    assert layout == ["300px", "324px", "1320px"]
+    page.clock.run_for(2990)
+    assert page.locator("#boom-banner").bounding_box()["width"] == 1320
+    page.clock.run_for(20)
+    assert "compact" in page.locator("#boom-banner").get_attribute("class")

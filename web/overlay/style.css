@@ -75,13 +75,13 @@ html[data-frozen] *, html[data-frozen] *::after { animation: none !important; tr
 /* One card changes layout; its full-size starting box is unchanged. */
 #boom-banner { transition: top .3s ease-out, left .3s ease-out, width .3s ease-out, height .3s ease-out, padding .3s ease-out; }
 #boom-banner .eyebrow, #boom-owner, #boom-word, #boom-age, #receipt, #false-alarm { transition: font-size .3s ease-out, margin .3s ease-out, padding .3s ease-out, line-height .3s ease-out; }
-#boom-banner.compact { top: 772px; left: 48px; width: 560px; height: 260px; padding: 16px 22px; border-radius: 14px; text-align: left; }
+#boom-banner.compact { top: 772px; left: 48px; width: 560px; height: 260px; padding: 12px 22px 16px; border-radius: 14px; text-align: left; }
 .compact .eyebrow { justify-content: flex-start; min-height: 18px; gap: 6px; font-size: 12px; letter-spacing: 2px; }
 .compact .impact-icon { font-size: 18px; }
-.compact #boom-owner { margin-top: 8px; font-size: 19px; line-height: 1.2; letter-spacing: .5px; }
-.compact #boom-word { margin: 2px 0; font-size: 40px; line-height: 1.12; letter-spacing: 1px; }
+.compact #boom-owner { margin-top: 4px; font-size: 19px; line-height: 1.2; letter-spacing: .5px; }
+.compact #boom-word { margin: 0; font-size: 40px; line-height: 1.12; letter-spacing: 1px; }
 .compact #boom-age { font-size: 13px; }
-.compact #receipt { margin-top: 10px; padding: 10px 0 0; max-height: 88px; overflow-y: auto; font-size: 24px; line-height: 1.3; }
+.compact #receipt { margin-top: 6px; padding: 6px 0 4px; max-height: 122px; overflow-y: auto; font-size: 22px; line-height: 1.2; }
 .compact #false-alarm { top: 10px; right: 12px; padding: 4px 6px; font-size: 13px; letter-spacing: 1px; }
 .compact #latency { right: 16px; bottom: 6px; font-size: 11px; }
 #reveal { top: 728px; left: 48px; width: 1240px; height: 304px; padding: 20px 30px; text-align: left; }

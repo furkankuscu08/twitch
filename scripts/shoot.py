@@ -115,6 +115,8 @@ def shoot_overlay(browser, output):
                 f'<figure><img src="data:image/png;base64,{encoded}">'
                 f"<figcaption>{step:02} · {label}</figcaption></figure>"
             )
+        page.locator("#scoreboard").screenshot(path=str(output / "overlay-panel.png"))
+
         # Exercise the actual timed demo, then sample its CSS shrink halfway.
         motion = browser.new_page(viewport={"width": 1920, "height": 1080})
         motion.clock.install()

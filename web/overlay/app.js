@@ -369,6 +369,8 @@
         });
         byId("latency").hidden = !showLatency;
         byId("latency").textContent = `${Math.round(message.latency_ms)} ms · ${message.source}`;
+        // Commit the hidden reset before showing a replacement at full size.
+        void byId("boom-banner").offsetWidth;
         byId("boom-banner").hidden = false;
         burst();
         sound("boom");
