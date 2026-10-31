@@ -6,6 +6,14 @@ from .config import Config
 
 
 @dataclass
+class Score:
+    points: int = 0
+    reached: int = 0
+    last_award: int = 0
+    round_booms: int = 0
+
+
+@dataclass
 class Mine:
     id: str
     owner: str
@@ -15,6 +23,7 @@ class Mine:
     status: str = "arming"
     boom_at: float | None = None
     boom_order: int = 0
+    credit: Score | None = field(default=None, repr=False)
 
     @property
     def live(self):
@@ -30,6 +39,8 @@ class Game:
         self.round_id = 0
         self.mines = {}
         self.next_id = 1
+        self.scores = {}
+        self.score_sequence = 0
         self.boom_sequence = 0
         self.archived_booms = 0
         self.archived_entries = []
@@ -39,6 +50,8 @@ class Game:
         if self.running:
             raise ValueError("Round already running")
         self.running = True
+        for score in self.scores.values():
+            score.round_booms = 0
         self.round_id += 1
         self.started_at = now
         self.boom_sequence = 0
@@ -47,6 +60,50 @@ class Game:
         self.archived_truncated = False
         self.mines.clear()
         return [self.snapshot(now)]
+
+    def leaderboard(self):
+        ranked = sorted(
+            ((owner, score) for owner, score in self.scores.items() if score.points),
+            key=lambda item: (-item[1].points, item[1].reached),
+        )
+        return [
+            {"owner": owner, "points": score.points}
+            for owner, score in ranked[: self.config.SCOREBOARD_SIZE]
+        ]
+
+    def score_boom(self, mine_id):
+        """Credit an emitted boom once; the server calls this before broadcast."""
+        mine = self.mines[mine_id]
+        if mine.credit is not None:
+            return mine.credit.points
+        if mine.status != "exploded":
+            raise ValueError("Mine has not exploded")
+        if mine.owner not in self.scores:
+            if len(self.scores) >= self.config.SCORE_MAX_PLAYERS:
+                oldest = min(
+                    self.scores,
+                    key=lambda owner: (
+                        self.scores[owner].points,
+                        self.scores[owner].last_award,
+                    ),
+                )
+                del self.scores[oldest]
+            self.scores[mine.owner] = Score()
+        score = self.scores[mine.owner]
+        self.score_sequence += 1
+        score.points += 1
+        score.round_booms += 1
+        score.reached = score.last_award = self.score_sequence
+        mine.credit = score
+        return score.points
+
+    def round_top(self):
+        highest = max((score.round_booms for score in self.scores.values()), default=0)
+        return [
+            {"owner": owner, "booms": highest}
+            for owner, score in sorted(self.scores.items())
+            if highest and score.round_booms == highest
+        ]
 
     def plant(self, owner, word, now):
         if not self.running:
@@ -88,6 +145,7 @@ class Game:
             "type": "snapshot",
             "round": {"running": self.running},
             "plant_url": plant_url,
+            "scores": self.leaderboard(),
             "mines": [
                 {
                     "id": mine.id,
@@ -113,7 +171,20 @@ class Game:
             return []
         mine = max(eligible, key=lambda item: (item.boom_at, item.boom_order))
         mine.status = "false_alarm"
-        return [{"type": "false_alarm", "id": mine.id, "owner": mine.owner}]
+        score = self.scores.get(mine.owner)
+        if score is not None and score is mine.credit:
+            self.score_sequence += 1
+            score.points -= 1
+            score.round_booms -= 1
+            score.reached = self.score_sequence
+        return [
+            {
+                "type": "false_alarm",
+                "id": mine.id,
+                "owner": mine.owner,
+                "scores": self.leaderboard(),
+            }
+        ]
 
     def end(self, now):
         if not self.running:
@@ -131,10 +202,14 @@ class Game:
                 "type": "reveal",
                 "duds": [{"owner": mine.owner, "word": mine.word} for mine in duds],
                 "stats": {"booms": self.archived_booms + len(booms)},
+                "round_top": self.round_top(),
+                "scores": self.leaderboard(),
             }
         ]
         recap = self._recap(booms, duds)
         self.running = False
+        for score in self.scores.values():
+            score.round_booms = 0
         self.mines.clear()
         self.archived_booms = 0
         self.archived_entries.clear()
@@ -184,6 +259,15 @@ class Game:
             )
 
         message = render(entries)
+        leaders = self.leaderboard()
+        if leaders and not self.archived_truncated:
+            suffix = (
+                " Top trappers: "
+                + ", ".join(f"@{row['owner']} {row['points']}" for row in leaders)
+                + "."
+            )
+            if len(message + suffix) <= self.config.CHAT_MAX_CHARS:
+                return message + suffix
         truncated = self.archived_truncated
         while entries and len(message) + int(truncated) > self.config.CHAT_MAX_CHARS:
             entries.pop()

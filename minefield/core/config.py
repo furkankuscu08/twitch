@@ -21,6 +21,8 @@ class Config:
     FALSE_ALARM_WINDOW_S: float = 10
     RECEIPT_WORDS: int = 8
     CHAT_MAX_CHARS: int = 500
+    SCOREBOARD_SIZE: int = 3
+    SCORE_MAX_PLAYERS: int = 200
     ENGINE_TIMEOUT_S: float = 5
     CHAT_SEND_TIMEOUT_S: float = 5
     WS_CLIENT_QUEUE_SIZE: int = 100

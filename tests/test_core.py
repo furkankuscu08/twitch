@@ -309,6 +309,8 @@ def test_round_end_duds_clear_and_recap(deck):
         "type": "reveal",
         "duds": [{"owner": "bob", "word": "volcano"}],
         "stats": {"booms": 1},
+        "round_top": [],
+        "scores": [],
     }
     assert (
         recap

@@ -4,7 +4,7 @@
 
 Viewers secretly pick a word from a deck and plant it as a "mine". The streamer talks as usual. Streaming speech recognition (Deepgram) listens to the streamer's mic; when the streamer says a live mine word, the overlay explodes and names the viewer who planted it.
 
-This file is the source of truth for the build. Work packages (WP1–WP14, without WP6 and WP12) and their acceptance criteria are in §7. The project plan (schedule, decisions; Turkish) is in `docs/plan/minefield.md`.
+This file is the source of truth for the build. Work packages (WP1–WP15, without WP6 and WP12) and their acceptance criteria are in §7. The project plan (schedule, decisions; Turkish) is in `docs/plan/minefield.md`.
 
 ---
 
@@ -72,7 +72,7 @@ Do not create a top-level `twitch/` package; that path is an unrelated local fol
 
 ### Round
 - The streamer starts a round from the dock. Mines can be planted only during a round.
-- Ending the round stops detection and planting, closes pending matcher candidates, reveals the duds and the stats, then clears the round's game state. Twitch tokens and connection health are not round state.
+- Ending the round stops detection and planting, closes pending matcher candidates, reveals the duds and the stats, then clears the round's game state. Twitch tokens, connection health and scores (see Score) are not round state.
 - The overlay keeps the received reveal on screen until the next round starts. This is browser display state only; the server does not retain the ended round for snapshots. An idle snapshot must not erase a reveal already displayed by that overlay, but a fresh page cannot recover it after the server has cleared it.
 - Round start broadcasts a snapshot showing the new running round; the overlay clears its retained reveal on that snapshot.
 
@@ -105,8 +105,8 @@ At round end, every mine that never exploded becomes a `dud`.
 See §5. Only `armed` mines can trigger. Eligibility uses the spoken occurrence's start time, not the time its hypothesis arrives: it must be at or after both the current round's start and the mine's `arms_at`. Ignore hypotheses while no round is running and occurrences from before the current round; delayed speech from an earlier round cannot trigger a new round's mines.
 
 ### Boom
-1. Show the overlay explosion and a banner: `{OWNER}'S MINE: {WORD}`, `planted {n} min ago`, and the **receipt** (below).
-2. Post `💥 @{owner}'s mine {WORD} went off!` immediately.
+1. Show the overlay explosion and a banner: `{OWNER}'S MINE: {WORD}`, `planted {n} min ago`, and the **receipt** (below). The banner stays full size for `BANNER_FULL_S` (3 s), then shrinks into a compact card in the lower-left corner (owner, word, receipt, still readable) so the streamer's face stays visible. The compact card stays until the next boom replaces it or the round's reveal appears; a false alarm stamps it.
+2. Post `💥 @{owner}'s mine {WORD} went off! @{owner} has {n} pts.` immediately, using the owner's session points after this boom (`1 pt` when the total is 1). A later false alarm does not edit that message; its separate correction message is unchanged.
 
 **Receipt:** the streamer's own words that set the mine off, e.g. *"…honestly I could go for some **pineapple**"*.
 - The last `RECEIPT_WORDS` (8) words of the triggering hypothesis, ending with the boom word (or its multi-word variant), which is highlighted. Words after it are not shown.
@@ -120,11 +120,20 @@ See §5. Only `armed` mines can trigger. Eligibility uses the spoken occurrence'
 - Target: the latest boom in the active round that is still within that window and has not already been corrected. Both `!defuse` and the dock button use this rule; no mine ID selector is needed. With no eligible boom, there is no state change.
 - Effect: the mine becomes `false_alarm` and does not count in the stats. The overlay shows a "FALSE ALARM" stamp, and the bot posts `🧯 False alarm, @{owner} gets a free re-plant`.
 
+### Score (WP15)
+Viewers compete with each other. The streamer does not score, so they never have a reason to stop talking.
+- Each boom gives its owner 1 point. A false alarm takes that point back. Duds score nothing.
+- Scores are session state, not round state: they survive round end and live in memory until the server process stops (one stream). Nothing is written to disk. Session points and current-round boom counts share a table capped at `SCORE_MAX_PLAYERS` (200). Before inserting a new owner, evict the existing owner with the fewest points, breaking ties by oldest last-awarded point. Eviction discards both counts; returning owners start at zero. A false alarm retracts its original credit only if that credit’s score entry is still retained; it never recreates an evicted entry or subtracts from a replacement entry. Round statistics are corrected regardless.
+- **Leaderboard:** the top `SCOREBOARD_SIZE` (3) owners with at least 1 point, ordered by points, then by who reached that total first. Every points change advances a session sequence counter and records when the resulting total was reached. Equal totals rank by that sequence ascending. Eviction uses the last positive award’s sequence; no clock reads.
+- **Round top trapper:** the owner(s) with the most uncorrected booms in the round that just ended; every tied leader among retained owners is listed, ordered by owner name. Counts survive mine compaction and reset at round end. With no scored booms there is none.
+- The overlay shows the leaderboard as a small **TOP TRAPPERS** panel in a corner while a round is running and after it ends; it must not cover the centre of the frame. On a boom it shows `+1` next to the owner and re-sorts.
+- Built in `core` (pure) and unit-tested. Scores and the leaderboard contain owners and numbers only, never words.
+
 ### Round end
-- The overlay reveals the duds (`{owner}'s mine {WORD} never went off`) and the number of booms.
-- The bot posts **one recap message**: `Round over: {n} booms. 💥 @a (pineapple), @b (volcano). Survived: @c's "banana".`
-  - False alarms are not listed. With no booms: `Round over: no booms.` followed by the survivors.
-  - At most `CHAT_MAX_CHARS` (500, the Send Chat Message limit); if longer, drop list entries from the end and add `…`.
+- The overlay reveals the round's top trapper(s) as the headline (`TOP TRAPPER: {owner} · {n} booms`, plural for ties; if `round_top` is empty, show the total boom count, or `No booms this round` when zero), then the duds (`{owner}'s mine {WORD} never went off`) and the leaderboard.
+- The bot posts **one recap message**: `Round over: {n} booms. 💥 @a (pineapple), @b (volcano). Survived: @c's "banana". Top trappers: @a 3, @b 1.`
+  - False alarms are not listed. With no booms: `Round over: no booms.` followed by the survivors. The `Top trappers` suffix lists the session leaderboard, not `round_top`. With an empty leaderboard, it is omitted.
+  - At most `CHAT_MAX_CHARS` (500, the Send Chat Message limit); if longer, drop the `Top trappers` part first, then drop list entries from the end and add `…`.
   - The text is built in `core` (pure) and unit-tested.
 
 **Secrecy invariant:** while a round is running, the words of mines that have not exploded must never reach the overlay, the dock, logs at INFO level, chat or a Twitch API call. A boom makes only that mine's word public; a later false-alarm correction does not make it secret again. At round end, dud words may be disclosed in `reveal` and the single chat recap, as required above. These are the only game-output disclosure exceptions. Receipts mask every other deck word, even one already public. The plant page may show its viewer their own hand; private server-side hand/code mappings and game state may hold those words. Live game recognition hypotheses are private engine/server inputs and must not be broadcast as a public transcript. Do not log live mine words through request bodies, state dumps or exception messages.
@@ -162,17 +171,17 @@ WebSocket `/ws/overlay` and `/ws/dock`. JSON messages with a `type` field:
 
 | type | payload | overlay | dock |
 | --- | --- | --- | --- |
-| `snapshot` | `round`, `plant_url`, `mines:[{id, owner, status, arms_in_s}]` | ✓ | ✓ |
+| `snapshot` | `round`, `plant_url`, `mines:[{id, owner, status, arms_in_s}]`, `scores` | ✓ | ✓ |
 | `mine_planted` | `id, owner, arms_in_s` | ✓ | ✓ |
 | `mine_armed` | `id` | ✓ | ✓ |
 | `spark` | `id` | ✓ | ✓ |
 | `fizzle` | `id` | ✓ | ✓ |
-| `boom` | `id, owner, word, planted_ago_s, latency_ms, source, at, receipt` | ✓ | ✓ |
-| `false_alarm` | `id, owner` | ✓ | ✓ |
-| `reveal` | `duds:[{owner, word}], stats` | ✓ | ✓ |
+| `boom` | `id, owner, word, planted_ago_s, latency_ms, source, at, receipt, scores` | ✓ | ✓ |
+| `false_alarm` | `id, owner, scores` | ✓ | ✓ |
+| `reveal` | `duds:[{owner, word}], stats, round_top:[{owner, booms}], scores` | ✓ | ✓ |
 | `status` | `mic, engine, deepgram, eventsub, tunnel_url` | — | ✓ |
 
-`word` appears only in `boom` and `reveal`; snapshots never contain words. `arms_in_s` is the seconds remaining until arming, clamped to zero. A reloaded overlay restores chips with their status without replaying banners or sounds. Snapshots retain live mines and recent inactive mines through the false-alarm window. Older inactive records are discarded; uncorrected booms are compacted into a total and a recap prefix bounded by `CHAT_MAX_CHARS`. `at` is the boom's server-clock Unix time; the server remains authoritative for the false-alarm deadline.
+`word` appears only in `boom` and `reveal`; snapshots never contain words. `scores` is the leaderboard (§3 Score) as `[{owner, points}]`, in order; it is sent in every snapshot, including idle ones, so a reloaded overlay restores the panel. `arms_in_s` is the seconds remaining until arming, clamped to zero. Any snapshot clears the full or compact boom card without replaying effects or sounds and restores chips with their status and scores silently. An idle snapshot preserves an already displayed reveal. Snapshots retain live mines and recent inactive mines through the false-alarm window. Older inactive records are discarded; uncorrected booms are compacted into a total and a recap prefix bounded by `CHAT_MAX_CHARS`. `at` is the boom's server-clock Unix time; the server remains authoritative for the false-alarm deadline.
 
 `source` is `stt` or `typed`. `receipt` is a list of `{"text": str, "hit": bool}` (masked as in §3; exactly one item has `hit: true`; a multi-word variant is one item). The dock receives a current `status` message when it connects as well as subsequent health updates.
 
@@ -281,9 +290,10 @@ Each WP is done when its acceptance criteria pass and `uv run pytest` and `uv ru
 | WP7 | `deck/en.json`: ~120 concrete, funny, everyday-but-not-too-common nouns with variants | Static checks only: no brands, offensive words, homophone pairs or ambiguous normalized variants; use `wordfreq` as a dev dependency and reject canonical words or variants in its top 1,000 English words, with the package version pinned by the uv lockfile. Frequency filtering runs during deck validation, never on the runtime hot path. Later, prune misheard words from the rehearsal log |
 | WP8 | `twitch_api.auth`: device code flow CLI per account, token store, refresh | `python -m minefield.twitch_api.auth --account bot` stores a working token |
 | WP9 | EventSub client + commands + chat send | Unit tests with a fake client; a `live` test sends `!mine` and `!mine CODE` as the test account through Send Chat Message, and the server's state changes and the bot's replies report `is_sent`; reconnect works |
-| WP10 | boom message, false-alarm message, round recap message | With a fake Twitch client: a boom posts the boom message, a false alarm within 10 s corrects the latest eligible boom and posts the false-alarm message, round end posts one recap message; a failed or timed-out send gets no retry, is logged, and the game continues. Each chat send has a 5 s total timeout. A `live` test does the same on the real channel (no live stream needed) |
+| WP10 | boom message, false-alarm message, round recap message | With a fake Twitch client: a boom posts the boom message with the owner’s updated session points (`1 pt`, otherwise `{n} pts`), a false alarm within 10 s corrects the latest eligible boom and posts the false-alarm message, round end posts one recap message; a failed or timed-out send gets no retry, is logged, and the game continues. Each chat send has a 5 s total timeout. A `live` test does the same on the real channel (no live stream needed) |
 | WP11 | `web/plant` + plant app + code binding + tunnel helper | Unit tests cover anonymous bearer codes consumed only on successful bind, hand/code TTL and round-end invalidation, and rejection at the combined pending-storage cap. `scripts/shoot.py plant` renders the page at 390 px phone width; a `live` test drives hand → pick → `!mine CODE` as the test account through the tunnel URL; then the human repeats it once from a phone (T4) |
 | WP13 | Polish and rehearsal fixes | Two uninterrupted rounds (typed mode + debug plant, or with a friend) |
+| WP15 | Score and compact banner (§3 Score, Boom, Round end; §4): session scores in `core`, `scores`/`round_top` in messages, overlay TOP TRAPPERS panel, banner shrinking after `BANNER_FULL_S`, reveal headline, recap suffix | Unit tests cover: +1 per boom and session points in boom chat messages (`1 pt`/`{n} pts`); a false alarm takes the point back; duds score nothing; scores survive round end and a new round start; leaderboard order and tie order; only owners with points, at most `SCOREBOARD_SIZE`; `SCORE_MAX_PLAYERS` pruning; round top trapper with ties, with a false-alarmed boom excluded, and with no booms; recap suffix, omitted when empty, dropped first on truncation; no word in `scores`, `round_top` or snapshots. A server test checks that `boom` and `false_alarm` carry the updated `scores` and that an idle snapshot after round end still has them. `/overlay?demo=1` covers a leaderboard change, the banner shrinking, a false alarm on the compact card and a reveal with a top trapper; `scripts/shoot.py overlay` shows the full banner, the compact card with a readable receipt and the centre of the frame clear, the panel, and the reveal |
 | WP14 | Ops: `scripts/run_all.sh` (server + engine + cloudflared; fails clearly if `DEEPGRAM_API_KEY` is missing), English README (setup, Deepgram key, Twitch app registration, how to open the mic page, no-key demo path: typed mode + debug plant (`MINEFIELD_DEBUG=1`) + `/overlay?demo=1`), demo-day checklist | A fresh clone on the same machine starts with one script plus the mic page in Chrome; the no-key demo path works without the STT engine |
 
 Order and milestones:
@@ -292,7 +302,8 @@ Order and milestones:
 - **M2:** WP5;
 - **M3:** WP9, WP10;
 - **M4:** WP11 (WP12, the chat simulator, was removed);
-- **M5:** WP3 full, WP13, WP14.
+- **M5:** WP3 full, WP13, WP14;
+- **M6:** WP15.
 
 ---
 
@@ -315,6 +326,9 @@ Order and milestones:
 | `FALSE_ALARM_WINDOW_S` | 10 |
 | `RECEIPT_WORDS` | 8 |
 | `CHAT_MAX_CHARS` | 500 |
+| `SCOREBOARD_SIZE` | 3 |
+| `SCORE_MAX_PLAYERS` | 200 |
+| `BANNER_FULL_S` | 3 (overlay display constant in `web/overlay`) |
 | `ENGINE_TIMEOUT_S` | 5 |
 | `CHAT_SEND_TIMEOUT_S` | 5 |
 | `WS_CLIENT_QUEUE_SIZE` | 100 |

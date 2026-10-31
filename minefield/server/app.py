@@ -98,11 +98,16 @@ class Runtime:
 
     def emit(self, events):
         for event in events:
+            if event["type"] == "boom":
+                points = self.game.score_boom(event["id"])
+                event["scores"] = self.game.leaderboard()
             self.hub.broadcast(event)
             if self.twitch is not None:
                 if event["type"] == "boom":
                     self.twitch.enqueue(
-                        f"💥 @{event['owner']}'s mine {event['word']} went off!"
+                        f"💥 @{event['owner']}'s mine {event['word']} went off! "
+                        f"@{event['owner']} has {points} "
+                        f"{'pt' if points == 1 else 'pts'}."
                     )
                 elif event["type"] == "false_alarm":
                     self.twitch.enqueue(

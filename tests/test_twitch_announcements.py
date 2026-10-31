@@ -33,10 +33,10 @@ def test_boom_latest_correction_and_single_recap_disclosure():
         client.portal.call(runtime.tick)
         assert queued(twitch) == []
         client.post("/dock/typed", json={"text": "pineapple"})
-        assert queued(twitch) == ["💥 @a's mine pineapple went off!"]
+        assert queued(twitch) == ["💥 @a's mine pineapple went off! @a has 1 pt."]
         now[0] += 1
         client.post("/dock/typed", json={"text": "volcano"})
-        assert queued(twitch) == ["💥 @b's mine volcano went off!"]
+        assert queued(twitch) == ["💥 @b's mine volcano went off! @b has 1 pt."]
         client.post("/dock/false-alarm")
         assert queued(twitch) == ["🧯 False alarm, @b gets a free re-plant"]
         assert [mine.status for mine in runtime.game.mines.values()] == [
@@ -51,7 +51,8 @@ def test_boom_latest_correction_and_single_recap_disclosure():
         client.post("/dock/round/end")
         (recap,) = queued(twitch)
         assert (
-            recap == 'Round over: 1 booms. 💥 @a (pineapple). Survived: @c\'s "banana".'
+            recap == "Round over: 1 booms. 💥 @a (pineapple). "
+            'Survived: @c\'s "banana". Top trappers: @a 1.'
         )
         assert "volcano" not in recap
         assert not runtime.game.mines
@@ -144,3 +145,28 @@ def test_failed_announcements_never_retry_or_block_game(failure, tmp_path, caplo
         asyncio.run(scenario())
     assert "failed" in caplog.text
     assert "private-pineapple" not in caplog.text and "access-secret" not in caplog.text
+
+
+def test_boom_chat_session_points_plural_and_survive_round_end():
+    now = [100.0]
+    app = create_app(
+        config=replace(Config(), ARM_DELAY_S=0), clock=lambda: now[0], debug=True
+    )
+    runtime = app.state.runtime
+    twitch = Twitch(runtime, SimpleNamespace(bot_id="20"))
+    runtime.twitch = twitch
+    with TestClient(app) as client:
+        for points in [1, 2]:
+            now[0] += 20
+            client.post("/dock/round/start")
+            client.post(
+                "/dock/debug/plant", json={"owner": "viewer", "word": "pineapple"}
+            )
+            client.portal.call(runtime.tick)
+            client.post("/dock/typed", json={"text": "pineapple"})
+            unit = "pt" if points == 1 else "pts"
+            assert queued(twitch) == [
+                f"💥 @viewer's mine pineapple went off! @viewer has {points} {unit}."
+            ]
+            client.post("/dock/round/end")
+            assert queued(twitch)[0].endswith(f"Top trappers: @viewer {points}.")

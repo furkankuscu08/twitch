@@ -219,6 +219,15 @@ def test_live_boom_false_alarm_and_single_round_recap():
             ]
             assert len(recaps) == 1 and "volcano" in recaps[0] and "banana" in recaps[0]
             assert "pineapple" not in recaps[0]
+            assert recaps[0].endswith(f"Top trappers: @{logins['test']} 1.")
+            boom_messages = [
+                text
+                for account, text, sent in outcomes
+                if account == "bot" and sent and "went off!" in text
+            ]
+            assert boom_messages and all(
+                text.endswith(f"@{logins['test']} has 1 pt.") for text in boom_messages
+            )
 
     asyncio.run(scenario())
 

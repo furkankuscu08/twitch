@@ -2,7 +2,7 @@
 
 Minefield: a Twitch game for the Codex x TwitchCon Hackathon. Viewers plant secret words; when the streamer says one on stream, the overlay explodes and names the viewer who planted it.
 
-**Read `SPEC.md` first.** It is the source of truth for architecture, messages, game rules and the work packages (WP1–WP14, without WP6 and WP12). When asked to "do WPn", implement exactly that package and meet its acceptance criteria. If the spec is wrong or unclear, say so and propose a spec change; don't silently diverge. `docs/plan/` contains Turkish planning notes, not implementation requirements; do not modify it for spec work.
+**Read `SPEC.md` first.** It is the source of truth for architecture, messages, game rules and the work packages (WP1–WP15, without WP6 and WP12). When asked to "do WPn", implement exactly that package and meet its acceptance criteria. If the spec is wrong or unclear, say so and propose a spec change; don't silently diverge. `docs/plan/` contains Turkish planning notes, not implementation requirements; do not modify it for spec work.
 
 ## Stack
 - Python 3.12, managed with `uv`; the package is `minefield/`.
@@ -31,7 +31,7 @@ Default ports are `GAME_PORT=8100` and `PLANT_PORT=8101`, overridable by environ
 - **Secrecy:** unrevealed mine words never go to the overlay, the dock, chat, Twitch API calls or INFO logs during a round. Only a boom discloses its word during play; round-end `reveal` and the recap disclose duds. Snapshots never contain words. Receipts mask all other deck words. See SPEC §3-4.
 - **No persistence:** game state lives in memory only. The only runtime state file is `data/tokens.json`; requested engine logs (`--save-raw`, `--save-hyps`) also go under `data/`, and requested private event logs go under `data/events/`. Never commit `data/`, tokens, `.env` or API keys.
 - **No STT biasing:** never send mine or deck words to Deepgram (`keyterm`, keywords, prompts). A false boom names a viewer.
-- `minefield/core` stays pure (no I/O, no network, no GPU, no clock reads or mutable process-global game state) and fully unit-tested. Put all tunable numbers and defaults in `minefield/core/config.py`; entrypoints outside `core` read env overrides and inject validated config and explicit times.
+- `minefield/core` stays pure (no I/O, no network, no GPU, no clock reads or mutable process-global game state) and fully unit-tested. Put all tunable numbers and defaults in `minefield/core/config.py`; entrypoints outside `core` read env overrides and inject validated config and explicit times. Overlay-only presentation constants, including `BANNER_FULL_S`, live in `web/overlay`.
 - Twitch and Deepgram: verify endpoints, scopes, parameters and payloads against https://dev.twitch.tv/docs and https://developers.deepgram.com before coding them. Dated claims in SPEC are verification inputs, not proof of current API behavior. Record the official source URL and verification date in implementation comments. Twitch failures (chat send, EventSub) are logged without private words or credentials and must never crash or block the game.
 - All code, comments, UI text, commit messages and docs you write are in English.
 - Assets (images, fonts) must be your own or CC0; record the source in `web/assets/CREDITS.md`. No third-party trademarks. Sounds are synthesized (see Stack), so they need no credits.
